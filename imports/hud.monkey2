@@ -118,7 +118,8 @@ Class HUD
 				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost", 20.0, 60.0)
 				
 				ShadowText (canvas, "R to reset!", 20.0, 80.0)
-				ShadowText (canvas, "TEMP: H to halve fuel", 20.0, 100.0)
+				ShadowText (canvas, "TEMP: H to halve fuel", 20.0, 120.0)
+				ShadowText (canvas, "TEMP: C for next level (what was that, Continue??)", 20.0, 140.0)
 				
 				ShadowText (canvas, "Press A on first XBox pad to enable...", 20.0, 160.0)
 				

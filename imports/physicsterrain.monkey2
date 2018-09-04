@@ -87,7 +87,7 @@ Class PhysicsTerrain ' WIP
 			Return TransformRange (pixmap_x, 0.0, heightmap.Width - 1, -Width * 0.5, Width * 0.5)
 		End
 
-		Method TerrainYFromHeightMap:Float (pixmap_x:Float, pixmap_y:Float, TMP_HACK:Bool = False)
+		Method TerrainYFromHeightMap:Float (pixmap_x:Float, pixmap_y:Float)
 
 			Local height:Float = heightmap.GetPixel (pixmap_x, (heightmap.Height - 1) - pixmap_y).R		' Red value from heightmap...
 

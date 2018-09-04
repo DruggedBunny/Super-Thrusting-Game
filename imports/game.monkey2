@@ -59,10 +59,10 @@ Class GameWindow Extends Window
 		
 		Method OnCreateWindow () Override
 	
-			terrain_seed			= 1 ' Int (RndULong ())
+			terrain_seed			= 0 ' Int (RndULong ())
 			terrain_side			= 1024.0 ' Size of terrain cube sides
 			
-			CurrentLevel			= New Level ("test_level.txt", terrain_seed, terrain_side)
+			CurrentLevel			= New Level (terrain_seed, terrain_side)
 	
 				If Not CurrentLevel Then Abort ("OnCreateWindow: Failed to create level!")
 			
@@ -222,8 +222,6 @@ Class GameWindow Extends Window
 
 			GameState.SetCurrentState (States.PlayStarting)
 
-			'PrintEntities ()
-			
 		End
 		
 		Method ReInitLevel ()
@@ -231,7 +229,8 @@ Class GameWindow Extends Window
 			terrain_seed			= terrain_seed + 1
 
 			CurrentLevel.Destroy ()
-			CurrentLevel			= New Level ("test_level.txt", terrain_seed, terrain_side)
+			
+			CurrentLevel			= New Level (terrain_seed, terrain_side)
 	
 				If Not CurrentLevel Then Abort ("ReInitLevel: Failed to create level!")
 			
@@ -247,8 +246,6 @@ Class GameWindow Extends Window
 
 			GameState.SetCurrentState (States.PlayStarting)
 
-			'PrintEntities ()
-			
 		End
 		
 		Method OnRender (canvas:Canvas) Override

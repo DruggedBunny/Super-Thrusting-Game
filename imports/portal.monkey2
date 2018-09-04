@@ -135,7 +135,7 @@ Class Portal
 '		Field ring:Model
 
 		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
-		Const FLYTHROUGH_VOLUME_MAX:Float = 0.75
+		Const FLYTHROUGH_VOLUME_MAX:Float = 0.33
 
 		Field center_upper:Model				' Upper collision cylinder
 		Field center_lower:Model				' Lower collision cylinder

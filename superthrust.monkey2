@@ -18,6 +18,8 @@ Const VR_MODE:Int = False
 
 Const AppName:String = "Super Thrusting Game!"
 
+Const TMP_LEVEL_COMPLETE:Bool = False
+
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
 Function InitTODOs ()
@@ -44,10 +46,10 @@ Function InitTODOs ()
 	
 	TODO ("See REM...")
 
-	TODO ("Randomise pad spawning instead of reading from PNG")
-	TODO ("Generate misc hit sounds for terrain bumps")
 	TODO ("Properly spawn dummy orb/collection point")
 	TODO ("Silence channels on level completion")
+	TODO ("Generate misc hit sounds for terrain bumps")
+	TODO ("Convert all physics entities to Behaviors")
 	TODO ("Fix SpaceGem retardity! Create model in SpaceGem.New!")
 	TODO ("SpaceGem -- OnUpdate -> OnBeginUpdate?")
 	TODO ("Convert SmokeParticle and Orb to pure Behaviors")

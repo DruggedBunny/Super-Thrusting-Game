@@ -151,9 +151,20 @@ Class Rocket
 	
 						' Landing speed check... TODO: Angle!
 						
+						' No fuel, instant explode...
+						
+						If fuel = 0.0 And Not exploded
+							Explode ()
+							Return
+						Endif
+						
+						' Allow for slow touchdown...
+						
 						If Abs (body.LinearVelocity.Length - last_vel.Length) < 3.0 ' WAS: If body.LinearVelocity.Length < 3.0
 							Return
 						Endif
+						
+						' DIE!! Well, damage, then die if too damaged...
 						
 						damage = damage + (Abs (body.LinearVelocity.Length - last_vel.Length) * 4.0)
 						
@@ -223,7 +234,8 @@ Class Rocket
 						If boost_channel.Volume > BOOST_VOLUME_MAX Then boost_channel.Volume = BOOST_VOLUME_MAX
 					Endif
 					
-					Boost (0.0, body.Mass * boost_factor, 0.0)
+					Boost (0.0, boost_factor, 0.0)
+'					Boost (0.0, body.Mass * boost_factor, 0.0)
 					New SmokeParticle (Self)
 					
 					fuel = fuel - (MPG * 0.9)
@@ -276,6 +288,8 @@ Class Rocket
 						If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 
+						' Boost...
+						
 						Local jyraw:Float = joy.GetAxis (5)
 						Local jy:Float = TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
 						
@@ -283,17 +297,18 @@ Class Rocket
 						' meaning that, at the lower end, input values are halved, yet
 						' remain full at the upper end. Finer control at the lower end!
 						
-						jy = jy * TransformRange (jy, 0.0, 1.0, 0.5, 1.0)
+						jy = jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
 						
-						If boost_channel.Volume < jy * BOOST_VOLUME_MAX
-							boost_channel.Volume = jy * BOOST_VOLUME_MAX
+						If boost_channel.Volume < jyraw * BOOST_VOLUME_MAX
+							boost_channel.Volume = jyraw * BOOST_VOLUME_MAX
 						Endif
 						
 						If jyraw > -1.0
 						
 							boosting = True
 							
-							Boost (0.0, (body.Mass * boost_factor) * jy, 0.0)
+'							Boost (0.0, (body.Mass * boost_factor) * jy, 0.0)
+							Boost (0.0, (boost_factor) * jy, 0.0)
 							New SmokeParticle (Self, jy)
 							
 							fuel = fuel - (MPG * jy)
@@ -312,36 +327,7 @@ Class Rocket
 				Endif
 			
 			Else
-				' Orient towards direction of travel
-				'model.Rotation = body.LinearVelocity ' NOPE TO EVERY POSSIBLE VARIANT OVER LAST TWO HOURS!!
-' https://answers.unity.com/questions/39031/how-can-i-rotate-a-rigid-body-based-on-its-velocit.html
-
-'				model.PointAt (model.Position + body.LinearVelocity)
-'				model.Rotate (90.0, 0.0, 0.0, True)
-'				Almost, but fails to ever collide, fixed camera looks weird
-
-'				Local model_pitch:Float	= model.GetRotation ().X
-'				Local model_yaw:Float	= model.GetRotation ().Y
-'				Local model_roll:Float	= model.GetRotation ().Z
-'				
-'				Print model_pitch Mod 360.0
-'				Print model_yaw Mod 360.0
-'				Print model_roll Mod 360.0
-'				
-'				Local body_pitch:Float	= Degrees (body.LinearVelocity.Pitch) * 360.0
-'				Local body_yaw:Float	= Degrees (body.LinearVelocity.Yaw) * 360.0
-'				Local body_roll:Float	= model_roll
-'				
-'				Print body_pitch
-'				Print body_yaw
-'				Print body_roll
-'				
-'				Print ""
-'				
-'				Local diff:Vec3f = New Vec3f ((body_pitch - model_pitch) * 0.1, (body_yaw - model_yaw) * 0.1, (body_roll - model_roll) * 0.1)
-'
-'				body.ApplyTorque (diff)
-'
+				' Orient towards direction of travel... not managed to figure this out :/
 			Endif
 	
 			If Not boosting
@@ -381,7 +367,7 @@ Class Rocket
 		Field collider:ConeCollider		' Bullet physics collider
 		Field body:RigidBody			' Bullet physics body
 	
-		Field boost_factor:Float	= 18.0'0.25
+		Field boost_factor:Float	= 150.0'0.25
 		Field torque_factor:Float	= 150.0
 	
 		Field vec_forward:Vec3f

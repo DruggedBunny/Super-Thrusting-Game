@@ -3,6 +3,27 @@ Function IsPow2:Long (value:Long)
 	Return Not (value & (value - 1))
 End
 
+Function LonePixel:Bool (x:Int, y:Int, argb:Color, pixmap:Pixmap)
+
+	Local pix:Color = pixmap.GetPixel (x, y)
+	
+	If pix = argb
+		
+		If pixmap.GetPixel (x - 1, y) = pix Or
+			pixmap.GetPixel (x, y - 1) = pix Or
+				pixmap.GetPixel (x + 1, y) = pix Or
+					pixmap.GetPixel (x, y + 1) = pix
+			
+						Return False
+
+		Endif
+		
+	Endif
+	
+	Return True
+
+End
+
 Function CountEntities:Int (entity:Entity = Null, depth:Int = 0)
 	
 	Local scene:Scene = Scene.GetCurrent ()

@@ -18,6 +18,8 @@ Class Level
 
 	Public
 		
+		Const FIXED_GEM_COUNT:Int = 10 ' Not sure if temp...
+		
 		Field pads:List <Pad>
 		Field gems:List <SpaceGem>
 		
@@ -75,7 +77,7 @@ Class Level
 				spawn_z = z
 		End
 		
-		Method New (level:String, seed:ULong, sides:Float)
+		Method New (seed:ULong, sides:Float)
 
 			If Not some_levels.Length
 
@@ -113,14 +115,6 @@ Class Level
 			gems = New List <SpaceGem>
 			
 			TerrainSeed = seed
-			
-			LevelFile = level
-			
-			' Read whole level file into one string...
-			
-			'file_data = LoadString (ASSET_PREFIX_LEVEL + level, True) ' Convert to Unix ~n newline
-	
-			' Get level name...
 			
 			LevelName = ""
 
@@ -208,130 +202,94 @@ Class Level
 			Game.SpawnRocket (New Vec3f (x, y, z))
 		End
 		
-		Method SpawnLevel:Vec3f () ' SpawnLevelContents?
+		Method SpawnLevel:Vec3f ()
 
-			' Get level data filename...
-			
-			' LEVEL DATA is gem/player start positions
-			
-			' TEMP
-			
-			Local level_data_png:String = "asset::levels\test_level\level_data.png"'ReadLevelData (file_data, "LEVEL_DATA")
-			
-			Local png:Pixmap = Pixmap.Load (level_data_png)
-			
-			If Not png Then Abort ("SpawnLevel: No level PNG!")
-			
 			Local pad_y_offset:Float		= 4.0
 			Local player_pad_y_offset:Float	= 20.0
 			
-			For Local pixmap_y:Int = 0 Until png.Height
-			
-				For Local pixmap_x:Int = 0 Until png.Width
+			Local pixmap_x:Float
+			Local pixmap_y:Float
 				
-					Local argb:Color = png.GetPixel (pixmap_x, pixmap_y)
-					
-					If argb.R Or argb.G Or argb.B
-						
-						' Any non-black colour...
-						
-						If argb = Color.Red
-						
-							' Red pixel?
-
-							' -------------------
-							' Player spawn point
-							' -------------------
-							
-							' Check for 2x2 square. This will be player spawn point if so...
-							
-							If png.GetPixel (pixmap_x + 1, pixmap_y) = Color.Red And
-								png.GetPixel (pixmap_x, pixmap_y + 1) = Color.Red And
-									png.GetPixel (pixmap_x + 1, pixmap_y + 1) = Color.Red
-							
-								' Above If line ends here!
-							
-								If Not SpawnPointSet
-								
-									SpawnX = terrain.TerrainXFromHeightMap (pixmap_x)
-									SpawnY = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y, True) + player_pad_y_offset
-									SpawnZ = terrain.TerrainZFromHeightMap (pixmap_y)
-									
-									Local pad:Pad = New Pad (SpawnX, SpawnY, SpawnZ, 8)
-									
-										pads.AddLast (pad)
-									
-									SpawnPointSet = True
-									
-								Endif
-
-							Else
-
-								' Red pixel, not start of 2x2 square. Check if no others left, up, right, down and spawn red gem...
-								
-								If LonePixel (pixmap_x, pixmap_y, argb, png)
-								
-									Local pad_x:Float = terrain.TerrainXFromHeightMap (pixmap_x)
-									Local pad_y:Float = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + pad_y_offset
-									Local pad_z:Float = terrain.TerrainZFromHeightMap (pixmap_y)
-										
-									Local pad:Pad = New Pad (pad_x, pad_y, pad_z)
-
-										pads.AddLast (pad)
-										gems.AddLast (SpawnSpaceGem (pad, argb))
-										
-								Endif
-								
-							Endif
-						
-						Else
-						
-							' Non-red pixel...
-							
-							Local pad_x:Float = terrain.TerrainXFromHeightMap (pixmap_x)
-							Local pad_y:Float = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + pad_y_offset
-							Local pad_z:Float = terrain.TerrainZFromHeightMap (pixmap_y)
+			If Not SpawnPointSet
 			
-							Local pad:Pad = New Pad (pad_x, pad_y, pad_z)
+				pixmap_x = terrain.Width * 0.5
+				pixmap_y = terrain.Depth * 0.5
+			
+				SpawnX = terrain.TerrainXFromHeightMap (pixmap_x)
+				SpawnY = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + player_pad_y_offset
+				SpawnZ = terrain.TerrainZFromHeightMap (pixmap_y)
+				
+				Local pad:Pad = New Pad (SpawnX, SpawnY, SpawnZ, 8)
+				
+					pads.AddLast (pad)
+				
+				SpawnPointSet = True
+				
+			Endif
 
-								pads.AddLast (pad)
-								gems.AddLast (SpawnSpaceGem (pad, argb))
-							
+			Local pad_x:Float
+			Local pad_y:Float
+			Local pad_z:Float
+
+			' Ensure same layout for each terrain seed value...
+			
+			If terrain_seed = 0
+				SeedRnd (1000)			' Seed = 0 makes for a load of green gems on a green backdrop!
+			Else
+				SeedRnd (terrain_seed)
+			Endif
+			
+			For Local spawning:Int = 0 Until FIXED_GEM_COUNT
+
+				Local valid_position:Bool
+
+				Repeat
+				
+					pixmap_x = Rnd (10.0, (terrain.Width - 1) - 10.0)
+					pixmap_y = Rnd (10.0, (terrain.Depth - 1) - 10.0)
+					
+					' Start by assuming valid position...
+					
+					valid_position = True
+				
+					pad_x = terrain.TerrainXFromHeightMap (pixmap_x)
+					pad_y = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + pad_y_offset
+					pad_z = terrain.TerrainZFromHeightMap (pixmap_y)
+	
+					For Local existing:Pad = Eachin pads
+
+						' New position as 3D vector...
+						
+						Local new_position:Vec3f = New Vec3f (pad_x, pad_y, pad_z)
+
+						' Compare against position of existing gems in level...
+						
+						If new_position.Distance (existing.PadModel.Position) < 50.0
+
+							' Too close to an existing gem... go back around Repeat/Until valid_position loop!
+
+							valid_position = False
+							Exit
+
 						Endif
-						
-					Endif
-					
-				Next
+
+					Next
+
+				Until valid_position ' NB. Could cause infinite loop with small enough terrain or REALLY unlucky Rnd results!
 				
+				Local pad:Pad = New Pad (pad_x, pad_y, pad_z)
+
+					pads.AddLast (pad)
+					gems.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
+					
 			Next
-			
+
 			spacegems_spawned = SpaceGemCount
 		
 			Assert (SpawnPointSet, "Level.SpawnLevel: Rocket spawn point not set in level data!")
 			
 			Return New Vec3f (SpawnX, SpawnY, SpawnZ)
 		
-		End
-
-		Method LonePixel:Bool (x:Int, y:Int, argb:Color, map:Pixmap)
-		
-			Local pix:Color = map.GetPixel (x, y)
-			
-			If pix = argb
-				
-				If map.GetPixel (x - 1, y) = pix Or
-					map.GetPixel (x, y - 1) = pix Or
-						map.GetPixel (x + 1, y) = pix Or
-							map.GetPixel (x, y + 1) = pix
-					
-								Return False
-
-				Endif
-				
-			Endif
-			
-			Return True
-
 		End
 
 		Method OrbCollected:Bool ()
@@ -354,7 +312,8 @@ Class Level
 		End
 		
 		Method Complete:Bool ()
-space_gems_collected = spacegems_spawned ' TEMP!!!
+
+			If TMP_LEVEL_COMPLETE Then space_gems_collected = spacegems_spawned ' TEMP!!!
 			
 			If space_gems_collected = spacegems_spawned
 				
@@ -436,7 +395,6 @@ space_gems_collected = spacegems_spawned ' TEMP!!!
 
 		'Const ASSET_PREFIX_LEVEL:String = "asset::levels/"
 		
-		Global LevelFile:String
 		Global LevelName:String
 		
 		Field space_gem_count:Int
