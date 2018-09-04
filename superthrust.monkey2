@@ -43,6 +43,8 @@ Function InitTODOs ()
 	#End
 	
 	TODO ("See REM...")
+
+	TODO ("Test commit... hey, I'm learning here!")
 	
 	TODO ("Randomise pad spawning instead of reading from PNG")
 	TODO ("Generate misc hit sounds for terrain bumps")
