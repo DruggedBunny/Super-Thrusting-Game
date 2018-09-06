@@ -29,6 +29,8 @@
 #Import "gamestate"
 #Import "simplex"
 #Import "playfuljsterrain"
+#Import "dummyorb"
+#Import "gaussianblur"
 
 #Import "temp"
 #Import "todo"

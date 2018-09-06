@@ -30,7 +30,7 @@ Class Orb
 			
 			model.Position				= rocket.RocketModel.Position + New Vec3f (0.0, -distance, 0.0)
 			
-				model.Alpha				= 0.75
+				model.Alpha				= 1'0.75
 '				model.Material.BlendMode = BlendMode.Additive
 				Cast <PbrMaterial> (model.Material).MetalnessFactor = 1.0
 				model.CastsShadow		= True

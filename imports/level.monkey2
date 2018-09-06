@@ -225,6 +225,8 @@ Class Level
 				
 				SpawnPointSet = True
 				
+				dummy_orb = New DummyOrb (SpawnX, SpawnY, SpawnZ)
+				
 			Endif
 
 			Local pad_x:Float
@@ -425,5 +427,7 @@ Class Level
 		Field file_data:String
 
 		Field some_levels:LevelData []
-		
+
+		Field dummy_orb:DummyOrb
+				
 End

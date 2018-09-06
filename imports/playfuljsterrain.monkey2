@@ -40,7 +40,7 @@ Class PlayfulJSTerrainMap
 			
 		End
 		
-		Method RenderPixmap:Pixmap ()
+		Method RenderPixmap:Pixmap (blur:Int = 0)
 		
 			Local pix:Pixmap = New Pixmap (max, max, PixelFormat.I8)
 			
@@ -65,6 +65,10 @@ Class PlayfulJSTerrainMap
 				Next
 			Next
 	 
+	 		' GaussianBlur processes in RGBA8 format!
+	 		
+	 		If blur Then pix = GaussianBlur (pix, blur).Convert (PixelFormat.I8)
+	 		
 			Return pix
 			
 		End

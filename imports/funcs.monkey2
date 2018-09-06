@@ -1,6 +1,6 @@
 
 Function IsPow2:Long (value:Long)
-	Return Not (value & (value - 1))
+	Return Not (value & (value - 1)) ' Caveat: 0 is not Pow2! https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
 End
 
 Function LonePixel:Bool (x:Int, y:Int, argb:Color, pixmap:Pixmap)
