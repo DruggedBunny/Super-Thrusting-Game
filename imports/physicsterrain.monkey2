@@ -49,7 +49,7 @@ Class PhysicsTerrain ' WIP
 		 
 		 	terrain_data = New PlayfulJSTerrainMap (seed, size, roughness)
 		 
-				heightmap = terrain_data.RenderPixmap () ' Gaussian blur level - TODO: Add as parameter?
+				heightmap = terrain_data.RenderPixmap (10) ' Gaussian blur level - TODO: Add as parameter?
 		 
 				If Not heightmap Then RuntimeError ("Failed to generate heightmap!")
 		 

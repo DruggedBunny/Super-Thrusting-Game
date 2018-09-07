@@ -225,8 +225,6 @@ Class Level
 				
 				SpawnPointSet = True
 				
-				dummy_orb = New DummyOrb (SpawnX, SpawnY, SpawnZ)
-				
 			Endif
 
 			Local pad_x:Float
@@ -294,34 +292,34 @@ Class Level
 		
 		End
 
-		Method OrbCollected:Bool ()
-		
-			If Not orb_collected
-			
-				If Not Game.Player.CurrentOrb
-			
-					' TODO: Spawn with player if died but already collected? Just set dummy invisible?
-				
-					Game.Player.CurrentOrb = New Orb (Game.Player, 10.0, 8.0)
-					orb_collected = True
-					
-				Endif
-				
-			Endif
-			
-			Return orb_collected
-			
-		End
-		
+'		Method OrbCollected:Bool ()
+'		
+'			If Game.Player.DummyOrbCollected
+'			
+''				If Not Game.Player.CurrentOrb
+'			
+'					' TODO: Spawn with player if died but already collected? Just set dummy invisible?
+'				
+'					'Game.Player.CurrentOrb = New Orb (Game.Player, 10.0, 8.0)
+'					orb_collected = True
+'					
+''				Endif
+'				
+'			Endif
+'			
+''			Return orb_collected
+'			
+'		End
+'		
 		Method Complete:Bool ()
 
 			If TMP_LEVEL_COMPLETE Then space_gems_collected = spacegems_spawned ' TEMP!!!
 			
 			If space_gems_collected = spacegems_spawned
 				
-				' TODO: Spawn collider above dummy orb, triggers portal (tweak OrbCollected to accommodate)...
+				If Not dummy_orb Then dummy_orb = New DummyOrb (SpawnX, SpawnY + 12, SpawnZ)
 				
-				If OrbCollected () And portal.PortalState = Portal.PORTAL_STATE_CLOSED
+				If Game.Player.DummyOrbCollected And portal.PortalState = Portal.PORTAL_STATE_CLOSED
 					portal.PortalState = Portal.PORTAL_STATE_OPENING' If portal.Hidden Then Print "Yup!"; portal.Show ()
 				Endif
 				

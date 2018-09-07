@@ -3,6 +3,10 @@ Class Rocket
 
 	Public
 		
+		Property DummyOrbCollected:Bool ()
+			Return dummy_orb_collected
+		End
+		
 		Property Damage:Float ()
 			Return damage
 			Setter (new_damage:Float)
@@ -172,6 +176,11 @@ Class Rocket
 							If Not exploded Then Explode ()
 							damage = 100.0
 						Endif
+					
+					Case COLL_DUMMY_ORB
+					
+						CurrentOrb = New Orb (Self, 10.0, 8.0)
+						dummy_orb_collected = True
 						
 				End
 				
@@ -407,6 +416,8 @@ Class Rocket
 		Field orb:Orb
 		Field orb_toggle:Bool	' TEMP
 	
+		Field dummy_orb_collected:Bool
+		
 		Method Boost:Void (force_x:Float = 0.0, force_y:Float = 0.0, force_z:Float = 0.0)
 			body.ApplyForce (model.Basis * New Vec3f (force_x, force_y, force_z))
 		End

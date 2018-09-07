@@ -46,7 +46,7 @@ Function InitTODOs ()
 	
 	TODO ("See REM...")
 
-	TODO ("Properly spawn dummy orb/collection point")
+	TODO ("Respawn dummy orb on death while carrying it")
 	TODO ("Silence channels on level completion")
 	TODO ("Generate misc hit sounds for terrain bumps")
 	TODO ("Convert all physics entities to Behaviors")
@@ -54,7 +54,8 @@ Function InitTODOs ()
 	TODO ("SpaceGem -- OnUpdate -> OnBeginUpdate?")
 	TODO ("Convert SmokeParticle and Orb to pure Behaviors")
 	TODO ("Pads have to be spawned AFTER level created... ideally would be in Level.New...")
-	TODO ("Clear all scene components... somehow (smoke/physicstris)") ' Did I do this?!
+	TODO ("Clear all scene components... somehow (smoke/physicstris... STILL PRESENT 7 Sep 2018)") ' Did I do this?!
+	TODO ("Orb remains on new level. IGNORE, only on temp C level skip, same with physics tris")
 	TODO ("VR: Scaling not right on monitor display")
 	TODO ("HUD blackout should be framerate-independent (as should lots of other things)")
 	TODO ("HUD skull image to 3d sprite (render text to texture??) -- to appear in VR. Started but not working")
