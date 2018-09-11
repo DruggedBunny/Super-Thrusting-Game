@@ -177,8 +177,6 @@ Class GameWindow Extends Window
 
 		Method SpawnRocket:Rocket (pos:Vec3f)
 
-			Game.Player?.CurrentOrb?.Destroy (True)
-			Game.Player?.CurrentOrb = Null
 			Game.Player?.Destroy ()
 	
 			Return New Rocket (pos.x, pos.y, pos.z)

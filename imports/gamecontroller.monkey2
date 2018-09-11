@@ -13,19 +13,6 @@ Class GameController
 			Case States.Playing
 			' -----------------------------------------------------------------
 
-'				If Not Game.CurrentLevel.ExitPortal.FlythroughComplete () And Game.Player.CurrentOrb And Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED
-'					Print "Opening portal..."
-'					Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_OPENING
-'				Endif
-				
-'				If Game.CurrentLevel.ExitPortal.FlythroughComplete () And Game.CurrentLevel.ExitPortal.PortalState <> Game.CurrentLevel.ExitPortal.PORTAL_STATE_CLOSING
-'					Print "Closing portal..."
-'					Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSING
-'					Game.GameState.SetCurrentState (States.LevelTween) ' TODO: See Case Portal.PORTAL_STATE_CLOSING
-'				Endif
-				
-
-
 				If Game.Player.Alive
 					Game.Player.Control		()				' Rocket controls
 					Game.MainCamera.Update	(Game.Player)	' Update camera, follow player

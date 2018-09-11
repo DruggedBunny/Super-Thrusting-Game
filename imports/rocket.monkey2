@@ -43,8 +43,6 @@ Class Rocket
 		
 		Method New (x:Float, y:Float, z:Float, collision_radius:Float = 1.2, collision_length:Float = 4.0, collision_mass:Float = 10.0)
 
-			If CurrentOrb Then CurrentOrb.Destroy (True)
-			
 			Local mat:PbrMaterial = New PbrMaterial (Color.Silver)
 			mat.MetalnessFactor = 0.85
 			
@@ -347,7 +345,10 @@ Class Rocket
 
 		Method Destroy:Void ()
 
-			If CurrentOrb Then CurrentOrb.Destroy (True)
+			If CurrentOrb
+				CurrentOrb.Destroy ()
+				CurrentOrb = Null
+			Endif
 			
 			model?.Destroy ()
 			body?.Destroy ()

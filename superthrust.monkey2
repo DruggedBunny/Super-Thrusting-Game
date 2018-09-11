@@ -46,9 +46,6 @@ Function InitTODOs ()
 	
 	TODO ("See REM...")
 
-	TODO ("Level/Portal state is a mess!")
-	TODO ("Portal flownthrough status reset after orb destroyed -- seems OK now, but need to close portal")
-	
 	TODO ("Move Game.State into GameController")
 	TODO ("Silence channels on level completion")
 	TODO ("Generate misc hit sounds for terrain bumps")

@@ -90,6 +90,10 @@ Class Orb
 	
 			End
 
+			Game.CurrentLevel.ExitPortal.Open ()
+
+			ResetBoomAudio ()
+
 		End
 
 		Method Explode ()
@@ -102,16 +106,31 @@ Class Orb
 			
 			exploded = True
 			
-			BoomChannel.Paused = False
+			Game.CurrentLevel.ExitPortal.Close ()
 			
 		End
 		
-		Method Destroy:Void (stop_boom_channel:Bool = False)
+		Method Destroy:Void (play_boom:Bool = True)
+
 			model?.Destroy ()
 			body?.Destroy ()
-			If stop_boom_channel Then BoomChannel.Stop ()
+
+			If play_boom
+				BoomChannel.Paused = False
+				ResetBoomAudio ()
+			Endif
+
 		End
 	
+		Method ResetBoomAudio ()
+
+			BoomChannel			= Boom.Play (False)
+			BoomChannel.Volume	= BOOM_VOLUME_MAX
+			BoomChannel.Rate	= BoomChannel.Rate * 0.75 ' Pitched slightly up from rocket boom
+			BoomChannel.Paused	= True
+			
+		End
+		
 		' Called also from Rocket upon crashing...
 		
 		Method DetachFromRocket ()
@@ -127,11 +146,11 @@ Class Orb
 		End
 	
 		Function InitOrbSound ()
+
 			Boom = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
-			BoomChannel = Boom.Play (False)
-			BoomChannel.Volume = BOOM_VOLUME_MAX
-			BoomChannel.Rate = BoomChannel.Rate * 0.75 ' Pitched slightly up from rocket boom
-			BoomChannel.Paused = True
+			
+				If Not Boom Then Abort ("Orb: InitOrbSound failed to load boom audio!")
+				
 		End
 		
 	Private

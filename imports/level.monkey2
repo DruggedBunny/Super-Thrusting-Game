@@ -355,6 +355,8 @@ Class Level
 
 		Method Destroy ()
 		
+			ExitPortal?.Destroy ()
+			
 			orb_collected = False
 
 			Terrain.Destroy ()

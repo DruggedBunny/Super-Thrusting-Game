@@ -1,4 +1,6 @@
 
+' TODO: Make PortalState an enum...
+
 Class Portal
 	
 	Public
@@ -10,26 +12,27 @@ Class Portal
 			Return upper_triggered
 		End
 		
-		Property FlownThrough:Bool ()
-			Return flown_through
-			Setter (state:Bool)
-				flown_through = state
-		End
-		
 		Method FlythroughComplete:Bool ()
-'			If Not Game.Player.CurrentOrb Then Print "No current orb"
-'			If Not Game.CurrentLevel.ExitPortal.LowerTriggered Then Print "Lower not triggered"
-'			If Not Game.CurrentLevel.ExitPortal.UpperTriggered Then Print "Upper not triggered"
-			If FlownThrough Then Return True
-			
+		
 			If Game.CurrentLevel.ExitPortal.Triggered
 				flythrough_channel.Paused = False
-				FlownThrough = True
 				Return True
 			Endif
 			
 			Return False
 			
+		End
+		
+		Method Close ()
+			PortalState = PORTAL_STATE_CLOSING
+		End
+		
+		Method Open ()
+			PortalState = PORTAL_STATE_OPENING
+		End
+		
+		Method Destroy ()
+			PortalState = PORTAL_STATE_DESTROY
 		End
 		
 		Method New (x:Float, y:Float, z:Float, outer:Float = 50.0, inner:Float = 5.0)
@@ -53,8 +56,8 @@ Class Portal
 			' Flattened cylinders used for portal collision detection, one below and one above. Distance between
 			' these must allow rocket to fit in-between. Lower must trigger before upper in order to complete fly-through.
 			
-			center_upper	= Model.CreateCylinder (outer - inner, 4.0, Axis.Y, 16, New PbrMaterial (Color.White), ring)
-			center_lower	= Model.CreateCylinder (outer - inner, 4.0, Axis.Y, 16, New PbrMaterial (Color.White), ring)
+			center_upper	= Model.CreateCylinder (outer, 4.0, Axis.Y, 16, New PbrMaterial (Color.White), ring)
+			center_lower	= Model.CreateCylinder (outer, 4.0, Axis.Y, 16, New PbrMaterial (Color.White), ring)
 			
 			center_upper.Name = "Portal ring upper collision cylinder [spawned at " + Time.Now () + "]"
 			center_lower.Name = "Portal ring lower collision cylinder [spawned at " + Time.Now () + "]"
@@ -62,14 +65,14 @@ Class Portal
 			' Upper collision cylinder...
 			
 				Cast <PbrMaterial> (center_upper.Material).ColorFactor = Color.Red		' Visibility testing only...
-				center_upper.Alpha = 0.0												' Visibility testing only...
+				center_upper.Alpha = 0.1												' Visibility testing only...
 
 				center_upper.Move (0.0, Cast <Float> (ring.Mesh.Bounds.Height) * 0.5 + center_upper.Mesh.Bounds.Height, 0.0)
 	
 			' Lower collision cylinder...
 
 				Cast <PbrMaterial> (center_lower.Material).ColorFactor = Color.Green	' Visibility testing only...
-				center_lower.Alpha = 0.0												' Visibility testing only...
+				center_lower.Alpha = 0.1												' Visibility testing only...
 
 				center_lower.Move (0.0, Cast <Float> (-ring.Mesh.Bounds.Height) * 0.5 - center_lower.Mesh.Bounds.Height, 0.0)
 			
@@ -156,10 +159,12 @@ Class Portal
 		Const PORTAL_STATE_OPENING:Int	= 1
 		Const PORTAL_STATE_OPEN:Int		= 2
 		Const PORTAL_STATE_CLOSING:Int	= 3
+		Const PORTAL_STATE_DESTROY:Int	= 4
 		
 		Method TMP_StateName:String (value:Int)
 		
 			Select value
+
 				Case PORTAL_STATE_CLOSED
 					Return "Closed"
 				Case PORTAL_STATE_OPENING
@@ -168,8 +173,12 @@ Class Portal
 					Return "Open"
 				Case PORTAL_STATE_CLOSING
 					Return "Closing"
+				Case PORTAL_STATE_DESTROY
+					Return "Destroying"
+
 				Default
 					Return "UNDEFINED PORTAL STATE"
+
 			End
 			
 			Return ""
@@ -225,7 +234,7 @@ Class PortalBehaviour Extends Behaviour
 		Select portal.PortalState
 		
 			Case Portal.PORTAL_STATE_OPENING
-		
+				
 				If portal.Alpha < 1.0
 				
 					' Increase alpha and scale...
@@ -272,35 +281,37 @@ Class PortalBehaviour Extends Behaviour
 					Game.GameState.SetCurrentState (States.LevelTween)
 				Endif
 				
-			Case Portal.PORTAL_STATE_CLOSED
-		
-				portal.Alpha = 0.0
-				portal.ring?.Alpha = portal.Alpha
-			
-				If not portal.FlythroughComplete () And Game.Player.CurrentOrb
-					portal.PortalState = Portal.PORTAL_STATE_OPENING
-				Endif
-			
 			Case Portal.PORTAL_STATE_CLOSING
 			
 				' TODO: See States.LevelTween
 				
-				portal.Alpha = portal.Alpha - 0.002
+				portal.Alpha = portal.Alpha - 0.0025
 				portal.ring?.Alpha = portal.Alpha
 				
 				'Print portal.Alpha
 				
 				If portal.Alpha < 0.01
-					portal.ring?.Destroy ()
-					Destroy ()
+					'portal.ring?.Destroy ()
+					'Destroy ()
 					portal.PortalState = Portal.PORTAL_STATE_CLOSED
-					'Print "Poof"
 				Endif
+				
+			Case Portal.PORTAL_STATE_CLOSED
+		
+				portal.Alpha = 0.0
+				portal.ring?.Alpha = portal.Alpha
+			
+		'		If not portal.FlythroughComplete () And Game.Player.CurrentOrb
+		'			portal.PortalState = Portal.PORTAL_STATE_OPENING
+		'		Endif
+			
+			Case Portal.PORTAL_STATE_DESTROY
+			
+				portal.ring?.Destroy ()
+				Destroy ()
 				
 		End
 		
 	End
 
-	' TODO: Delete portal for new level!
-	
 End
