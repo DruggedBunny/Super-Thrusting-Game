@@ -18,7 +18,7 @@ Const VR_MODE:Int = False
 
 Const AppName:String = "Super Thrusting Game!"
 
-Const TMP_LEVEL_COMPLETE:Bool = True
+Const TMP_LEVEL_COMPLETE:Bool = False
 
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
@@ -55,7 +55,6 @@ Function InitTODOs ()
 	TODO ("Convert SmokeParticle and Orb to pure Behaviors")
 	TODO ("Pads have to be spawned AFTER level created... ideally would be in Level.New...")
 	TODO ("Clear all scene components... somehow (smoke/physicstris... STILL PRESENT 7 Sep 2018)") ' Did I do this?!
-	TODO ("Orb remains on new level. IGNORE, only on temp C level skip, same with physics tris")
 	TODO ("VR: Scaling not right on monitor display")
 	TODO ("HUD blackout should be framerate-independent (as should lots of other things)")
 	TODO ("HUD skull image to 3d sprite (render text to texture??) -- to appear in VR. Started but not working")
