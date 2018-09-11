@@ -3,10 +3,6 @@ Class Rocket
 
 	Public
 		
-		Property DummyOrbCollected:Bool ()
-			Return dummy_orb_collected
-		End
-		
 		Property Damage:Float ()
 			Return damage
 			Setter (new_damage:Float)
@@ -47,7 +43,7 @@ Class Rocket
 		
 		Method New (x:Float, y:Float, z:Float, collision_radius:Float = 1.2, collision_length:Float = 4.0, collision_mass:Float = 10.0)
 
-			If CurrentOrb Then CurrentOrb.Destroy ()
+			If CurrentOrb Then CurrentOrb.Destroy (True)
 			
 			Local mat:PbrMaterial = New PbrMaterial (Color.Silver)
 			mat.MetalnessFactor = 0.85
@@ -179,8 +175,9 @@ Class Rocket
 					
 					Case COLL_DUMMY_ORB
 					
+						CurrentOrb?.Destroy ()
 						CurrentOrb = New Orb (Self, 10.0, 8.0)
-						dummy_orb_collected = True
+'						Game.CurrentLevel.DummyOrbCollected = True
 						
 				End
 				
@@ -350,7 +347,7 @@ Class Rocket
 
 		Method Destroy:Void ()
 
-			If CurrentOrb Then CurrentOrb.Destroy ()
+			If CurrentOrb Then CurrentOrb.Destroy (True)
 			
 			model?.Destroy ()
 			body?.Destroy ()
@@ -416,8 +413,6 @@ Class Rocket
 		Field orb:Orb
 		Field orb_toggle:Bool	' TEMP
 	
-		Field dummy_orb_collected:Bool
-		
 		Method Boost:Void (force_x:Float = 0.0, force_y:Float = 0.0, force_z:Float = 0.0)
 			body.ApplyForce (model.Basis * New Vec3f (force_x, force_y, force_z))
 		End

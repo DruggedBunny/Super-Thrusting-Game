@@ -30,11 +30,19 @@ Class DummyOrb
 				
 				' k bai!
 				
-				model.Destroy	()
-				body.Destroy	()
+				Destroy ()
 				
 			End
 
+	End
+	
+	Method Destroy ()
+	
+		model.Destroy	()
+		body.Destroy	()
+		
+		Game.CurrentLevel.Dummy = Null
+		
 	End
 	
 End

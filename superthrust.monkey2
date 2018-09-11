@@ -18,7 +18,7 @@ Const VR_MODE:Int = False
 
 Const AppName:String = "Super Thrusting Game!"
 
-Const TMP_LEVEL_COMPLETE:Bool = False
+Const TMP_LEVEL_COMPLETE:Bool = True
 
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
@@ -46,7 +46,10 @@ Function InitTODOs ()
 	
 	TODO ("See REM...")
 
-	TODO ("Respawn dummy orb on death while carrying it")
+	TODO ("Level/Portal state is a mess!")
+	TODO ("Portal flownthrough status reset after orb destroyed -- seems OK now, but need to close portal")
+	
+	TODO ("Move Game.State into GameController")
 	TODO ("Silence channels on level completion")
 	TODO ("Generate misc hit sounds for terrain bumps")
 	TODO ("Convert all physics entities to Behaviors")

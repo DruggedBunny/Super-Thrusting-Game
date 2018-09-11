@@ -3,8 +3,11 @@ Class GameWindow Extends Window
 
 	Public
 
-		Field terrain_seed:ULong
-		Field terrain_side:Float
+		' Temp: Used only by GameMenu.Control -> R or Gamepad Start to reset level during development!
+		
+		Method TMP_ResetLevel ()
+			ResetLevel ()
+		End
 		
 		Property VR_Renderer:VRRenderer ()
 			Return renderer
@@ -44,23 +47,14 @@ Class GameWindow Extends Window
 			Super.New (title, width, height, flags)
 		End
 	
-		Method SpawnRocket:Rocket (pos:Vec3f)
-
-			Game.Player?.CurrentOrb?.Destroy ()
-			Game.Player?.CurrentOrb = Null
-	
-			Game.Player?.Destroy ()
-	
-			Local rocket:Rocket = New Rocket (pos.x, pos.y, pos.z)
-			
-			Return rocket
-	
-		End
-		
 		Method OnCreateWindow () Override
 	
-			terrain_seed			= 0 ' Int (RndULong ())
-			terrain_side			= 1024.0 ' Size of terrain cube sides
+			' ----------------------------------------------------------------
+			' Terrain, level and scene setup...
+			' ----------------------------------------------------------------
+			
+			terrain_seed			= 0			' Test: Int (RndULong ())
+			terrain_side			= 1024.0	' Size of terrain cube sides
 			
 			CurrentLevel			= New Level (terrain_seed, terrain_side)
 	
@@ -68,13 +62,25 @@ Class GameWindow Extends Window
 			
 			InitScene (terrain_side)
 
+			' ----------------------------------------------------------------
+			' Player setup...
+			' ----------------------------------------------------------------
+
 			Local rocket_pos:Vec3f	= CurrentLevel.SpawnLevel ()
 			
 			Player					= SpawnRocket (rocket_pos)
 			
 				If Not Player Then Abort ("OnCreateWindow: SpawnRocket failed to spawn rocket!")
 			
+			' ----------------------------------------------------------------
+			' Camera setup...
+			' ----------------------------------------------------------------
+
 			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, terrain_side)
+			
+			' ----------------------------------------------------------------
+			' Set window title...
+			' ----------------------------------------------------------------
 			
 			' TODO: Not quite working, shows non-"randomly-generated level" text!
 			
@@ -84,31 +90,153 @@ Class GameWindow Extends Window
 				Title				= AppName + " Playing level " + Quoted (CurrentLevel.GetLevelName ()) + "..."
 			Endif
 			
-			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
-			
+			' ----------------------------------------------------------------
+			' Hide mouse pointer...
+			' ----------------------------------------------------------------
+
 			Mouse.PointerVisible	= False
 	
+			' ----------------------------------------------------------------
+			' Init HUD (TODO: Use an object instead of class functions)...
+			' ----------------------------------------------------------------
+
 			HUD.Init ()
+
+			' ----------------------------------------------------------------
+			' Special case -- orb sound pre-loaded...
+			' ----------------------------------------------------------------
+
 			Orb.InitOrbSound ()				' Preload sound as Orb is spawned on the fly in-game
 
-'			PrintEntities ()
+			' ----------------------------------------------------------------
+			' Init gameloop...
+			' ----------------------------------------------------------------
 
+			game_controller			= New GameController
+	
+			' ----------------------------------------------------------------
+			' Init game state...
+			' ----------------------------------------------------------------
+
+			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
+			
 		End
 	
-		Method SetFogColor (clear_color:Color = Color.Sky * 0.75)
-			GameScene.ClearColor	= clear_color
-			GameScene.FogColor		= clear_color
+		Method OnRender (canvas:Canvas) Override
+		
+			' ----------------------------------------------------------------
+			' Effectively, run main loop, managing game state:
+			' ----------------------------------------------------------------
+			
+			game_controller.ProcessGame ()
+			
+			' ----------------------------------------------------------------
+			' VR-only:
+			' ----------------------------------------------------------------
+			
+			If VR_MODE
+			
+				renderer.Update () ' Get VR headset position, etc...
+				
+				' Position camera according to headset rotation/position...
+				
+				MainCamera.Camera3D.SetBasis	(renderer.HeadMatrix.m, True)
+				MainCamera.Camera3D.SetPosition	(renderer.HeadMatrix.t, True)
+			
+			Endif
+			
+			' ----------------------------------------------------------------
+			' Update scene (mainly physics)...
+			' ----------------------------------------------------------------
+
+			GameScene.Update ()
+
+			' ----------------------------------------------------------------
+			' Render scene to canvas...
+			' ----------------------------------------------------------------
+
+			GameScene.Render (canvas)
+
+			' ----------------------------------------------------------------
+			' Overlay HUD...
+			' ----------------------------------------------------------------
+
+			HUD.Render (canvas) ' TEMP
+			
+			' ----------------------------------------------------------------
+			' Tell system we are ready to draw this scene frame...
+			' ----------------------------------------------------------------
+
+			RequestRender ()
+	
+		End
+
+		' --------------------------------------------------------------------
+		' Spawn new player...
+		' --------------------------------------------------------------------
+
+		Method SpawnRocket:Rocket (pos:Vec3f)
+
+			Game.Player?.CurrentOrb?.Destroy (True)
+			Game.Player?.CurrentOrb = Null
+			Game.Player?.Destroy ()
+	
+			Return New Rocket (pos.x, pos.y, pos.z)
+			
 		End
 		
-		Method SetAmbientLight (ambient_color:Color = Color.White * 0.75)
-			GameScene.AmbientLight = ambient_color
+		' --------------------------------------------------------------------
+		' Reset level after player dies...
+		' --------------------------------------------------------------------
+
+		Method ResetLevel ()
+
+			Local rocket_pos:Vec3f = CurrentLevel.Reset ()
+
+			Player = SpawnRocket (rocket_pos)
+
+				If Not Player Then Abort ("ResetLevel: SpawnRocket failed to spawn rocket!")
+			
+			HUD.ResetFadeOut ()
+
+			GameState.SetCurrentState (States.PlayStarting)
+
 		End
 		
-		Method SetFogRange (near:Float, far:Float)
-			GameScene.FogNear	= near
-			GameScene.FogFar	= far
+		' --------------------------------------------------------------------
+		' Level complete! Next!
+		' --------------------------------------------------------------------
+
+		Method SpawnNextLevel ()
+
+			CurrentLevel.Destroy ()
+			
+			terrain_seed			= terrain_seed + 1
+
+			CurrentLevel			= New Level (terrain_seed, terrain_side)
+	
+				If Not CurrentLevel Then Abort ("SpawnNextLevel: Failed to create level!")
+			
+			Local rocket_pos:Vec3f	= CurrentLevel.SpawnLevel ()
+
+			Player = SpawnRocket (rocket_pos)
+			
+				If Not Player Then Abort ("SpawnNextLevel: SpawnRocket failed to spawn rocket!")
+						
+			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, terrain_side)
+			
+			Title = AppName + " Playing level " + Quoted (CurrentLevel.GetLevelName ())
+
+			GameState.SetCurrentState (States.PlayStarting)
+
 		End
 		
+	Private
+
+		' --------------------------------------------------------------------
+		' Scene setup...
+		' --------------------------------------------------------------------
+
 		Method InitScene (terrain_side:Float)
 	
 			GameScene					= Scene.GetCurrent ()
@@ -126,158 +254,35 @@ Class GameWindow Extends Window
 	
 		End
 		
-		Method UpdateGame ()
-	
-			GameMenu.Control ()			' Application controls (Esc to quit, etc)
+		' --------------------------------------------------------------------
+		' Set setup helper functions...
+		' --------------------------------------------------------------------
 
-			Select GameState.GetCurrentState ()
-
-				' -----------------------------------------------------------------
-				Case States.Playing
-				' -----------------------------------------------------------------
-				
-					If Player.Alive
-
-						Player.Control		()			' Rocket controls
-						
-						MainCamera.Update	(Player)	' Update camera, follow player
-						
-						' TEMP!
-						
-					'	If CurrentLevel.Complete () ' Spawns orb at present! Stupid...
-						'	Print "Level Complete!"
-					'	Endif
-					
-					Else
-						GameState.SetCurrentState (States.PlayEnding)
-					Endif
-
-				' -----------------------------------------------------------------
-				Case States.PlayStarting
-				' -----------------------------------------------------------------
-
-					Player.Control		()			' Rocket controls
-						
-					MainCamera.Update	(Player)	' Update camera, follow player
-
-					' Change to Playing state after HUD has blacked in...
-					
-					If HUD.Blackin () = 0.0
-						GameState.SetCurrentState (States.Playing)
-					Endif
-
-				' -----------------------------------------------------------------
-				Case States.PlayEnding ' Player dead...
-				' -----------------------------------------------------------------
-					
-					MainCamera.Update	(Player)	' Update camera, follow player
-					
-					' Reset after HUD has blacked out...
-					
-					If HUD.Blackout () >= 1.0
-						ResetLevel ()
-					Endif
-
-				' -----------------------------------------------------------------
-				Case States.LevelTween ' Level complete, loading new level...
-				' -----------------------------------------------------------------
-					
-					MainCamera.Update	(Player)	' Update camera, follow player
-					
-					' Reset after HUD has blacked out...
-					
-					If HUD.Blackout (0.01) >= 1.0
-						If CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED Then ReInitLevel ()
-					Endif
-
-				' -----------------------------------------------------------------
-				Case States.Exiting
-				' -----------------------------------------------------------------
-				
-					Player.Control		()			' Rocket controls
-					
-					MainCamera.Update	(Player)	' Update camera, follow player
-					
-					' Exit after HUD has blacked out...
-					
-					' TODO: Not getting why this spins skull so fast!
-					
-					If HUD.Blackout (0.025) >= 1.0
-						App.Terminate ()
-					Endif
-				
-			End
-			
-		End
-	
-		Method ResetLevel ()
-
-			Local rocket_pos:Vec3f = CurrentLevel.Reset ()
-
-			Player = SpawnRocket (rocket_pos)
-
-				If Not Player Then Abort ("OnCreateWindow: SpawnRocket failed to spawn rocket!")
-			
-			HUD.ResetBlackout ()
-
-			GameState.SetCurrentState (States.PlayStarting)
-
+		Method SetFogColor (clear_color:Color = Color.Sky * 0.75)
+			GameScene.ClearColor	= clear_color
+			GameScene.FogColor		= clear_color
 		End
 		
-		Method ReInitLevel ()
-
-			terrain_seed			= terrain_seed + 1
-
-			CurrentLevel.Destroy ()
-			
-			CurrentLevel			= New Level (terrain_seed, terrain_side)
-	
-				If Not CurrentLevel Then Abort ("ReInitLevel: Failed to create level!")
-			
-			Local rocket_pos:Vec3f	= CurrentLevel.SpawnLevel ()
-
-			Player = SpawnRocket (rocket_pos)
-			
-				If Not Player Then Abort ("ReInitLevel: SpawnRocket failed to spawn rocket!")
-						
-			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, terrain_side)
-			
-			Title = AppName + " Playing level " + Quoted (CurrentLevel.GetLevelName ())
-
-			GameState.SetCurrentState (States.PlayStarting)
-
+		Method SetAmbientLight (ambient_color:Color = Color.White * 0.75)
+			GameScene.AmbientLight = ambient_color
 		End
 		
-		Method OnRender (canvas:Canvas) Override
-	
-			UpdateGame ()
-			
-			If VR_MODE
-			
-				renderer.Update ()
-				
-				MainCamera.Camera3D.SetBasis	(renderer.HeadMatrix.m, True)
-				MainCamera.Camera3D.SetPosition	(renderer.HeadMatrix.t, True)
-			
-			Endif
-			
-			GameScene.Update ()
-			GameScene.Render (canvas)
-
-			HUD.Render (canvas) ' TEMP
-			
-			RequestRender ()
-	
+		Method SetFogRange (near:Float, far:Float)
+			GameScene.FogNear	= near
+			GameScene.FogFar	= far
 		End
-
-	Private
-
+		
 		Field game_scene:Scene
 		Field current_level:Level
 	 	Field main_camera:GameCamera
 		Field player:Rocket
 		Field game_state:GameState
 
+		Field game_controller:GameController
+		
+		Field terrain_seed:ULong
+		Field terrain_side:Float
+		
 		Field renderer:VRRenderer ' VR renderer
 		
 End

@@ -1,15 +1,15 @@
 
 Class HUD
 	
-	' This is all pretty nasty/WIP...
+	' This is all pretty nasty/temp/WIP...
 	
 	Private
 	
 		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
 	
 		Global FuelTextColor:Color = Color.Green ' Text colour for fuel display
-		Global BlackoutAlpha:Float = 1.0
-		Global BlackingOut:Bool = False
+		Global FadeOutAlpha:Float = 1.0
+		Global FadingOut:Bool = False
 	
 		Global SkullImage:Image
 		
@@ -25,30 +25,30 @@ Class HUD
 
 		End
 		
-		Function Blackout:Float (delta:Float = 0.0045)
+		Function FadeOut:Float (delta:Float = 0.0045)
 			
-			BlackingOut = True
+			FadingOut = True
 
-			BlackoutAlpha = BlackoutAlpha + delta
-			If BlackoutAlpha >= 1.0 Then BlackoutAlpha = 1.0
+			FadeOutAlpha = FadeOutAlpha + delta
+			If FadeOutAlpha >= 1.0 Then FadeOutAlpha = 1.0
 			
-			Return BlackoutAlpha
-			
-		End
-		
-		Function Blackin:Float (delta:Float = 0.01)
-		
-			BlackingOut = False
-			
-			BlackoutAlpha = BlackoutAlpha - delta
-			If BlackoutAlpha <= 0.0 Then BlackoutAlpha = 0.0
-			
-			Return BlackoutAlpha
+			Return FadeOutAlpha
 			
 		End
 		
-		Function ResetBlackout ()
-			BlackoutAlpha = 1.0
+		Function FadeIn:Float (delta:Float = 0.01)
+		
+			FadingOut = False
+			
+			FadeOutAlpha = FadeOutAlpha - delta
+			If FadeOutAlpha <= 0.0 Then FadeOutAlpha = 0.0
+			
+			Return FadeOutAlpha
+			
+		End
+		
+		Function ResetFadeOut ()
+			FadeOutAlpha = 1.0
 			SkullImage?.Scale = New Vec2f (1.0, 1.0)
 		End
 		
@@ -58,27 +58,27 @@ Class HUD
 				Game.MainCamera.RenderVR (canvas)
 			Endif
 
-			' Blackout overlay...
+			' FadeOut overlay...
 			
 			Select GameState.GetCurrentState ()
 			
 				Case States.PlayStarting
 
-					' Black-in...
+					' Fade in...
 					
 					canvas.Color = Color.Black
-					canvas.Alpha = BlackoutAlpha
+					canvas.Alpha = FadeOutAlpha
 					canvas.DrawRect (App.ActiveWindow.Rect)
 			
 				Case States.PlayEnding ' Player dead...
 
-					' Blackout...
+					' Fade out...
 					
 					canvas.Color = Color.Black
 
 						' Draw rect...
 						
-						canvas.Alpha = BlackoutAlpha
+						canvas.Alpha = FadeOutAlpha
 						canvas.DrawRect (App.ActiveWindow.Rect)
 					
 					canvas.Color = Color.White
@@ -86,25 +86,25 @@ Class HUD
 						' Draw skull...
 						
 						SkullImage.Scale = SkullImage.Scale * 1.0075
-						canvas.DrawImage (SkullImage, canvas.Viewport.Center, BlackoutAlpha * TwoPi * 4.0)
+						canvas.DrawImage (SkullImage, canvas.Viewport.Center, FadeOutAlpha * TwoPi * 4.0)
 			
 				Case States.LevelTween
 			
-					' Blackout...
+					' Fade out...
 					
 					canvas.Color = Color.Black
 
 						' Draw rect...
 						
-						canvas.Alpha = BlackoutAlpha
+						canvas.Alpha = FadeOutAlpha
 						canvas.DrawRect (App.ActiveWindow.Rect)
 					
 				Case States.Exiting
 
-					' Blackout...
+					' Fade out...
 					
 					canvas.Color = Color.Black
-					canvas.Alpha = BlackoutAlpha
+					canvas.Alpha = FadeOutAlpha
 					canvas.DrawRect (App.ActiveWindow.Rect)
 			
 			End
@@ -143,9 +143,9 @@ Class HUD
 				ShadowText (canvas, "Cam distance: " + cam_dist, 20.0, 240.0)
 				ShadowText (canvas, "Cam FOV: " + Game.MainCamera.Camera3D.FOV, 20.0, 260.0)
 				
-				If Game.CurrentLevel.Complete ()
-					ShadowText (canvas, "LEVEL COMPLETE!", 20.0, 300.0)
-				Endif
+'				If Game.CurrentLevel.Complete ()
+'					ShadowText (canvas, "LEVEL COMPLETE!", 20.0, 300.0)
+'				Endif
 	
 				ShadowText (canvas, "Entities in scene: " + CountEntities (), 20.0, 340.0)
 				

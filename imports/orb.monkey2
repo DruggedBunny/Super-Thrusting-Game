@@ -96,30 +96,34 @@ Class Orb
 	
 			PhysicsTri.Explode (model, body)
 			
-			model.Visible = False
-			
 			DetachFromRocket ()
 	
+			Destroy ()
+			
 			exploded = True
 			
 			BoomChannel.Paused = False
 			
 		End
 		
-		Method Destroy:Void ()
+		Method Destroy:Void (stop_boom_channel:Bool = False)
 			model?.Destroy ()
 			body?.Destroy ()
-			BoomChannel.Stop ()
+			If stop_boom_channel Then BoomChannel.Stop ()
 		End
 	
 		' Called also from Rocket upon crashing...
 		
 		Method DetachFromRocket ()
+		
 			joint?.Destroy ()
 			joint = Null
+			
 			constraint?.Destroy ()
 			constraint = Null
+			
 			Game.Player.CurrentOrb = Null
+			
 		End
 	
 		Function InitOrbSound ()

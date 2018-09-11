@@ -31,6 +31,7 @@
 #Import "playfuljsterrain"
 #Import "dummyorb"
 #Import "gaussianblur"
+#Import "gamecontroller"
 
 #Import "temp"
 #Import "todo"

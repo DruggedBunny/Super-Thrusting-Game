@@ -4,21 +4,32 @@ Class Portal
 	Public
 	
 		Field ring:Model
+		Field flown_through:Bool
 		
-		Property UpperTriggered:Bool ()
+		Property Triggered:Bool ()
 			Return upper_triggered
 		End
-	
-		Property LowerTriggered:Bool ()
-			Return lower_triggered
+		
+		Property FlownThrough:Bool ()
+			Return flown_through
+			Setter (state:Bool)
+				flown_through = state
 		End
 		
-		Function Complete:Bool ()
-			If Game.Player.CurrentOrb And Game.CurrentLevel.ExitPortal.UpperTriggered And Game.CurrentLevel.ExitPortal.LowerTriggered
+		Method FlythroughComplete:Bool ()
+'			If Not Game.Player.CurrentOrb Then Print "No current orb"
+'			If Not Game.CurrentLevel.ExitPortal.LowerTriggered Then Print "Lower not triggered"
+'			If Not Game.CurrentLevel.ExitPortal.UpperTriggered Then Print "Upper not triggered"
+			If FlownThrough Then Return True
+			
+			If Game.CurrentLevel.ExitPortal.Triggered
 				flythrough_channel.Paused = False
+				FlownThrough = True
 				Return True
 			Endif
+			
 			Return False
+			
 		End
 		
 		Method New (x:Float, y:Float, z:Float, outer:Float = 50.0, inner:Float = 5.0)
@@ -105,28 +116,65 @@ Class Portal
 				' Upper cylinder collision only accepted if lower cylinder collision already triggered...
 				
 				If lower_triggered
-					upper_triggered = True
+					If Game.Player.CurrentOrb
+						upper_triggered = True
+					Endif
 				Endif
 				
 			End
 	
 			body_lower.Collided += Lambda (other_body:RigidBody)
 
-				lower_triggered = True
+				If Game.Player.CurrentOrb
+					lower_triggered = True
+				Endif
 				
 			End
 	
-			Portal.PortalState = Portal.PORTAL_STATE_CLOSED
+			PortalState = Portal.PORTAL_STATE_CLOSED
 			
 		End
 	
 ' WIP	
-		Global PortalState:Int
+		Property PortalState:Int ()
+
+			Return portal_state
+
+			Setter (state:Int)
+
+				If state <> portal_state
+					Local t_state:Int = portal_state
+					portal_state = state
+					Print "Changed portal state from " + TMP_StateName (t_state) + " to " + TMP_StateName (portal_state)
+				Endif
+
+		End
+		
+		Field portal_state:Int
 		
 		Const PORTAL_STATE_CLOSED:Int	= 0
 		Const PORTAL_STATE_OPENING:Int	= 1
 		Const PORTAL_STATE_OPEN:Int		= 2
 		Const PORTAL_STATE_CLOSING:Int	= 3
+		
+		Method TMP_StateName:String (value:Int)
+		
+			Select value
+				Case PORTAL_STATE_CLOSED
+					Return "Closed"
+				Case PORTAL_STATE_OPENING
+					Return "Opening"
+				Case PORTAL_STATE_OPEN
+					Return "Open"
+				Case PORTAL_STATE_CLOSING
+					Return "Closing"
+				Default
+					Return "UNDEFINED PORTAL STATE"
+			End
+			
+			Return ""
+			
+		End
 		
 		Global Alpha:Float = 0.0				' Portal alpha controls visibility and scale. *** Separate to model alpha! ***
 		
@@ -219,10 +267,19 @@ Class PortalBehaviour Extends Behaviour
 				portal.Alpha = 1.0
 				portal.ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.01)) * 15.0 + 0.5) ' Yikes
 				
+				If portal.FlythroughComplete ()
+					portal.PortalState = Portal.PORTAL_STATE_CLOSING
+					Game.GameState.SetCurrentState (States.LevelTween)
+				Endif
+				
 			Case Portal.PORTAL_STATE_CLOSED
 		
 				portal.Alpha = 0.0
 				portal.ring?.Alpha = portal.Alpha
+			
+				If not portal.FlythroughComplete () And Game.Player.CurrentOrb
+					portal.PortalState = Portal.PORTAL_STATE_OPENING
+				Endif
 			
 			Case Portal.PORTAL_STATE_CLOSING
 			

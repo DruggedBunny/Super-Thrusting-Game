@@ -23,6 +23,18 @@ Class Level
 		Field pads:List <Pad>
 		Field gems:List <SpaceGem>
 		
+		Property Dummy:DummyOrb ()
+			Return dummy_orb
+			Setter (new_dummy:DummyOrb)
+				dummy_orb = new_dummy
+		End
+		
+'		Property DummyOrbCollected:Bool ()
+'			Return dummy_orb_collected
+'			Setter (state:Bool)
+'				dummy_orb_collected = state
+'		End
+'		
 		Property TerrainSeed:ULong ()
 			Return terrain_seed
 			Setter (new_seed:ULong)
@@ -43,6 +55,8 @@ Class Level
 		
 		Property ExitPortal:Portal ()
 			Return portal
+			Setter (new_portal:Portal)
+				portal = new_portal
 		End
 		
 		Property SpaceGemCount:Int ()
@@ -168,8 +182,7 @@ Class Level
 
 			sun.PointAt (terrain.TerrainModel)
 	
-			portal = New Portal (0.0, terrain.Height + 100.0, 50.0)
-			'portal.Hide ()
+			ExitPortal = New Portal (0.0, terrain.Height + 100.0, terrain.Depth * 0.25)
 
 			SpawnPointSet = False
 
@@ -292,43 +305,24 @@ Class Level
 		
 		End
 
-'		Method OrbCollected:Bool ()
-'		
-'			If Game.Player.DummyOrbCollected
-'			
-''				If Not Game.Player.CurrentOrb
-'			
-'					' TODO: Spawn with player if died but already collected? Just set dummy invisible?
-'				
-'					'Game.Player.CurrentOrb = New Orb (Game.Player, 10.0, 8.0)
-'					orb_collected = True
-'					
-''				Endif
-'				
-'			Endif
-'			
-''			Return orb_collected
-'			
-'		End
-'		
-		Method Complete:Bool ()
+		Method SpawnDummyOrb ()
+			Dummy = New DummyOrb (SpawnX, SpawnY + 15, SpawnZ)
+		End
+		
+		Method Update:Bool ()
 
 			If TMP_LEVEL_COMPLETE Then space_gems_collected = spacegems_spawned ' TEMP!!!
 			
 			If space_gems_collected = spacegems_spawned
 				
-				If Not dummy_orb Then dummy_orb = New DummyOrb (SpawnX, SpawnY + 12, SpawnZ)
+				' Respawn dummy orb if needed...
 				
-				If Game.Player.DummyOrbCollected And portal.PortalState = Portal.PORTAL_STATE_CLOSED
-					portal.PortalState = Portal.PORTAL_STATE_OPENING' If portal.Hidden Then Print "Yup!"; portal.Show ()
+				If Not Dummy						' Dummy orb doesn't exist
+					If Not Game.Player.CurrentOrb	' Player isn't carrying an orb already
+						SpawnDummyOrb ()
+					Endif
 				Endif
-				
-				If ExitPortal.Complete ()
-					portal.PortalState = Portal.PORTAL_STATE_CLOSING
-					Game.GameState.SetCurrentState (States.LevelTween) ' TODO: See Case Portal.PORTAL_STATE_CLOSING
-					Return True
-				Endif
-				
+
 			Endif
 			
 			Return False
@@ -427,5 +421,6 @@ Class Level
 		Field some_levels:LevelData []
 
 		Field dummy_orb:DummyOrb
-				
+		'Field dummy_orb_collected:Bool
+		
 End
