@@ -117,8 +117,9 @@ Class Orb
 
 			If play_boom
 				BoomChannel.Paused = False
-				ResetBoomAudio ()			' NB. Playing channel continues independently until done
 			Endif
+
+			ResetBoomAudio ()			' NB. Playing channel continues independently until done
 
 		End
 	

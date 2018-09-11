@@ -346,7 +346,7 @@ Class Rocket
 		Method Destroy:Void ()
 
 			If CurrentOrb
-				CurrentOrb.Destroy ()
+				CurrentOrb.Destroy (False)
 				CurrentOrb = Null
 			Endif
 			
