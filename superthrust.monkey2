@@ -18,7 +18,7 @@ Const VR_MODE:Int = False
 
 Const AppName:String = "Super Thrusting Game!"
 
-Const TMP_LEVEL_COMPLETE:Bool = False
+Const TMP_LEVEL_COMPLETE:Bool = True
 
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 

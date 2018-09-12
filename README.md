@@ -11,3 +11,6 @@ http://www.playfuljs.com/realistic-terrain-in-130-lines/
 Uses keyboard and, optionally, first Xbox controller detected. (Press A to enable.)
 
 See TODOs in main superthrust.monkey2 file!
+
+![Super Thrusting Game: Flying over terrain](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/superthrust1.png)
+![Super Thrusting Game: Heading for portal, carrying orb](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/superthrust2.png)
