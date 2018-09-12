@@ -151,7 +151,20 @@ Class HUD
 				
 				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
 	
-				
+'				Local nearest:Float = 1000000.0
+'				
+'				For Local gem:SpaceGem = Eachin Game.CurrentLevel.GemList
+'					
+'					' TODO: Remember why SpaceGemModel () is a method... ???
+'					
+'					If gem.GetSpaceGemModel ().Position.Distance (Game.Player.RocketModel.Position) < nearest
+'						nearest = gem.GetSpaceGemModel ().Position.Distance (Game.Player.RocketModel.Position)
+'					Endif
+'					
+'				Next
+'				
+'				ShadowText (canvas, "Nearest Space Gem: " + nearest, 20.0, 420.0)
+'				
 	'			ShadowText (canvas, Game.Player.RocketModel.LocalRx, 200, 340)
 	'			ShadowText (canvas, Game.Player.RocketModel.LocalRy, 200, 360)
 	'			ShadowText (canvas, Game.Player.RocketModel.GetRotation ().Z, 200, 380)

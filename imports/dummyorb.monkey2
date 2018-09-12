@@ -4,6 +4,7 @@ Class DummyOrb
 	Field model:Model
 	Field body:RigidBody
 	Field collider:SphereCollider
+	Field glow:Light
 	
 	Method New (x:Float, y:Float, z:Float)
 
@@ -34,13 +35,21 @@ Class DummyOrb
 				
 			End
 
+			glow = New Light (model)
+			
+				glow.Type				= LightType.Point
+				glow.CastsShadow		= False
+				glow.Color				= Color.HotPink * 8.0
+				glow.Range				= 50.0
+			
 	End
 	
 	Method Destroy ()
 	
 		model.Destroy	()
 		body.Destroy	()
-		
+		glow.Destroy	()
+					
 		Game.CurrentLevel.Dummy = Null
 		
 	End

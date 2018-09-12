@@ -112,9 +112,10 @@ Class Orb
 		
 		Method Destroy:Void (play_boom:Bool = True)
 
-			model?.Destroy ()
-			body?.Destroy ()
-
+			model?.Destroy	()
+			body?.Destroy 	()
+			glow?.Destroy	()
+			
 			If play_boom
 				BoomChannel.Paused = False
 			Endif

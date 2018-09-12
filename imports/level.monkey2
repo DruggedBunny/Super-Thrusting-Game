@@ -20,6 +20,14 @@ Class Level
 		
 		Const FIXED_GEM_COUNT:Int = 10 ' Not sure if temp...
 		
+		Property PadList:List <Pad> ()
+			Return pads
+		End
+		
+		Property GemList:List <SpaceGem> ()
+			Return gems
+		End
+		
 		Field pads:List <Pad>
 		Field gems:List <SpaceGem>
 		
@@ -123,7 +131,7 @@ Class Level
 
 			Endif
 
-			If pads Or gems Then DestroyPadsAndGems ()
+			If PadList Or GemList Then DestroyPadsAndGems ()
 			
 			pads = New List <Pad>
 			gems = New List <SpaceGem>
@@ -234,7 +242,7 @@ Class Level
 				
 				Local pad:Pad = New Pad (SpawnX, SpawnY, SpawnZ, 8)
 				
-					pads.AddLast (pad)
+					PadList.AddLast (pad)
 				
 				SpawnPointSet = True
 				
@@ -269,7 +277,7 @@ Class Level
 					pad_y = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + pad_y_offset
 					pad_z = terrain.TerrainZFromHeightMap (pixmap_y)
 	
-					For Local existing:Pad = Eachin pads
+					For Local existing:Pad = Eachin PadList
 
 						' New position as 3D vector...
 						
@@ -292,8 +300,8 @@ Class Level
 				
 				Local pad:Pad = New Pad (pad_x, pad_y, pad_z)
 
-					pads.AddLast (pad)
-					gems.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
+					PadList.AddLast (pad)
+					GemList.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
 					
 			Next
 
@@ -369,7 +377,7 @@ Class Level
 		
 		Method DestroyPadsAndGems ()
 			
-			For Local p:Pad = Eachin pads
+			For Local p:Pad = Eachin PadList
 			
 				' TODO: Move to Pad.Destroy ()!
 				p.PadModel.Destroy ()
@@ -377,7 +385,7 @@ Class Level
 				
 			Next
 			
-			For Local sg:SpaceGem = Eachin gems
+			For Local sg:SpaceGem = Eachin GemList
 			
 				' TODO: Move to SpaceGem.Destroy ()!
 				sg.GetSpaceGemModel ().Destroy ()
