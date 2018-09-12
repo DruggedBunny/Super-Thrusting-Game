@@ -10,9 +10,9 @@ http://www.playfuljs.com/realistic-terrain-in-130-lines/
 
 Uses keyboard and, optionally, first Xbox controller detected. (Press A to enable.)
 
-Collect all Space Gems [tm*] to spawn the Atomic Orb [tm*], which appears at your start point, before heading for the Space Portal [tm*]. Refuel by landing on pads.
+Collect all Space Gems [tm\*] to spawn the Atomic Orb [tm\*], which appears at your start point, before heading for the Space Portal [tm\*]. Refuel by landing on pads.
 
-* Not really.
+\* Not really.
 
 See TODOs in main superthrust.monkey2 file!
 
