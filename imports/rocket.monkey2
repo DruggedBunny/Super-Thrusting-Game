@@ -174,8 +174,7 @@ Class Rocket
 					Case COLL_DUMMY_ORB
 					
 						CurrentOrb?.Destroy ()
-						CurrentOrb = New Orb (Self, 10.0, 8.0)
-'						Game.CurrentLevel.DummyOrbCollected = True
+						CurrentOrb = Orb.Create (Self, 10.0, 8.0)
 						
 				End
 				
@@ -186,6 +185,12 @@ Class Rocket
 			
 		End
 	
+		' Called from Orb.DetachFromRocket...
+		
+		Method NullifyOrb ()
+			CurrentOrb	= Null
+		End
+		
 		Method Explode ()
 	
 			boost_channel.Paused	= True
@@ -198,7 +203,7 @@ Class Rocket
 			
 			fuel = 0.0
 	
-			orb?.DetachFromRocket ()
+			CurrentOrb?.DetachFromRocket ()
 			CurrentOrb = Null
 			
 			exploded = True
@@ -239,8 +244,8 @@ Class Rocket
 					Endif
 					
 					Boost (0.0, boost_factor, 0.0)
-'					Boost (0.0, body.Mass * boost_factor, 0.0)
-					New SmokeParticle (Self)
+
+					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (0.0, -0.3, 0.0))
 					
 					fuel = fuel - (MPG * 0.9)
 					If fuel < 25.0 Then alert_channel.Volume = ALERT_VOLUME_MAX
@@ -311,9 +316,9 @@ Class Rocket
 						
 							boosting = True
 							
-'							Boost (0.0, (body.Mass * boost_factor) * jy, 0.0)
-							Boost (0.0, (boost_factor) * jy, 0.0)
-							New SmokeParticle (Self, jy)
+							Boost (0.0, boost_factor * jy, 0.0)
+							
+							SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (0.0, -0.3 * jy, 0.0))
 							
 							fuel = fuel - (MPG * jy)
 							If fuel < 25.0 Then alert_channel.Volume = ALERT_VOLUME_MAX

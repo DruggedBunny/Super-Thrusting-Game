@@ -1,94 +1,162 @@
 
-Class Orb
+Class Orb Extends Behaviour
 
 	Public
 	
-		Method New (rocket:Rocket, distance:Float, mass:Float = 1.0)
-	
-			Local mat:PbrMaterial = New PbrMaterial (Color.HotPink)
+		Function Create:Orb (rocket:Rocket, distance:Float, in_mass:Float = 1.0)
+
+			Local mat:PbrMaterial		= New PbrMaterial (Color.HotPink)
 			
-			model		= Model.CreateSphere (0.75, 8, 8, mat)
+			Local model:Model			= Model.CreateSphere (0.75, 8, 8, mat, rocket.RocketModel)
 			
-			model.Name	= "Orb [spawned at " + Time.Now () + "]"
-						
-			' Position model BEFORE adding physics components; set here
-			' to rocket position less 'distance' below rocket...
-			
-			#Rem
-			
-			
-				^		ROCKET			constraint.Pivot				This is the BALL socket (at rocket position)
-				|
-				|
-				|		distance
-				|
-				|
-				O		ORB				constraint.ConnectedPivot		This is a FIXED point (at orb position)
-				
-				
-			#End
-			
-			model.Position				= rocket.RocketModel.Position + New Vec3f (0.0, -distance, 0.0)
-			
-				model.Alpha				= 1'0.75
-'				model.Material.BlendMode = BlendMode.Additive
-				Cast <PbrMaterial> (model.Material).MetalnessFactor = 1.0
+				model.Move (0.0, -distance, 0.0)
+
+				model.Parent			= Null
+				model.Name				= "Orb [spawned at " + Time.Now () + "]"
+				model.Alpha				= 1.0
 				model.CastsShadow		= True
 			
-			glow = New Light (model)
+			Local orb:Orb				= New Orb (model)
+
+				orb.mass				= in_mass
+				orb.rocket_body			= rocket.RocketBody
+				orb.start_vel			= rocket.RocketBody.LinearVelocity
+				orb.distance			= distance
+
+			Return orb
 			
-				glow.Type				= LightType.Point ' Very slow to init!
-				glow.CastsShadow		= False'True ' TODO - may be fixed in future
-				glow.Color				= Color.HotPink * 8.0
-				glow.Range				= 10.0
+		End
+
+		Function InitOrbSound ()
+
+			Boom = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
 			
-			body						= model.AddComponent <RigidBody> ()
-			collider					= model.AddComponent <SphereCollider> ()
+			If Not Boom Then Abort ("Orb: InitOrbSound failed to load boom audio!")
+			
+		End
+		
+		' May be called also from Rocket.Explode upon crashing...
+		
+		Method DetachFromRocket ()
+		
+			joint?.Destroy ()
+			constraint?.Destroy ()
+
+			joint					= Null
+			constraint				= Null
+			
+			Game.Player.NullifyOrb ()
+			
+		End
 	
-				body.Mass				= mass
-				body.Restitution		= 0.1
-				body.AngularDamping		= 0.45
-				body.LinearVelocity		= rocket.RocketBody.LinearVelocity
+		Method Destroy:Void (play_boom:Bool = True)
+
+			Entity.Destroy ()
+			
+			If play_boom
+				BoomChannel.Paused = False
+			Endif
+
+			ResetBoomAudio ()			' NB. Playing channel continues independently until done
+
+		End
+	
+	Private
+	
+		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
+		Const BOOM_VOLUME_MAX:Float = 0.5
+		
+		' Setup stuff for Create:Orb (), needed as OnStart can't take params...
+		
+		Field mass:Float
+		Field start_vel:Vec3f
+		Field distance:Float
+		Field rocket_body:RigidBody
+
+		' Required fields for later access...
+		
+		Field last_vel:Vec3f
+		Field joint:Model
+		Field constraint:BallSocketJoint
+	
+		Field exploded:Bool = False
+		
+		Global Boom:Sound
+		Global BoomChannel:Channel
+
+		Method New (entity:Entity)
+			
+			Super.New (entity)
+			AddInstance ()
+	
+		End
+		
+		Method OnUpdate (elapsed:Float) Override
+			last_vel = Entity.GetComponent <RigidBody> ().LinearVelocity
+		End
+	
+		Method OnStart () Override
+	
+			Local glow:Light				= New Light (Entity)
+			
+				glow.Type					= LightType.Point	' Very slow to init with shadows on! https://github.com/blitz-research/monkey2/issues/391
+				glow.CastsShadow			= False				'True ' TODO - may be fixed in future
+				glow.Color					= Color.HotPink * 8.0
+				glow.Range					= 10.0
+			
+			Local collider:SphereCollider	= Entity.AddComponent <SphereCollider> ()
+
+			Local body:RigidBody			= Entity.AddComponent <RigidBody> ()
+	
+				body.Mass					= mass
+				body.Restitution			= 0.1
+				body.AngularDamping			= 0.45
+				body.LinearVelocity			= start_vel
 				
-				body.CollisionMask		= COLL_ORB
-				body.CollisionGroup		= ORB_COLLIDES_WITH
+				body.CollisionMask			= COLL_ORB
+				body.CollisionGroup			= ORB_COLLIDES_WITH
 	
-			constraint					= model.AddComponent <BallSocketJoint> ()
+			constraint						= Entity.AddComponent <BallSocketJoint> ()
 			
-			' constraint.Pivot at ROCKET position (upwards by 'distance')...
-			
-			' BALL SOCKET
-			
-			constraint.Pivot			= New Vec3f (0.0, distance, 0.0)
-	
-			' constraint.ConnectedPivot at ORB position (0, 0, 0 relative to orb)...
-			
-			' FIXED POINT
-			
-			' But constraint.ConnectedBody is the ROCKET body here... all a matter of
-			' perspective, since you could have the ball socket (Pivot) at orb position
-			' instead...
-			
-			constraint.ConnectedBody	= rocket.RocketBody
-			
+				' constraint.Pivot sits at ROCKET position (located upwards from orb model by 'distance')...
+				
+				' BALL SOCKET
+				
+				constraint.Pivot			= New Vec3f (0.0, distance, 0.0)
+		
+				' constraint.ConnectedPivot sits at ORB position (0, 0, 0 relative to orb model)...
+				
+				' FIXED CONNECTION
+				
+				' constraint.ConnectedBody is the ROCKET body here... all a matter of
+				' perspective, since you could have the ball socket (Pivot) at orb position
+				' instead...
+				
+				constraint.ConnectedBody	= rocket_body
+				
 			' Visual connection between orb and rocket...
 			
-			joint = Model.CreateCylinder (0.05, distance, Axis.Y, 8, New PbrMaterial (Color.Yellow), model)
+			joint							= Model.CreateCylinder (0.05, distance, Axis.Y, 8, New PbrMaterial (Color.Yellow), Entity)
 			
-				joint.Alpha = 0.1
 				joint.Move (0.0, distance * 0.5, 0.0)
 
-				joint.Name = "Orb/Rocket joint"
+				joint.Name					= "Orb/Rocket joint [spawned at " + Time.Now () + "]"
+				joint.Alpha					= 0.1
 				
 			body.Collided += Lambda (other_body:RigidBody) ' Other colliding body
 				
-				If constraint And Abs (body.LinearVelocity.Length - last_vel.Length) < 9.5 ' Resilient little bugger
+				If constraint And Abs (body.LinearVelocity.Length - last_vel.Length) < 9.0 ' Resilient little bugger
 					Return
 				Endif
 				
 				If Not exploded Then Explode ()
-	
+
 			End
+
+			' Done with these temp objects...
+			
+			start_vel						= Null
+			body							= Null
 
 			Game.CurrentLevel.ExitPortal.Open ()
 
@@ -98,7 +166,7 @@ Class Orb
 
 		Method Explode ()
 	
-			PhysicsTri.Explode (model, body)
+			PhysicsTri.Explode (Cast <Model> (Entity), Entity.GetComponent <RigidBody> ())
 			
 			DetachFromRocket ()
 	
@@ -110,91 +178,30 @@ Class Orb
 			
 		End
 		
-		Method Destroy:Void (play_boom:Bool = True)
-
-			model?.Destroy	()
-			body?.Destroy 	()
-			glow?.Destroy	()
-			
-			If play_boom
-				BoomChannel.Paused = False
-			Endif
-
-			ResetBoomAudio ()			' NB. Playing channel continues independently until done
-
-		End
-	
 		Method ResetBoomAudio ()
 
 			BoomChannel			= Boom.Play (False)
 			BoomChannel.Volume	= BOOM_VOLUME_MAX
 			BoomChannel.Rate	= BoomChannel.Rate * 0.75 ' Pitched slightly up from rocket boom
 			BoomChannel.Paused	= True
-			
-		End
-		
-		' Called also from Rocket upon crashing...
-		
-		Method DetachFromRocket ()
-		
-			joint?.Destroy ()
-			joint = Null
-			
-			constraint?.Destroy ()
-			constraint = Null
-			
-			Game.Player.CurrentOrb = Null
-			
-		End
-	
-		Function InitOrbSound ()
 
-			Boom = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
-			
-				If Not Boom Then Abort ("Orb: InitOrbSound failed to load boom audio!")
-				
 		End
 		
-	Private
-	
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
-		Const BOOM_VOLUME_MAX:Float = 0.5
-			
-		Field model:Model
-		Field body:RigidBody
-		Field collider:SphereCollider
-	
-		Field last_vel:Vec3f
-			
-		Field joint:Model
-		
-		Field glow:Light
-		
-		Field constraint:BallSocketJoint
-	
-		Field exploded:Bool = False
-
-		' This must be a TODO...
-		
-		Global Boom:Sound
-		Global BoomChannel:Channel
-					
 End
 
-Class OrbBehaviour Extends Behaviour
-	
-	Field orb:Orb
-	
-	Method New (entity:Entity)
-		
-		Super.New (entity)
-		
-		AddInstance ()
+' Position model BEFORE adding physics components; set here
+' to rocket position less 'distance' below rocket...
 
-	End
+#Rem
+
+
+	^		ROCKET			constraint.Pivot				This is the BALL socket (at rocket position)
+	|
+	|
+	|		distance
+	|
+	|
+	O		ORB				constraint.ConnectedPivot		This is a FIXED point (at orb position)
 	
-	Method OnBeginUpdate () Override
-		orb.last_vel = orb.body.LinearVelocity
-	End
 	
-End
+#End

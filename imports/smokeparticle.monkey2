@@ -1,14 +1,10 @@
 
-Class SmokeParticle
+Class SmokeParticle Extends Behaviour
 
 	Public
 	
-		Method New (rocket:Rocket, multi:Float = 1.0)
-	
-			If Not thrust
-				thrust = New Vec3f (0.0, -0.3 * multi, 0.0)
-			Endif
-			
+		Function Create:SmokeParticle (rocket:Rocket, thrust:Vec3f = New Vec3f (1.0, 1.0, 1.0))
+
 			Local col:Color
 			
 			Select Int (Rnd (5))
@@ -26,80 +22,82 @@ Class SmokeParticle
 					
 			End
 			
-			'rocket.booster.Color = col * 4.0 * multi
+			Local size:Float			= 0.5
+			Local mat:PbrMaterial		= New PbrMaterial (col)
 			
-			Local mat:PbrMaterial = New PbrMaterial (col)
+			' TODO: Temp model, need something better, maybe sprites...
+
+			Local model:Model			= Model.CreateBox (New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5), 2, 2, 2, mat, rocket.RocketModel)
 			
-			Local size:Float = 0.5
-			Local distance:Float = 10.0
-			
-			model						= Model.CreateBox (New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5), 2, 2, 2, mat, rocket.RocketModel)
-			
-			'model.Position				= rocket.model.Position + New Vec3f (0.0, -distance, 0.0) + New Vec3f (Rnd (-1.0, 1.0), Rnd (0.0, 5.0), Rnd (-1.0, 1.0))
-			model.Move (Rnd (-1.0, 1.0), -Rnd (2.5, 3.5), Rnd (-1.0, 1.0))
-			
-			model.Alpha					= 1.0
-			
-			body						= model.AddComponent <RigidBody> ()
-			collider					= model.AddComponent <BoxCollider> ()
-	
-			body.Mass					= 0.01
-			body.Restitution			= 0.5
-			body.Friction				= 0.1
-			
-			body.LinearFactor = New Vec3f (1, 1, 0)
-			body.AngularFactor = New Vec3f (0, 0, 0)
-			
-			body.ApplyImpulse (rocket.RocketModel.Basis * thrust)
-			
-			body.CollisionMask	= COLL_SMOKE
-			body.CollisionGroup	= SMOKE_COLLIDES_WITH
-			
-			Local spc:SmokeParticleComponent = New SmokeParticleComponent (model)
-			
-				spc.sp = Self
+				model.Move (Rnd (-1.0, 1.0), -Rnd (2.5, 3.5), Rnd (-1.0, 1.0))
+
+				model.Parent			= Null
+				model.Alpha				= 1.0
+
+			Local sp:SmokeParticle		= New SmokeParticle (model)
+
+				sp.thrust				= thrust
+
+			Return sp
 			
 		End
-	
+
 	Private
-	
-		Field model:Model
-		Field body:RigidBody
-		Field collider:BoxCollider
-	
-		Field thrust:Vec3f
-
-End
-
-Class SmokeParticleComponent Extends Behaviour
-
-	Public
 	
 		Method New (entity:Entity)
+		
 			Super.New (entity)
 			AddInstance ()
+			
 		End
+
+		Method OnStart () Override
+
+			Local collider:BoxCollider	= Entity.AddComponent <BoxCollider> () ' Unexpected: Collider needs to be added BEFORE applying impulse!
+
+			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 	
-	Private
+				body.Mass				= 0.01
+				body.Restitution		= 0.5
+				body.Friction			= 0.1
 	
-		Field sp:SmokeParticle
+				body.CollisionMask		= COLL_SMOKE
+				body.CollisionGroup		= SMOKE_COLLIDES_WITH
+			
+				body.ApplyImpulse (thrust)
+			
+				thrust					= Null ' Don't need to keep temp Vec3f object
+				
+		End
 		
 		Method OnUpdate (elapsed:Float) Override
 			
-			Entity.Alpha = Entity.Alpha * 0.9 ' Probably needs adjusting for framerate!
+			Entity.Alpha = Entity.Alpha * 0.9 ' TODO: Needs adjusting for framerate!
 			
 			If Entity.Alpha < 0.1
-				
-				Destroy ()
-
-				sp?.model?.Destroy ()
-				sp?.model = Null
-
-				sp?.body = Null
-				sp = Null
-				
+				Entity.Destroy ()
 			Endif
 			
 		End
+	
+		' Rocket thrust level -- need to temp-store here as OnStart can't be passed custom params!
 		
+		Field thrust:Vec3f
+		
+		' TODO?
+		
+'		Global PrototypeModel:Model
+
+'			If Not PrototypeModel
+'				PrototypeModel			= Model.CreateBox (New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5), 2, 2, 2, New PbrMaterial (Color.Magenta))
+'				PrototypeModel.Visible	= False
+
+'				model = Proto... .Copy ()
+'				model.Material[0] = ...
+
+				' Oh... can't replace material on a copy!
+				' https://github.com/blitz-research/monkey2/issues/424
+				
+'			Endif
+			
 End

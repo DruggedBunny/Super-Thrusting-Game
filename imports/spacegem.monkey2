@@ -9,7 +9,7 @@ Class SpaceGem Extends Behaviour
 
 			' TODO: THIS IS STUPID! Create model here!
 			
-			If Not CollectedSound Then CollectedSound = Sound.Load (ASSET_PREFIX_AUDIO + "collected.ogg")
+			If Not CollectedSound Then CollectedSound = Sound.Load (ASSET_PREFIX_AUDIO + "spacegem_collected.ogg")
 			If Not CollectedSound Then Abort ("SpaceGem: Failed to load collected audio!")
 
 			in_model.Move (x, y + box.Height * 3.0, z)

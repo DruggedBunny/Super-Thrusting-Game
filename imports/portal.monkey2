@@ -146,9 +146,9 @@ Class Portal
 			Setter (state:Int)
 
 				If state <> portal_state
-					Local t_state:Int = portal_state
+					'Local t_state:Int = portal_state
 					portal_state = state
-					Print "Changed portal state from " + TMP_StateName (t_state) + " to " + TMP_StateName (portal_state)
+					'Print "Changed portal state from " + TMP_StateName (t_state) + " to " + TMP_StateName (portal_state)
 				Endif
 
 		End
@@ -285,7 +285,7 @@ Class PortalBehaviour Extends Behaviour
 			
 				' TODO: See States.LevelTween
 				
-				portal.Alpha = portal.Alpha - 0.0025
+				portal.Alpha = portal.Alpha - 0.003
 				portal.ring?.Alpha = portal.Alpha
 				
 				'Print portal.Alpha

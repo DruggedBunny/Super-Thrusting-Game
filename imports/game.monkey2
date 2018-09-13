@@ -107,6 +107,7 @@ Class GameWindow Extends Window
 			' ----------------------------------------------------------------
 
 			Orb.InitOrbSound ()				' Preload sound as Orb is spawned on the fly in-game
+			DummyOrb.InitDummyOrbSound ()
 
 			' ----------------------------------------------------------------
 			' Init gameloop...

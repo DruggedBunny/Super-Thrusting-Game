@@ -15,7 +15,7 @@ Class DummyOrb
 			model.Move (x, y, z)
 
 			model.Alpha				= 0.5
-			model.Name				= "Dummy Orb"
+			model.Name				= "Dummy Orb [spawned at " + Time.Now () + "]"
 			
 		collider					= model.AddComponent <SphereCollider> ()
 
@@ -28,11 +28,13 @@ Class DummyOrb
 			body.CollisionGroup		= DUMMY_ORB_COLLIDES_WITH
 	
 			body.Collided += Lambda (other_body:RigidBody)
-				
-				' k bai!
+
+				CollectedChannel.Paused = False
+	
+				ResetCollectedAudio ()			' NB. Playing channel continues independently until done
 				
 				Destroy ()
-				
+
 			End
 
 			glow = New Light (model)
@@ -41,6 +43,8 @@ Class DummyOrb
 				glow.CastsShadow		= False
 				glow.Color				= Color.HotPink * 8.0
 				glow.Range				= 50.0
+			
+			ResetCollectedAudio ()
 			
 	End
 	
@@ -53,5 +57,28 @@ Class DummyOrb
 		Game.CurrentLevel.Dummy = Null
 		
 	End
+
+	Method ResetCollectedAudio ()
+
+		CollectedChannel		= Collected.Play (False)
+		CollectedChannel.Volume	= COLLECTED_VOLUME_MAX
+		CollectedChannel.Rate	= CollectedChannel.Rate * 0.75 ' Pitched slightly up from rocket boom
+		CollectedChannel.Paused	= True
+
+	End
+
+	Function InitDummyOrbSound ()
+
+		Collected = Sound.Load (ASSET_PREFIX_AUDIO + "orb_collected.ogg")
+		
+		If Not Collected Then Abort ("DummyOrb: InitDummyOrbSound failed to load orb-collected audio!")
+			
+	End
+	
+	Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
+	Const COLLECTED_VOLUME_MAX:Float = 0.5
+
+	Global Collected:Sound
+	Global CollectedChannel:Channel
 	
 End
