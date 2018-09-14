@@ -19,14 +19,14 @@ Const AppName:String = "Super Thrusting Game!"
 ' Hacks...
 
 Const VR_MODE:Int = False
-Const TMP_LEVEL_COMPLETE:Bool = True
+Const TMP_LEVEL_COMPLETE:Bool = False
 
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
 Function InitTODOs ()
 	
-	TODO ("Convert all physics entities to Behaviors: portal and spacegem, maybe rocket? DummyOrb too simple?")
 	TODO ("Make PhysicsTris clear selves by changing to Components and fading out")
+	TODO ("Convert all physics entities to Behaviors: Portal DONE (woo), spacegem, maybe rocket? DummyOrb too simple?")
 	TODO ("Fix SpaceGem retardity! Create model in SpaceGem.New!")
 	TODO ("Silence channels on level completion")
 	TODO ("Move Game.State into GameController")
