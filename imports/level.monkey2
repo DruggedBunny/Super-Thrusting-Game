@@ -339,7 +339,7 @@ Class Level
 		
 		Method Reset:Vec3f ()
 	
-			PhysicsTri.Clear ()
+'			PhysicsTri.Clear ()
 			
 			Game.MainCamera.Reset ()
 			
