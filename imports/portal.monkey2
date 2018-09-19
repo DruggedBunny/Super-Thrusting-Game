@@ -8,6 +8,14 @@ Class Portal
 
 	Public
 	
+		Function InitSound ()
+
+			FlythroughSound = Sound.Load (ASSET_PREFIX_AUDIO + "portal_flythrough.ogg")
+	
+				If Not FlythroughSound Then Abort ("Portal: InitSound failed to load flythrough audio!")
+	
+		End
+
 		Property Alpha:Float ()
 			Return alpha
 			Setter (new_alpha:Float)
@@ -39,11 +47,7 @@ Class Portal
 		
 		Method New (x:Float, y:Float, z:Float, outer:Float = 50.0, inner:Float = 5.0)
 		
-			flythrough = Sound.Load (ASSET_PREFIX_AUDIO + "portal_flythrough.ogg")
-	
-				If Not flythrough Then Abort ("Portal: Failed to load flythrough audio!")
-	
-			flythrough_channel			= flythrough.Play (False)
+			flythrough_channel			= FlythroughSound.Play (False)
 			flythrough_channel.Paused	= True
 			flythrough_channel.Volume	= FLYTHROUGH_VOLUME_MAX
 	
@@ -150,8 +154,9 @@ Class Portal
 
 		' TEMP!!
 		
-		Global flythrough:Sound
-		Global flythrough_channel:Channel
+		Global FlythroughSound:Sound
+		
+		Field flythrough_channel:Channel
 			
 		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
 		Const FLYTHROUGH_VOLUME_MAX:Float = 0.33

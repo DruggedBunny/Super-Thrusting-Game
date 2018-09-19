@@ -53,9 +53,12 @@ Class GameWindow Extends Window
 			' Pre-load sounds...
 			' ----------------------------------------------------------------
 
-			Orb.InitSound			()
-			DummyOrb.InitSound		()
-			Rocket.InitSound		()
+			Orb.		InitSound ()
+			DummyOrb.	InitSound ()
+			Rocket.		InitSound ()
+			Wall.		InitSound ()
+			Portal.		InitSound ()
+			SpaceGem.	InitSound ()
 			
 			' ----------------------------------------------------------------
 			' Terrain, level and scene setup...

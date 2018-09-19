@@ -25,7 +25,7 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 	
-	TODO ("Convert remaining physics entities to Behaviors; remaining: Rocket, DummyOrb (too simple?)")
+	TODO ("Convert remaining physics entities to Behaviours; remaining: Rocket, DummyOrb (too simple?)")
 	TODO ("Move Game.State into GameController")
 	TODO ("Generate misc hit sounds for terrain bumps")
 	
@@ -36,7 +36,6 @@ Function InitTODOs ()
 	TODO ("HUD skull image to 3d sprite (render text to texture??) -- to appear in VR. Started but not working")
 	TODO ("Point in direction of fall when ballistic (out of fuel)... ? FUCKING IMPOSSIBLE")
 	TODO ("Remove over-cautious object?.thing checks")
-	TODO ("Preload spacegem and any other sounds loaded in-game, like InitOrbSound")
 	TODO ("Disable one control method if other used -- per-loop (eg. can double-boost using Xbox pad AND space!)")
 	
 End
@@ -50,6 +49,6 @@ Function Main ()
 	Local height:Int	= 768
 	
 	Run3D (AppName, width, height, WindowFlags.Center)
-'	Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
+	'Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
 	
 End

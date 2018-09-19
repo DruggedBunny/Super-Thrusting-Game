@@ -109,9 +109,20 @@ End
 
 Class Wall
 
+	Public
+	
+		Function InitSound ()
+	
+			BumpSound = Sound.Load (ASSET_PREFIX_AUDIO + "wall_bump.ogg")
+			
+				If Not BumpSound Then Abort ("PhysicsTerrain/Wall: InitSound failed to load wall-bump audio!")
+
+		End
+
 	Private
 	
-		Field bump:Sound
+		Global BumpSound:Sound
+		
 		Field bump_channel:Channel
 		Field bump_channel_time:Int
 		
@@ -130,16 +141,12 @@ Class Wall
 	End
 	
 	Method New (height_box:Boxf)
-	
+
 		' Sound for bumping into invisible walls at outer edge of terrain/upper ceiling limit...
-		
-		bump = Sound.Load (ASSET_PREFIX_AUDIO + "wall_bump.ogg")
 
-			If Not bump Then Abort ("PhysicsTerrain: Failed to load wall-bump audio!")
-
-			bump_channel		= bump.Play (False)
-			bump_channel.Paused	= True
-			bump_channel_time	= Millisecs ()
+		bump_channel		= BumpSound.Play (False)
+		bump_channel.Paused	= True
+		bump_channel_time	= Millisecs ()
 
 		' Invisible walls around terrain...
 		
@@ -217,7 +224,7 @@ Class Wall
 					
 						' Start a new instance playing, but paused...
 						
-						bump_channel = bump.Play (False)
+						bump_channel = BumpSound.Play (False)
 						bump_channel.Paused = True
 						
 						' Reset timer...
@@ -253,17 +260,17 @@ Class Wall
 				
 				cc.Box = ceiling_box
 		
-		Local cb:RigidBody = ceiling.AddComponent <RigidBody> ()
+		Local ceiling_body:RigidBody = ceiling.AddComponent <RigidBody> ()
 		
-			cb.Mass = 0.0			' 0 = immoveable
-			cb.Restitution = 1.0	' Bouncy!
+			ceiling_body.Mass = 0.0			' 0 = immoveable
+			ceiling_body.Restitution = 1.0	' Bouncy!
 			
-			cb.CollisionMask	= COLL_WALL
-			cb.CollisionGroup	= WALL_COLLIDES_WITH
+			ceiling_body.CollisionMask	= COLL_WALL
+			ceiling_body.CollisionGroup	= WALL_COLLIDES_WITH
 		
 			' Collision response function...
 			
-			cb.Collided += Lambda (other_body:RigidBody)
+			ceiling_body.Collided += Lambda (other_body:RigidBody)
 		
 				' Play bounce sound only every 250 ms (avoids high-speed repetition when colliding)...
 				
@@ -275,7 +282,7 @@ Class Wall
 				
 					' Start a new instance playing, but paused...
 					
-					bump_channel = bump.Play (False)
+					bump_channel = BumpSound.Play (False)
 					bump_channel.Paused = True
 					
 					' Reset timer...

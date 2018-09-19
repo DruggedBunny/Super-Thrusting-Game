@@ -5,12 +5,6 @@ Class SpaceGem Extends Behaviour
 	
 		Function Create:SpaceGem (pad_model:Model, color:Color)
 
-			' TODO: Pre-load, like Orb/Portal...
-			
-			If Not CollectedSound Then CollectedSound = Sound.Load (ASSET_PREFIX_AUDIO + "spacegem_collected.ogg")
-			
-				If Not CollectedSound Then Abort ("SpaceGem: Failed to load collected audio!")
-
 			Local size:Float	= pad_model.Mesh.Bounds.Width * 0.5
 			
 			Local box:Boxf		= New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5)
@@ -40,6 +34,14 @@ Class SpaceGem Extends Behaviour
 			
 		End
 		
+		Function InitSound ()
+
+			If Not CollectedSound Then CollectedSound = Sound.Load (ASSET_PREFIX_AUDIO + "spacegem_collected.ogg")
+			
+				If Not CollectedSound Then Abort ("SpaceGem: Failed to load collected audio!")
+
+		End
+
 		Method New (entity:Entity)
 			
 			Super.New (entity)
