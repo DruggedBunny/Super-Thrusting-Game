@@ -151,7 +151,7 @@ Class HUD
 				
 				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
 
-				Local current_time:String = TimePad (Time.Now ().Hours) + ":" + TimePad (Time.Now ().Minutes) + ":" + TimePad (Time.Now ().Seconds)
+				Local current_time:String = PadDigit (Time.Now ().Hours, 2) + ":" + PadDigit (Time.Now ().Minutes, 2) + ":" + PadDigit (Time.Now ().Seconds, 2)
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
 	

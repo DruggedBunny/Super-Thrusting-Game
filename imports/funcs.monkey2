@@ -1,11 +1,11 @@
 
-Function TimePad:String (number:String)
+Function PadDigit:String (number:String, pad:Int)
 	
 	' 0 -> 00
 	' 1 -> 01
 	' etc...
 	
-	While number.Length < 2
+	While number.Length < pad
 		number = "0" + number
 	Wend
 	
@@ -15,27 +15,6 @@ End
 
 Function IsPow2:Long (value:Long)
 	Return Not (value & (value - 1)) ' Caveat: 0 is not Pow2! https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
-End
-
-Function LonePixel:Bool (x:Int, y:Int, argb:Color, pixmap:Pixmap)
-
-	Local pix:Color = pixmap.GetPixel (x, y)
-	
-	If pix = argb
-		
-		If pixmap.GetPixel (x - 1, y) = pix Or
-			pixmap.GetPixel (x, y - 1) = pix Or
-				pixmap.GetPixel (x + 1, y) = pix Or
-					pixmap.GetPixel (x, y + 1) = pix
-			
-						Return False
-
-		Endif
-		
-	Endif
-	
-	Return True
-
 End
 
 Function CountEntities:Int (entity:Entity = Null, depth:Int = 0)
@@ -165,18 +144,6 @@ Function ValidateJoystick:Joystick (j:Joystick)
 	
 End
 
-Function ReplaceAssetPath:String (path:String)
-
-	If path.ToLower ().Left (7) = "asset::"
-		
-		path = path.Slice (7)
-	
-	Endif
-	
-	Return path
-	
-End
-
 Function PixmapFormat:String (pixmap:Pixmap)
 
 	Select pixmap.Format
@@ -215,12 +182,16 @@ Function PixmapFormat:String (pixmap:Pixmap)
 End
 
 Function ShadowText:Void (canvas:Canvas, s:String, x:Float, y:Float, fore:Color = Null, back:Color = Null)
+
 	If Not fore Then fore = Color.White
 	If Not back Then back = Color.Black
+
 	canvas.Color = back
 	canvas.DrawText	(s, x + 1, y + 1)
+
 	canvas.Color = fore
 	canvas.DrawText	(s, x, y)
+
 End
 
 Function CheckerPixmap:Pixmap (color0:Color = Color.Black, color1:Color = Color.White)
@@ -282,8 +253,6 @@ Function ModelFromTriangle:Model (in_model:Model, index:UInt, mat_index:Int)
  
 End
 
-Global Game:GameWindow
-
 Function Run3D (title:String, width:Int, height:Int, flags:WindowFlags = WindowFlags.Center)
 
 	New AppInstance
@@ -296,5 +265,26 @@ Function Run3D (title:String, width:Int, height:Int, flags:WindowFlags = WindowF
 	Game = New GameWindow (title, width, height, flags)
 
 	App.Run ()
+
+End
+
+Function LonePixel:Bool (x:Int, y:Int, argb:Color, pixmap:Pixmap)
+
+	Local pix:Color = pixmap.GetPixel (x, y)
+	
+	If pix = argb
+		
+		If pixmap.GetPixel (x - 1, y) = pix Or
+			pixmap.GetPixel (x, y - 1) = pix Or
+				pixmap.GetPixel (x + 1, y) = pix Or
+					pixmap.GetPixel (x, y + 1) = pix
+			
+						Return False
+
+		Endif
+		
+	Endif
+	
+	Return True
 
 End

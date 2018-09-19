@@ -9,15 +9,22 @@
 ' NB. Copyright notice: declared as 'Public Domain' via original www.blitzbasic.com code submission.
 ' https://web.archive.org/web/20141229185926/http://www.blitzbasic.com/
 
-Function GaussianBlur:Pixmap(tex:Pixmap, radius:Int)
+' Thanks to Queller!
+
+Function GaussianBlur:Pixmap (tex:Pixmap, radius:Int)
+
 	If radius <=0 Return tex
 	
 	If tex.Format <> PixelFormat.RGBA8 Then tex = tex.Convert (PixelFormat.RGBA8)
 	
-	Local texclone:Pixmap = tex.Copy()			'clone incoming texture
+	Local texclone:Pixmap = tex.Copy ()			'clone incoming texture
+	
 	Local filter:GaussianFilter = New GaussianFilter		'instantiate a new gaussian filter
+	
 		filter.radius = radius					'configure it
-	Return filter.apply(tex, texclone)
+	
+	Return filter.Apply (tex, texclone)
+	
 End Function
 
 Class GaussianFilter
@@ -25,35 +32,36 @@ Class GaussianFilter
 	Field radius:Double
 	Field kernel:Kernel
 	
-	Method apply:Pixmap(src:Pixmap, dst:Pixmap)
-		kernel = makekernel(radius)
-		convolveAndTranspose(kernel, src, dst, src.Width, src.Height, True)
-		convolveAndTranspose(kernel, dst, src, dst.Height, dst.Width, True)
+	Method Apply:Pixmap (src:Pixmap, dst:Pixmap)
+		kernel = MakeKernel (radius)
+		ConvolveAndTranspose (kernel, src, dst, src.Width, src.Height, True)
+		ConvolveAndTranspose (kernel, dst, src, dst.Height, dst.Width, True)
 		dst = Null
-		GCCollect()
+		GCCollect ()
 		Return src
 	End Method
 
 'Make a Gaussian blur kernel.
 
-	Method makekernel:Kernel(radius:Double)
-		Local r:Int = Int(Ceil(radius))
+	Method MakeKernel:Kernel (radius:Double)
+	
+		Local r:Int = Int (Ceil (radius))
 		Local rows:Int = r*2+1
 		Local matrix:Double[] = New Double[rows]
 		Local sigma:Double = radius/3.0
 		Local sigma22:Double = 2*sigma*sigma
 		Local sigmaPi2:Double = 2*Pi*sigma
-		Local sqrtSigmaPi2:Double = Sqrt(sigmaPi2)
+		Local sqrtSigmaPi2:Double = Sqrt (sigmaPi2)
 		Local radius2:Double = radius*radius
 		Local total:Double = 0
 		Local index:Int = 0
 
 		For Local row:Int = -r To r
-			Local distance:Double = Double(row*row)
+			Local distance:Double = Double (row*row)
 			If (distance > radius2)
 				matrix[index] = 0
 			Else
-				matrix[index] = Double(Exp(-(distance/sigma22)) / sqrtSigmaPi2)
+				matrix[index] = Double (Exp (- (distance/sigma22)) / sqrtSigmaPi2)
 				total = total + matrix[index]
 				index = index + 1
 			End If
@@ -63,23 +71,27 @@ Class GaussianFilter
 			matrix[i] = matrix[i]/total			'normalizes the gaussian kernel
 		Next 
 
-		Return mkernel(rows, 1, matrix)
+		Return mkernel (rows, 1, matrix)
+		
 	End Method
 	
-	Function mkernel:Kernel(w:Int, h:Int, d:Double[])
+	Function mkernel:Kernel (w:Int, h:Int, d:Double[])
+		
 		Local k:Kernel = New Kernel
+		
 			k.width = w
 			k.height = h
 			k.data = d
+		
 		Return k
+	
 	End Function
 
-
-	Method convolveAndTranspose(kernel:Kernel, in:Pixmap, out:Pixmap, width:Int, height:Int, alpha:Int)
+	Method ConvolveAndTranspose (kernel:Kernel, in:Pixmap, out:Pixmap, width:Int, height:Int, alpha:Int)
 		Local inba:UByte Ptr = in.Data
 		Local outba:UByte Ptr = out.Data
-		Local matrix:Double[] = kernel.getKernelData()
-		Local cols:Int = kernel.getWidth()
+		Local matrix:Double[] = kernel.GetKernelData ()
+		Local cols:Int = kernel.GetWidth ()
 		Local cols2:Int = cols/2
 		
 		For Local y:Int = 0 Until height
@@ -99,18 +111,18 @@ Class GaussianFilter
 						End If
 						
 						Local rgb:Int = Cast <Int Ptr> (inba)[ioffset+ix] ' Was Int Ptr inba
-						a = a + f *((rgb Shr 24) & $FF)
-						b = b + f *((rgb Shr 16) & $FF)
-						g = g + f *((rgb Shr 8) & $FF)
-						r = r + f *(rgb & $FF)
+						a = a + f * ( (rgb Shr 24) & $FF)
+						b = b + f * ( (rgb Shr 16) & $FF)
+						g = g + f * ( (rgb Shr 8) & $FF)
+						r = r + f * (rgb & $FF)
 					End If
 				Next
 				Local ia:Int
-					If alpha = True Then ia = clamp(Int(a+0.5)) Else ia = $FF
-				Local ir:Int =clamp( Int(r+0.5))
-				Local ig:Int = clamp(Int(g+0.5))
-				Local ib:Int = clamp(Int(b+0.5))
-				Cast <Int Ptr> (outba)[index] =((ia Shl 24) | (ib Shl 16) | (ig Shl 8) | (ir Shl 0)) ' Was Int Ptr outba
+					If alpha = True Then ia = Clamp (Int (a+0.5)) Else ia = $FF
+				Local ir:Int = Clamp ( Int (r+0.5))
+				Local ig:Int = Clamp (Int (g+0.5))
+				Local ib:Int = Clamp (Int (b+0.5))
+				Cast <Int Ptr> (outba)[index] = ( (ia Shl 24) | (ib Shl 16) | (ig Shl 8) | (ir Shl 0)) ' Was Int Ptr outba
 				index = index + height
 				Next
 		Next
@@ -123,21 +135,21 @@ Class Kernel
 	Field height:Int
 	Field data:Double[]
 	
-	Method getKernelData:Double[]()
+	Method GetKernelData:Double[] ()
 		Return data
 	End Method
 	
-	Method getWidth:Int()
+	Method GetWidth:Int ()
 		Return width
 	End Method
 	
-	Method getHeight:Int()
+	Method GetHeight:Int ()
 		Return height
 	End Method
 
 End
 
-Function clamp:Int(val:Int)
+Function Clamp:Int (val:Int)
 If val < 0
 	Return 0
 ElseIf val > 255

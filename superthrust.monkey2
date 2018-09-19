@@ -16,6 +16,8 @@ Using mojo3d..
 
 Const AppName:String = "Super Thrusting Game!"
 
+Global Game:GameWindow
+		
 ' Hacks...
 
 Const VR_MODE:Int = False
