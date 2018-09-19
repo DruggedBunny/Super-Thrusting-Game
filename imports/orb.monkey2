@@ -27,12 +27,20 @@ Class Orb Extends Behaviour
 			
 		End
 
-		Function InitOrbSound ()
+		Function InitSound ()
 
 			Boom = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
 			
-			If Not Boom Then Abort ("Orb: InitOrbSound failed to load boom audio!")
+				If Not Boom Then Abort ("Orb: InitOrbSound failed to load boom audio!")
 			
+		End
+
+		Method FadeAudio (rate:Float)
+		
+			boom_channel.Volume	= boom_channel.Volume - rate
+
+			If boom_channel.Volume	< 0.0 Then boom_channel.Volume	= 0.0
+
 		End
 		
 		' May be called also from Rocket.Explode upon crashing...
@@ -48,13 +56,13 @@ Class Orb Extends Behaviour
 			Game.Player.NullifyOrb ()
 			
 		End
-	
+		
 		Method Destroy:Void (play_boom:Bool = True)
 
 			Entity.Destroy ()
 			
 			If play_boom
-				BoomChannel.Paused = False
+				boom_channel.Paused = False
 			Endif
 
 			ResetBoomAudio ()			' NB. Playing channel continues independently until done
@@ -76,13 +84,14 @@ Class Orb Extends Behaviour
 		' Required fields for later access...
 		
 		Field last_vel:Vec3f
+
 		Field joint:Model
 		Field constraint:BallSocketJoint
 	
 		Field exploded:Bool = False
 		
 		Global Boom:Sound
-		Global BoomChannel:Channel
+		Field boom_channel:Channel
 
 		Method New (entity:Entity)
 			
@@ -153,10 +162,9 @@ Class Orb Extends Behaviour
 
 			End
 
-			' Done with these temp objects...
+			' Done with this temp object...
 			
 			start_vel						= Null
-			body							= Null
 
 			Game.CurrentLevel.ExitPortal.Open ()
 
@@ -180,10 +188,10 @@ Class Orb Extends Behaviour
 		
 		Method ResetBoomAudio ()
 
-			BoomChannel			= Boom.Play (False)
-			BoomChannel.Volume	= BOOM_VOLUME_MAX
-			BoomChannel.Rate	= BoomChannel.Rate * 0.75 ' Pitched slightly up from rocket boom
-			BoomChannel.Paused	= True
+			boom_channel		= Boom.Play (False)
+			boom_channel.Volume	= BOOM_VOLUME_MAX
+			boom_channel.Rate	= boom_channel.Rate * 0.75 ' Pitched slightly up from rocket boom
+			boom_channel.Paused	= True
 
 		End
 		

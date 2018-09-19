@@ -194,25 +194,25 @@ Class PortalCollider Extends Behaviour
 		Method OnStart () Override
 
 			' Add physics bodies and colliders...
-			
-			collider = Entity.AddComponent <CylinderCollider> ()
 
-				collider.Radius		= radius
+			Local collider:CylinderCollider	= Entity.AddComponent <CylinderCollider> ()
+
+				collider.Radius				= radius
 	
-			body = Entity.AddComponent <RigidBody> ()
+			Local body:RigidBody			= Entity.AddComponent <RigidBody> ()
 	
-				body.Mass			= 0.0
+				body.Mass					= 0.0
 			
-				body.CollisionMask	= COLL_PORTAL
-				body.CollisionGroup	= PORTAL_COLLIDES_WITH
+				body.CollisionMask			= COLL_PORTAL
+				body.CollisionGroup			= PORTAL_COLLIDES_WITH
 	
 				body.btBody.setCollisionFlags (bullet.btCollisionObject.CF_NO_CONTACT_RESPONSE)
 	
-			body.Collided += Lambda (other_body:RigidBody)
-				
-				If Game.Player.CurrentOrb
-					Triggered = True
-				Endif
+				body.Collided += Lambda (other_body:RigidBody)
+					
+					If Game.Player.CurrentOrb
+						Triggered = True
+					Endif
 				
 			End
 
@@ -303,13 +303,18 @@ Class PortalCollider Extends Behaviour
 			
 		End
 
+		Property SpaceGemModel:Model ()
+			Return Cast <Model> (Entity)
+		End
+		
+		Property PortalColliderBody:RigidBody ()
+			Return Entity.GetComponent <RigidBody> ()
+		End
+	
 	Private
 
 		Field portal:Portal
 	
-		Field body:RigidBody				' Bullet physics body
-		Field collider:CylinderCollider		' Bullet physics collider
-		
 		Field radius:Float
 		Field triggered:Bool
 

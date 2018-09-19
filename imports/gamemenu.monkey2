@@ -9,7 +9,7 @@ Class GameMenu
 
 		' TEMP
 		
-		If Keyboard.KeyHit (Key.R) Or (Game.Player.Joy And Game.Player.Joy.Attached And Game.Player.Joy.ButtonPressed (7))
+		If Keyboard.KeyHit (Key.R) Or (Game.Player.TMP_Joy And Game.Player.TMP_Joy.Attached And Game.Player.TMP_Joy.ButtonPressed (7))
 			Game.TMP_ResetLevel ()
 		Endif
 

@@ -52,8 +52,14 @@ Class GameController
 				Game.MainCamera.Update	(Game.Player)		' Update camera, follow player
 				
 				' Reset after HUD has faded out...
+				
+				Local rate:Float = 0.01
+				
+				Game.Player.FadeAudio (rate)
+				Game.Player.CurrentOrb?.FadeAudio (rate)
+				Game.CurrentLevel.Dummy?.FadeAudio (rate)
 
-				If HUD.FadeOut (0.01) >= 1.0
+				If HUD.FadeOut (rate) >= 1.0
 					If Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED
 						Game.SpawnNextLevel ()
 					Endif

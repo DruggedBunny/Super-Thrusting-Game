@@ -1,4 +1,18 @@
 
+Function TimePad:String (number:String)
+	
+	' 0 -> 00
+	' 1 -> 01
+	' etc...
+	
+	While number.Length < 2
+		number = "0" + number
+	Wend
+	
+	Return number
+	
+End
+
 Function IsPow2:Long (value:Long)
 	Return Not (value & (value - 1)) ' Caveat: 0 is not Pow2! https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
 End

@@ -150,6 +150,10 @@ Class HUD
 				ShadowText (canvas, "Entities in scene: " + CountEntities (), 20.0, 340.0)
 				
 				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
+
+				Local current_time:String = TimePad (Time.Now ().Hours) + ":" + TimePad (Time.Now ().Minutes) + ":" + TimePad (Time.Now ().Seconds)
+
+				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
 	
 '				Local nearest:Float = 1000000.0
 '				

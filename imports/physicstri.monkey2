@@ -9,14 +9,14 @@ Class PhysicsTri Extends Behaviour
 			
 				For Local loop:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * TRI_SKIPPER ' Set in consts.monkey2
 					
-					Local model:Model			= ModelFromTriangle (model, loop, mat)
+					Local model:Model		= ModelFromTriangle (model, loop, mat)
 					
-						model.Parent			= Null
-						model.CastsShadow		= False
+						model.Parent		= Null
+						model.CastsShadow	= False
 	
-					Local ptri:PhysicsTri		= New PhysicsTri (model)
+					Local ptri:PhysicsTri	= New PhysicsTri (model)
 
-						ptri.src_body			= body
+						ptri.src_body		= body
 
 				Next
 			
@@ -63,7 +63,6 @@ Class PhysicsTri Extends Behaviour
 			' Add velocity...
 
 			Local with_vel:Vec3f		= src_body.LinearVelocity + core_vec * Rnd (1.0, 5.0)
-			' Boom!
 			
 			body.ApplyImpulse (with_vel)
 			
@@ -76,20 +75,6 @@ Class PhysicsTri Extends Behaviour
 	
 		End
 		
-'		Function Clear ()
-'	
-'			If PhysicsTri.PhysicsTriList
-'	
-'				For Local pt:PhysicsTri = Eachin PhysicsTri.PhysicsTriList
-'					pt.Destroy ()
-'				Next
-'	
-'				PhysicsTri.PhysicsTriList.Clear ()
-'	
-'			Endif
-'	
-'		End
-'	
 		Method OnUpdate (elapsed:Float) Override
 		
 			Entity.Alpha = Entity.Alpha * 0.9875

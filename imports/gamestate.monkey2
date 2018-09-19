@@ -25,7 +25,7 @@ Class GameState
 				StateName [States.PlayStarting]	= "Play starting"
 				StateName [States.PlayEnding]	= "Play ending"
 				StateName [States.LevelTween]	= "Level tweening"
-				StateName [States.StartMenu]		= "Start menu"
+				StateName [States.StartMenu]	= "Start menu"
 				StateName [States.InGameMenu]	= "In-game menu"
 				StateName [States.Exiting]		= "Exiting game"
 			
@@ -40,7 +40,7 @@ Class GameState
 		Function SetCurrentState (new_state:States)
 			If GameState.CurrentState <> States.Exiting
 				GameState.CurrentState = new_state
-				Print "State: " + StateName [GameState.CurrentState]
+				'Print "State: " + StateName [GameState.CurrentState]
 			Endif
 		End
 		

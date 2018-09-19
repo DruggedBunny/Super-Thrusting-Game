@@ -3,22 +3,32 @@ Class Rocket
 
 	Public
 		
-		Property Damage:Float ()
-			Return damage
-			Setter (new_damage:Float)
-				damage = new_damage
+		Function InitSound ()
+
+			BoostSound	= Sound.Load (ASSET_PREFIX_AUDIO + "boost.ogg")
+			AlertSound	= Sound.Load (ASSET_PREFIX_AUDIO + "alert.ogg")
+			BoomSound	= Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
+
+			If Not BoostSound	Then Abort ("Rocket: Failed to load boost audio!")
+			If Not AlertSound	Then Abort ("Rocket: Failed to load alert audio!")
+			If Not BoomSound	Then Abort ("Rocket: Failed to load boom audio!")
+
+		End
+		
+		Method FadeAudio (rate:Float)
+		
+			boost_channel.Volume	= boost_channel.Volume	- rate
+			alert_channel.Volume	= alert_channel.Volume	- rate
+			boom_channel.Volume		= boom_channel.Volume	- rate
+
+			If boost_channel.Volume	< 0.0 Then boost_channel.Volume	= 0.0
+			If alert_channel.Volume	< 0.0 Then alert_channel.Volume	= 0.0
+			If boom_channel.Volume	< 0.0 Then boom_channel.Volume	= 0.0
+
 		End
 		
 		Property Alive:Bool ()
 			Return Not exploded
-		End
-		
-		Property RocketBody:RigidBody ()
-			Return body
-		End
-		
-		Property RocketModel:Model ()
-			Return model
 		End
 		
 		Property Fuel:Float ()
@@ -27,99 +37,67 @@ Class Rocket
 				fuel = amount
 		End
 		
-		Property Joy:Joystick ()
-			Return joy
-		End
-		
 		Property CurrentOrb:Orb ()
 			Return orb
 			Setter (torb:Orb)
 				orb = torb
 		End
 
-		Const BOOM_VOLUME_MAX:Float = 0.5
-		Const BOOST_VOLUME_MAX:Float = 0.5
-		Const ALERT_VOLUME_MAX:Float = 0.05
+		Property RocketBody:RigidBody ()
+			Return body
+		End
+		
+		Property RocketModel:Model ()
+			Return model
+		End
 		
 		Method New (x:Float, y:Float, z:Float, collision_radius:Float = 1.2, collision_length:Float = 4.0, collision_mass:Float = 10.0)
 
-			Local mat:PbrMaterial = New PbrMaterial (Color.Silver)
-			mat.MetalnessFactor = 0.85
-			
-			boost = Sound.Load (ASSET_PREFIX_AUDIO + "boost.ogg")
-
-			If Not boost Then Abort ("Rocket: Failed to load boost audio!")
-
-			boost_channel = boost.Play (True)
-			boost_channel.Volume = 0.0
-			
-			alert = Sound.Load (ASSET_PREFIX_AUDIO + "alert.ogg")
-
-			If Not alert Then Abort ("Rocket: Failed to load alert audio!")
-
-			alert_channel = alert.Play (True)
-			alert_channel.Volume = 0.0
-			
-			boom = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
-
-			If Not boom Then Abort ("Rocket: Failed to load boom audio!")
-
-			boom_channel = boom.Play (False)
-			boom_channel.Paused = True
-			boom_channel.Volume = BOOM_VOLUME_MAX
+			model						= Model.Load (ASSET_PREFIX_MODEL + "Rocket_Ship_01.gltf")
 	
-	' Can't detect when leaving pad!
+				If Not model Then Abort ("Rocket: Failed to load rocket model!")
+			
+				model.Name				= "Rocket [spawned at " + Time.Now () + "]"
+			
+				Local yoff:Float = 0.15
 	
-	'		refuel = Sound.Load ("asset::refuel.ogg")
-	'		refuel_channel = refuel.Play (True)
-			'refuel_channel.Rate = refuel_channel.Rate * 0.85
-	'		refuel_channel.Volume = 0.0
+				model.Mesh.FitVertices (New Boxf (-collision_radius, -collision_length * 0.5 - yoff, -collision_radius, collision_radius, collision_length * 0.5 - yoff, collision_radius), False)
 			
-			model = Model.Load (ASSET_PREFIX_MODEL + "Rocket_Ship_01.gltf")
-	
-			If Not model Then Abort ("Rocket: Failed to load rocket model!")
+			Local mat:PbrMaterial		= New PbrMaterial (Color.Silver)
+
+				mat.MetalnessFactor		= 0.85
 			
-			model.Name = "Rocket [spawned at " + Time.Now () + "]"
-			
-			For Local mat:Material = Eachin model.Materials
-				Cast <PbrMaterial> (mat).MetalnessFactor = 1.0
-			Next
+				For Local mat:Material = Eachin model.Materials
+					Cast <PbrMaterial> (mat).MetalnessFactor = 1.0
+				Next
 			
 	'		cone vis:
 			
 			'Local temp:Model = Model.CreateCone (radius, length, Axis.Y, 32, mat, model)
 			'temp.Alpha = 0.25
 			
-			Local yoff:Float = 0.15
-			model.Mesh.FitVertices (New Boxf (-collision_radius, -collision_length * 0.5 - yoff, -collision_radius, collision_radius, collision_length * 0.5 - yoff, collision_radius), False)
-			
 			' Important: Position BEFORE adding collider/rigid body!
 			
-			model.Move (x, y + collision_length * 0.7, z)
+				model.Move (x, y + collision_length * 0.7, z)
 	
 			' Add collider shape and rigid body...
 			
 			collider			= model.AddComponent <ConeCollider> ()
-			collider.Radius		= collision_radius
-			collider.Length		= collision_length
+		
+				collider.Radius		= collision_radius
+				collider.Length		= collision_length
 	
 			body				= model.AddComponent <RigidBody> ()
-	 		body.Mass			= collision_mass
-			body.Restitution	= 0.1
-			
-			body.AngularDamping	= 0.95
-			body.LinearDamping	= 0.135
-			
-			body.CollisionMask	= COLL_ROCKET
-			body.CollisionGroup	= ROCKET_COLLIDES_WITH
+
+		 		body.Mass			= collision_mass
+				body.Restitution	= 0.1
+				
+				body.AngularDamping	= 0.95
+				body.LinearDamping	= 0.135
+				
+				body.CollisionMask	= COLL_ROCKET
+				body.CollisionGroup	= ROCKET_COLLIDES_WITH
 	
-			vec_forward			= New Vec3f (torque_factor, 0.0, 0.0)
-			vec_backward		= New Vec3f (-torque_factor, 0.0, 0.0)
-			vec_left			= New Vec3f (0.0, 0.0, torque_factor)
-			vec_right			= New Vec3f (0.0, 0.0, -torque_factor)
-	
-			explosion_triggered = False
-			
 			body.Collided += Lambda (other_body:RigidBody) ' Other colliding body
 				
 				Select other_body.CollisionMask
@@ -130,10 +108,10 @@ Class Rocket
 						
 						' TODO: Angle!
 						
-						If Not landed
-							landed = True ' Can't detect when no longer colliding!
+'						If Not landed
+'							landed = True ' Can't detect when no longer colliding!
 							' Want to play landing 'thump' once
-						Endif
+'						Endif
 					
 						fuel = fuel + 0.25
 						
@@ -180,15 +158,30 @@ Class Rocket
 				
 			End
 		
-			fuel	= 100.0
-			damage	= 0.0
+			fuel					= 100.0
+			damage					= 0.0
+			
+			vec_forward				= New Vec3f (torque_factor, 0.0, 0.0)
+			vec_backward			= New Vec3f (-torque_factor, 0.0, 0.0)
+			vec_left				= New Vec3f (0.0, 0.0, torque_factor)
+			vec_right				= New Vec3f (0.0, 0.0, -torque_factor)
+	
+			boost_channel			= BoostSound.Play (True)
+			alert_channel			= AlertSound.Play (True)
+			boom_channel			= BoomSound.Play (False)
+
+			boost_channel.Volume	= 0.0
+			alert_channel.Volume	= 0.0
+			boom_channel.Volume		= BOOM_VOLUME_MAX
+
+			boom_channel.Paused		= True
 			
 		End
 	
 		' Called from Orb.DetachFromRocket...
 		
 		Method NullifyOrb ()
-			CurrentOrb	= Null
+			CurrentOrb = Null
 		End
 		
 		Method Explode ()
@@ -199,14 +192,14 @@ Class Rocket
 			
 			PhysicsTri.Explode (model, body)
 			
-			model.Visible = False
+			model.Visible			= False
 			
-			fuel = 0.0
+			fuel					= 0.0
 	
 			CurrentOrb?.DetachFromRocket ()
-			CurrentOrb = Null
+			CurrentOrb				= Null
 			
-			exploded = True
+			exploded				= True
 			
 		End
 		
@@ -251,9 +244,9 @@ Class Rocket
 					If fuel < 25.0 Then alert_channel.Volume = ALERT_VOLUME_MAX
 					
 					If fuel < 0.0
-						fuel = 0.0
-						boost_channel.Volume = 0.0
-						boosting = False
+						fuel					= 0.0
+						boost_channel.Volume	= 0.0
+						boosting				= False
 					Endif
 					
 				Endif
@@ -270,43 +263,43 @@ Class Rocket
 					
 					If joy_enabled
 	
-			'			Print joy.GetAxis (0) ' Left stick left/right
+						'Print joy.GetAxis (0) ' Left stick left/right
 						'Print joy.GetAxis (1) ' Left stick up/down (-1 = back, +1 = forward)
 						
-						Local jpitch:Float = joy.GetAxis (1)
+						Local jpitch:Float		= joy.GetAxis (1)
 						
 						' Pitch scaling:
 						
 						' Raw input, jpitch, is -1.0 to 1.0...
 						
-						' Want to multiply lower end of 0.0 to [+/-] 1.0 by 0.5, upper end by 1.2...
+						' Want to multiply lower end of 0.0 to [+/-] 1.0 by 0.5 and upper end by 1.2...
 						
 						' Multipliers:
 						
-						Local TEMP_lower:Float = 0.5
-						Local TEMP_upper:Float = 1.2
+						Local TEMP_lower:Float	= 0.5
+						Local TEMP_upper:Float	= 1.2
 						
-						Local tpitch:Float = Abs (jpitch)
+						Local tpitch:Float		= Abs (jpitch)
 						
 						If jpitch > 0.05 Then PitchBack (Game.MainCamera, jpitch * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						If jpitch < -0.05 Then PitchForward (Game.MainCamera, Abs (jpitch) * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						
-						Local jlr:Float = joy.GetAxis (0)
-						Local tlr:Float = Abs (jpitch)
+						Local jlr:Float			= joy.GetAxis (0)
+						Local tlr:Float			= Abs (jpitch)
 						
 						If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 
 						' Boost...
 						
-						Local jyraw:Float = joy.GetAxis (5)
-						Local jy:Float = TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
+						Local jyraw:Float		= joy.GetAxis (5)
+						Local jy:Float			= TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
 						
 						' The line below multiplies 0.0 - 1.0 by the range 0.5 - 1.0,
 						' meaning that, at the lower end, input values are halved, yet
 						' remain full at the upper end. Finer control at the lower end!
 						
-						jy = jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
+						jy						= jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
 						
 						If boost_channel.Volume < jyraw * BOOST_VOLUME_MAX
 							boost_channel.Volume = jyraw * BOOST_VOLUME_MAX
@@ -324,9 +317,9 @@ Class Rocket
 							If fuel < 25.0 Then alert_channel.Volume = ALERT_VOLUME_MAX
 							
 							If fuel < 0.0
-								fuel = 0.0
-								boost_channel.Volume = 0.0
-								boosting = False
+								fuel					= 0.0
+								boost_channel.Volume	= 0.0
+								boosting				= False
 							Endif
 							
 						Endif
@@ -362,25 +355,33 @@ Class Rocket
 			alert_channel.Stop ()
 			boom_channel.Stop ()
 			
-			boost_channel = Null
-			alert_channel = Null
-			boom_channel = Null
-
 		End
 	
 	Private
 	
-		Const MPG:Float = 0.035 ' Fuel usage rate
+		Const MPG:Float					= 0.035 ' Fuel usage rate
 		
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
-		Const ASSET_PREFIX_MODEL:String = "asset::models/common/"
+		Const BOOM_VOLUME_MAX:Float		= 0.5
+		Const BOOST_VOLUME_MAX:Float	= 0.5
+		Const ALERT_VOLUME_MAX:Float	= 0.05
+		
+		Const ASSET_PREFIX_AUDIO:String	= "asset::audio/common/"
+		Const ASSET_PREFIX_MODEL:String	= "asset::models/common/"
 	
+		Field boost_channel:Channel
+		Field alert_channel:Channel
+		Field boom_channel:Channel
+		
+		Global BoostSound:Sound
+		Global AlertSound:Sound
+		Global BoomSound:Sound
+
 		Field model:Model				' mojo3d Model
 		Field collider:ConeCollider		' Bullet physics collider
 		Field body:RigidBody			' Bullet physics body
 	
-		Field boost_factor:Float	= 150.0'0.25
-		Field torque_factor:Float	= 150.0
+		Field boost_factor:Float		= 150.0
+		Field torque_factor:Float		= 150.0
 	
 		Field vec_forward:Vec3f
 		Field vec_backward:Vec3f
@@ -388,36 +389,16 @@ Class Rocket
 		Field vec_right:Vec3f
 	
 		Field last_vel:Vec3f
-		Field explosion_triggered:Bool
-		
-		' Make Global to load once?
-		
-		Field boost:Sound
-		Field boost_channel:Channel
-		
-		Field alert:Sound
-		Field alert_channel:Channel
-		
-		Field boom:Sound
-		Field boom_channel:Channel
-		
-		Field refuel:Sound
-		Field refuel_channel:Channel
-		
-	'	Field booster:Light
 		
 		Field fuel:Float
-		Field exploded:Bool = False
+		Field exploded:Bool	= False
 
 		Field damage:Float
-				
-		Field landed:Bool = False
-	
+		
 		Field joy:Joystick
 		Field joy_enabled:Bool
 	
 		Field orb:Orb
-		Field orb_toggle:Bool	' TEMP
 	
 		Method Boost:Void (force_x:Float = 0.0, force_y:Float = 0.0, force_z:Float = 0.0)
 			body.ApplyForce (model.Basis * New Vec3f (force_x, force_y, force_z))
@@ -439,4 +420,14 @@ Class Rocket
 			body.ApplyTorque (camera.Camera3D.Basis * vec_backward * multi)
 		End
 
+		Property Damage:Float ()
+			Return damage
+			Setter (new_damage:Float)
+				damage = new_damage
+		End
+		
+		Property TMP_Joy:Joystick ()
+			Return joy
+		End
+		
 End

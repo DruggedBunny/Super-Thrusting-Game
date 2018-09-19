@@ -25,9 +25,7 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 	
-	TODO ("Convert all physics entities to Behaviors: Portal DONE (woo), SpaceGem, PhysicsTris, maybe Rocket? DummyOrb too simple?")
-	TODO ("Fix SpaceGem retardity! Create model in SpaceGem.New!")
-	TODO ("Silence channels on level completion")
+	TODO ("Convert remaining physics entities to Behaviors; remaining: Rocket, DummyOrb (too simple?)")
 	TODO ("Move Game.State into GameController")
 	TODO ("Generate misc hit sounds for terrain bumps")
 	

@@ -50,6 +50,14 @@ Class GameWindow Extends Window
 		Method OnCreateWindow () Override
 	
 			' ----------------------------------------------------------------
+			' Pre-load sounds...
+			' ----------------------------------------------------------------
+
+			Orb.InitSound			()
+			DummyOrb.InitSound		()
+			Rocket.InitSound		()
+			
+			' ----------------------------------------------------------------
 			' Terrain, level and scene setup...
 			' ----------------------------------------------------------------
 			
@@ -84,11 +92,7 @@ Class GameWindow Extends Window
 			
 			' TODO: Not quite working, shows non-"randomly-generated level" text!
 			
-			If CurrentLevel.GetLevelName () = "randomly-generated level"
-				Title				= AppName + " Playing randomly-generated level (seed value " + terrain_seed + ")..."
-			Else
-				Title				= AppName + " Playing level " + Quoted (CurrentLevel.GetLevelName ()) + "..."
-			Endif
+			SetWindowTitle ()
 			
 			' ----------------------------------------------------------------
 			' Hide mouse pointer...
@@ -103,13 +107,6 @@ Class GameWindow Extends Window
 			HUD.Init ()
 
 			' ----------------------------------------------------------------
-			' Special case -- orb sound pre-loaded...
-			' ----------------------------------------------------------------
-
-			Orb.InitOrbSound ()				' Preload sound as Orb is spawned on the fly in-game
-			DummyOrb.InitDummyOrbSound ()
-
-			' ----------------------------------------------------------------
 			' Init gameloop...
 			' ----------------------------------------------------------------
 
@@ -122,7 +119,17 @@ Class GameWindow Extends Window
 			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
 			
 		End
-	
+
+		Method SetWindowTitle ()
+		
+			If CurrentLevel.LevelName = ""
+				Title = AppName + " Playing randomly-generated level (seed value " + terrain_seed + ")..."
+			Else
+				Title = AppName + " Playing level " + Quoted (CurrentLevel.LevelName) + "..."
+			Endif
+
+		End
+		
 		Method OnRender (canvas:Canvas) Override
 		
 			' ----------------------------------------------------------------
@@ -224,8 +231,8 @@ Class GameWindow Extends Window
 						
 			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, terrain_side)
 			
-			Title = AppName + " Playing level " + Quoted (CurrentLevel.GetLevelName ())
-
+			SetWindowTitle ()
+			
 			GameState.SetCurrentState (States.PlayStarting)
 
 		End
