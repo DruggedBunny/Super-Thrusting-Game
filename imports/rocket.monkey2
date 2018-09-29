@@ -281,6 +281,7 @@ Class Rocket
 						' Boost...
 						
 						Local jyraw:Float		= joy.GetAxis (5)
+						
 						Local jy:Float			= TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
 						
 						' The line below multiplies 0.0 - 1.0 by the range 0.5 - 1.0,

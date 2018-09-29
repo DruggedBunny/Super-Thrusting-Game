@@ -9,6 +9,7 @@ Enum States
 	InGameMenu,		' In-game menu options
 	Exiting,		' Exiting game
 	Paused			' Paused
+	
 End
 
 Class GameState

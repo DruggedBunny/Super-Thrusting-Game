@@ -27,6 +27,8 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 	
+	TODO ("LIKELY MOJO BUG: Deactivating window and releasing joystick, then activating window, acts as if joystick still held")
+	
 	TODO ("Convert remaining physics entities to Behaviours; remaining: Rocket, DummyOrb (too simple?)")
 	TODO ("Move Game.State into GameController")
 	TODO ("Generate misc hit sounds for terrain bumps")
@@ -50,7 +52,7 @@ Function Main ()
 	Local width:Int		= 1024
 	Local height:Int	= 768
 	
-	Run3D (AppName, width, height, WindowFlags.Center)
-	'Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
+'	Run3D (AppName, width, height, WindowFlags.Center)
+	Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
 	
 End

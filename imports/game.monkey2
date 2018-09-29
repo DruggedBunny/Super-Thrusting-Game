@@ -127,6 +127,19 @@ Class GameWindow Extends Window
 
 			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
 
+			last_state				= game_state.GetCurrentState ()
+
+			App.Activated			+=	Lambda ()
+											Print "Activated"
+											GameState.SetCurrentState (last_state)
+										End
+		
+			App.Deactivated			+=	Lambda ()
+											Print "Deactivated"
+											last_state = GameState.GetCurrentState ()
+											GameState.SetCurrentState (States.Paused)
+										End
+			
 			' Mixer debug...
 			
 			MainMixer.PrintFaders ()
@@ -305,5 +318,7 @@ Class GameWindow Extends Window
 		Field terrain_side:Float
 		
 		Field renderer:VRRenderer ' VR renderer
+		
+		Field last_state:States
 		
 End
