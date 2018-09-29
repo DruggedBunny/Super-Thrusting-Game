@@ -33,7 +33,7 @@ Class Portal
 			If upper_collider.Triggered
 
 				If lower_collider.Triggered
-					flythrough_channel.Paused = False
+					flythrough_fader.Paused = False
 					Return True
 				Else
 					upper_collider.Triggered = False
@@ -47,9 +47,9 @@ Class Portal
 		
 		Method New (x:Float, y:Float, z:Float, outer:Float = 50.0, inner:Float = 5.0)
 		
-			flythrough_channel			= FlythroughSound.Play (False)
-			flythrough_channel.Paused	= True
-			flythrough_channel.Volume	= FLYTHROUGH_VOLUME_MAX
+			flythrough_fader			= Game.MainMixer.AddFader ("Portal: Flythrough", FlythroughSound.Play (False))
+			flythrough_fader.Paused		= True
+			flythrough_fader.Level		= FLYTHROUGH_VOLUME_MAX
 	
 			' Portal ring (model only -- no physics)...
 			
@@ -156,8 +156,8 @@ Class Portal
 		
 		Global FlythroughSound:Sound
 		
-		Field flythrough_channel:Channel
-			
+		Field flythrough_fader:Fader
+
 		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
 		Const FLYTHROUGH_VOLUME_MAX:Float = 0.33
 	
@@ -235,76 +235,80 @@ Class PortalCollider Extends Behaviour
 		
 		Method OnUpdate (elapsed:Float) Override
 			
-			Select portal.PortalState
-			
-				Case Portal.PORTAL_STATE_OPENING
-					
-					If portal.Alpha < 1.0
-					
-						' Increase alpha and scale...
+			If Game.GameState.GetCurrentState () <> States.Paused
+
+				Select portal.PortalState
+				
+					Case Portal.PORTAL_STATE_OPENING
 						
-						portal.Alpha = portal.Alpha + 0.002
-						portal.Ring.Scale = New Vec3f (portal.Alpha, portal.Alpha, portal.Alpha)
+						If portal.Alpha < 1.0
 						
-						' Cap alpha/scale at 1.0 and switch to open state...
-						
-						If portal.Alpha >= 1.0
-						
-							portal.Alpha = 1.0
-						
-							Cast <PbrMaterial> (portal.Ring?.Material)?.ColorFactor = Color.White
-							portal.Ring.Scale = New Vec3f (1.0, 1.0, 1.0)
-						
-							portal.PortalState = Portal.PORTAL_STATE_OPEN
-	
-							Return
+							' Increase alpha and scale...
+							
+							portal.Alpha = portal.Alpha + 0.002
+							portal.Ring.Scale = New Vec3f (portal.Alpha, portal.Alpha, portal.Alpha)
+							
+							' Cap alpha/scale at 1.0 and switch to open state...
+							
+							If portal.Alpha >= 1.0
+							
+								portal.Alpha = 1.0
+							
+								Cast <PbrMaterial> (portal.Ring?.Material)?.ColorFactor = Color.White
+								portal.Ring.Scale = New Vec3f (1.0, 1.0, 1.0)
+							
+								portal.PortalState = Portal.PORTAL_STATE_OPEN
+		
+								Return
+								
+							Endif
 							
 						Endif
 						
-					Endif
+						' While opening, use random colours...
+						
+						If Sin (Millisecs ()) > 0.5
+							Cast <PbrMaterial> (portal.Ring?.Material)?.ColorFactor = Color.Rnd ()
+						Endif
+						
+						' Modulate alpha...
+						
+						portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.005)) * 15.0 + 0.5) ' Yikes
+						
+					Case Portal.PORTAL_STATE_OPEN
 					
-					' While opening, use random colours...
+						portal.Alpha = 1.0
+						portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.01)) * 15.0 + 0.5) ' Yikes
+						
+						If portal.Triggered
+							portal.PortalState = Portal.PORTAL_STATE_CLOSING
+							Game.GameState.SetCurrentState (States.LevelTween)
+						Endif
+						
+					Case Portal.PORTAL_STATE_CLOSING
 					
-					If Sin (Millisecs ()) > 0.5
-						Cast <PbrMaterial> (portal.Ring?.Material)?.ColorFactor = Color.Rnd ()
-					Endif
-					
-					' Modulate alpha...
-					
-					portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.005)) * 15.0 + 0.5) ' Yikes
-					
-				Case Portal.PORTAL_STATE_OPEN
+						' TODO: See States.LevelTween
+						
+						portal.Alpha = portal.Alpha - 0.003
+						portal.Ring?.Alpha = portal.Alpha
+						
+						If portal.Alpha < 0.01
+							portal.PortalState = Portal.PORTAL_STATE_CLOSED
+						Endif
+						
+					Case Portal.PORTAL_STATE_CLOSED
 				
-					portal.Alpha = 1.0
-					portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.01)) * 15.0 + 0.5) ' Yikes
+						portal.Alpha = 0.0
+						portal.Ring?.Alpha = portal.Alpha
 					
-					If portal.Triggered
-						portal.PortalState = Portal.PORTAL_STATE_CLOSING
-						Game.GameState.SetCurrentState (States.LevelTween)
-					Endif
+					Case Portal.PORTAL_STATE_DESTROY
 					
-				Case Portal.PORTAL_STATE_CLOSING
-				
-					' TODO: See States.LevelTween
-					
-					portal.Alpha = portal.Alpha - 0.003
-					portal.Ring?.Alpha = portal.Alpha
-					
-					If portal.Alpha < 0.01
-						portal.PortalState = Portal.PORTAL_STATE_CLOSED
-					Endif
-					
-				Case Portal.PORTAL_STATE_CLOSED
+						portal.Ring?.Destroy ()
+						Destroy ()
+						
+				End
 			
-					portal.Alpha = 0.0
-					portal.Ring?.Alpha = portal.Alpha
-				
-				Case Portal.PORTAL_STATE_DESTROY
-				
-					portal.Ring?.Destroy ()
-					Destroy ()
-					
-			End
+			Endif
 			
 		End
 

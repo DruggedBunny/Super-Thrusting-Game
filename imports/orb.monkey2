@@ -29,17 +29,17 @@ Class Orb Extends Behaviour
 
 		Function InitSound ()
 
-			Boom = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
+			BoomSound = Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
 			
-				If Not Boom Then Abort ("Orb: InitOrbSound failed to load boom audio!")
+				If Not BoomSound Then Abort ("Orb: InitOrbSound failed to load boom audio!")
 			
 		End
 
 		Method FadeAudio (rate:Float)
 		
-			boom_channel.Volume	= boom_channel.Volume - rate
+			boom_fader.Level = boom_fader.Level - rate
 
-			If boom_channel.Volume	< 0.0 Then boom_channel.Volume	= 0.0
+			If boom_fader.Level	< 0.0 Then boom_fader.Level	= 0.0
 
 		End
 		
@@ -62,17 +62,19 @@ Class Orb Extends Behaviour
 			Entity.Destroy ()
 			
 			If play_boom
-				boom_channel.Paused = False
+				boom_fader.Channel.Paused = False
 			Endif
 
-			ResetBoomAudio ()			' NB. Playing channel continues independently until done
-
+			Game.MainMixer.RemoveFader (boom_fader, True) ' True means remove only when finished playing
+			
 		End
 	
 	Private
 	
 		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
-		Const BOOM_VOLUME_MAX:Float = 0.5
+		Const BOOM_VOLUME:Float = 0.5
+		
+		Global BoomSound:Sound
 		
 		' Setup stuff for Create:Orb (), needed as OnStart can't take params...
 		
@@ -90,9 +92,8 @@ Class Orb Extends Behaviour
 	
 		Field exploded:Bool = False
 		
-		Global Boom:Sound
-		Field boom_channel:Channel
-
+		Field boom_fader:Fader
+		
 		Method New (entity:Entity)
 			
 			Super.New (entity)
@@ -188,10 +189,11 @@ Class Orb Extends Behaviour
 		
 		Method ResetBoomAudio ()
 
-			boom_channel		= Boom.Play (False)
-			boom_channel.Volume	= BOOM_VOLUME_MAX
-			boom_channel.Rate	= boom_channel.Rate * 0.75 ' Pitched slightly up from rocket boom
-			boom_channel.Paused	= True
+			boom_fader						= Game.MainMixer.AddFader ("Orb: Boom",	BoomSound.Play (False))
+			
+				boom_fader.Level			= BOOM_VOLUME
+				boom_fader.Channel.Rate 	= boom_fader.Channel.Rate * 0.75
+				boom_fader.Channel.Paused	= True
 
 		End
 		

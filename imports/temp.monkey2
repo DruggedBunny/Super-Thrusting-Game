@@ -3,6 +3,10 @@ Class Temp
 
 	Function Controls ()
 
+		If Keyboard.KeyHit (Key.F)
+			Game.MainMixer.PrintFaders ()
+		Endif
+		
 		' C to complete level...
 		
 		If Keyboard.KeyHit (Key.C)

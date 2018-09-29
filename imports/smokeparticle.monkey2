@@ -72,10 +72,14 @@ Class SmokeParticle Extends Behaviour
 		
 		Method OnUpdate (elapsed:Float) Override
 			
-			Entity.Alpha = Entity.Alpha * 0.9 ' TODO: Needs adjusting for framerate!
+			If Game.GameState.GetCurrentState () <> States.Paused
 			
-			If Entity.Alpha < 0.1
-				Entity.Destroy ()
+				Entity.Alpha = Entity.Alpha * 0.9 ' TODO: Needs adjusting for framerate!
+				
+				If Entity.Alpha < 0.1
+					Entity.Destroy ()
+				Endif
+			
 			Endif
 			
 		End

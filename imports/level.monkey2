@@ -102,11 +102,7 @@ Class Level
 			' Generate a new terrain...
 			' -----------------------------------------------------------------
 		
-			' TODO: New PhysicsTerrain should probably incorporate PhysicsTerrain.LoadTerrain...
-			
-			terrain					= New PhysicsTerrain ()
-			
-				terrain.GenerateTerrain (TerrainSeed, sides, 384, 0.5, color0, color1)
+			terrain					= New PhysicsTerrain (TerrainSeed, sides, 384, 0.5, color0, color1)
 
 			sun.PointAt (terrain.TerrainModel)
 

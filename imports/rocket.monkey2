@@ -15,18 +15,6 @@ Class Rocket
 
 		End
 		
-		Method FadeAudio (rate:Float)
-		
-			boost_channel.Volume	= boost_channel.Volume	- rate
-			alert_channel.Volume	= alert_channel.Volume	- rate
-			boom_channel.Volume		= boom_channel.Volume	- rate
-
-			If boost_channel.Volume	< 0.0 Then boost_channel.Volume	= 0.0
-			If alert_channel.Volume	< 0.0 Then alert_channel.Volume	= 0.0
-			If boom_channel.Volume	< 0.0 Then boom_channel.Volume	= 0.0
-
-		End
-		
 		Property Alive:Bool ()
 			Return Not exploded
 		End
@@ -115,13 +103,13 @@ Class Rocket
 					
 						fuel = fuel + 0.25
 						
-						'refuel_channel.Volume = 0.1
+						'refuel_channel.Level = 0.1
 						
-						If alert_channel.Volume
-							If fuel > 25.0 Then alert_channel.Volume = 0.0
+						If alert_fader.Level
+							If fuel > 25.0 Then alert_fader.Level = 0.0
 						Endif
 						
-						If fuel > 100 Then fuel = 100'; refuel_channel.Volume = 0.0
+						If fuel > 100 Then fuel = 100'; refuel_channel.Level = 0.0
 					
 					Case COLL_TERRAIN
 	
@@ -158,23 +146,23 @@ Class Rocket
 				
 			End
 		
-			fuel					= 100.0
-			damage					= 0.0
+			fuel						= 100.0
+			damage						= 0.0
 			
-			vec_forward				= New Vec3f (torque_factor, 0.0, 0.0)
-			vec_backward			= New Vec3f (-torque_factor, 0.0, 0.0)
-			vec_left				= New Vec3f (0.0, 0.0, torque_factor)
-			vec_right				= New Vec3f (0.0, 0.0, -torque_factor)
-	
-			boost_channel			= BoostSound.Play (True)
-			alert_channel			= AlertSound.Play (True)
-			boom_channel			= BoomSound.Play (False)
+			vec_forward					= New Vec3f (torque_factor, 0.0, 0.0)
+			vec_backward				= New Vec3f (-torque_factor, 0.0, 0.0)
+			vec_left					= New Vec3f (0.0, 0.0, torque_factor)
+			vec_right					= New Vec3f (0.0, 0.0, -torque_factor)
 
-			boost_channel.Volume	= 0.0
-			alert_channel.Volume	= 0.0
-			boom_channel.Volume		= BOOM_VOLUME_MAX
+			boost_fader					= Game.MainMixer.AddFader ("Rocket: Boost",	BoostSound.Play (True))
+			alert_fader					= Game.MainMixer.AddFader ("Rocket: Alert",	AlertSound.Play (True))
+			boom_fader					= Game.MainMixer.AddFader ("Rocket: Boom",	BoomSound.Play (False))
 
-			boom_channel.Paused		= True
+			boost_fader.Level			= 0.0
+			alert_fader.Level			= 0.0
+			boom_fader.Level			= BOOM_VOLUME
+
+			boom_fader.Channel.Paused	= True
 			
 		End
 	
@@ -186,9 +174,9 @@ Class Rocket
 		
 		Method Explode ()
 	
-			boost_channel.Paused	= True
-			boom_channel.Paused		= False
-			alert_channel.Paused	= True
+			boost_fader.Channel.Paused	= True
+			boom_fader.Channel.Paused	= False
+			alert_fader.Channel.Paused	= True
 			
 			PhysicsTri.Explode (model, body)
 			
@@ -204,7 +192,7 @@ Class Rocket
 		End
 		
 		Method Control ()
-	
+
 			Local boosting:Bool = False
 			
 			If fuel ' TODO: Might rearrange to allow hopeless rotating while out of fuel...
@@ -231,9 +219,9 @@ Class Rocket
 				
 					boosting = True
 					
-					If boost_channel.Volume < BOOST_VOLUME_MAX
-						boost_channel.Volume = boost_channel.Volume + 0.05
-						If boost_channel.Volume > BOOST_VOLUME_MAX Then boost_channel.Volume = BOOST_VOLUME_MAX
+					If boost_fader.Level < BOOST_VOLUME
+						boost_fader.Level = boost_fader.Level + 0.05
+						If boost_fader.Level > BOOST_VOLUME Then boost_fader.Level = BOOST_VOLUME
 					Endif
 					
 					Boost (0.0, boost_factor, 0.0)
@@ -241,11 +229,11 @@ Class Rocket
 					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (0.0, -0.3, 0.0))
 					
 					fuel = fuel - (MPG * 0.9)
-					If fuel < 25.0 Then alert_channel.Volume = ALERT_VOLUME_MAX
+					If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
 					
 					If fuel < 0.0
 						fuel					= 0.0
-						boost_channel.Volume	= 0.0
+						boost_fader.Level		= 0.0
 						boosting				= False
 					Endif
 					
@@ -301,8 +289,8 @@ Class Rocket
 						
 						jy						= jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
 						
-						If boost_channel.Volume < jyraw * BOOST_VOLUME_MAX
-							boost_channel.Volume = jyraw * BOOST_VOLUME_MAX
+						If boost_fader.Level < jyraw * BOOST_VOLUME
+							boost_fader.Level = jyraw * BOOST_VOLUME
 						Endif
 						
 						If jyraw > -1.0
@@ -314,11 +302,11 @@ Class Rocket
 							SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (0.0, -0.3 * jy, 0.0))
 							
 							fuel = fuel - (MPG * jy)
-							If fuel < 25.0 Then alert_channel.Volume = ALERT_VOLUME_MAX
+							If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
 							
 							If fuel < 0.0
 								fuel					= 0.0
-								boost_channel.Volume	= 0.0
+								boost_fader.Level		= 0.0
 								boosting				= False
 							Endif
 							
@@ -333,10 +321,10 @@ Class Rocket
 			Endif
 	
 			If Not boosting
-				boost_channel.Volume = boost_channel.Volume - 0.02
-				If boost_channel.Volume < 0.0 Then boost_channel.Volume = 0.0
+				boost_fader.Level = boost_fader.Level - 0.02
+				If boost_fader.Level < 0.0 Then boost_fader.Level = 0.0
 			Endif
-		
+
 			last_vel = body.LinearVelocity
 			
 		End
@@ -351,37 +339,37 @@ Class Rocket
 			model?.Destroy ()
 			body?.Destroy ()
 
-			boost_channel.Stop ()
-			alert_channel.Stop ()
-			boom_channel.Stop ()
-			
+			Game.MainMixer.RemoveFader (boost_fader, False)
+			Game.MainMixer.RemoveFader (alert_fader, False)
+			Game.MainMixer.RemoveFader (boom_fader, False)
+
 		End
 	
 	Private
 	
-		Const MPG:Float					= 0.035 ' Fuel usage rate
+		Const MPG:Float						= 0.035 ' Fuel usage rate
 		
-		Const BOOM_VOLUME_MAX:Float		= 0.5
-		Const BOOST_VOLUME_MAX:Float	= 0.5
-		Const ALERT_VOLUME_MAX:Float	= 0.05
+		Const BOOM_VOLUME:Float				= 0.5
+		Const BOOST_VOLUME:Float			= 0.5
+		Const ALERT_VOLUME:Float			= 0.05
 		
-		Const ASSET_PREFIX_AUDIO:String	= "asset::audio/common/"
-		Const ASSET_PREFIX_MODEL:String	= "asset::models/common/"
+		Const ASSET_PREFIX_AUDIO:String		= "asset::audio/common/"
+		Const ASSET_PREFIX_MODEL:String		= "asset::models/common/"
 	
-		Field boost_channel:Channel
-		Field alert_channel:Channel
-		Field boom_channel:Channel
-		
 		Global BoostSound:Sound
 		Global AlertSound:Sound
 		Global BoomSound:Sound
 
+		Field boost_fader:Fader
+		Field alert_fader:Fader
+		Field boom_fader:Fader
+		
 		Field model:Model				' mojo3d Model
 		Field collider:ConeCollider		' Bullet physics collider
 		Field body:RigidBody			' Bullet physics body
 	
-		Field boost_factor:Float		= 150.0
-		Field torque_factor:Float		= 150.0
+		Field boost_factor:Float			= 150.0
+		Field torque_factor:Float			= 150.0
 	
 		Field vec_forward:Vec3f
 		Field vec_backward:Vec3f

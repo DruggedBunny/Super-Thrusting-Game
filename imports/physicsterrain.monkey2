@@ -45,6 +45,10 @@ Class PhysicsTerrain ' WIP
 			Return height_box.Depth
 		End
 		
+		Method New (seed:ULong, size:Int, terrain_height:Float, roughness:Float = 0.5, color0:Color, color1:Color)
+			GenerateTerrain (seed, size, terrain_height, roughness, color0, color1)
+		End
+		
 		Method GenerateTerrain (seed:ULong, size:Int, terrain_height:Float, roughness:Float = 0.5, color0:Color, color1:Color)
 		 
 		 	terrain_data = New PlayfulJSTerrainMap (seed, size, roughness)
@@ -123,7 +127,7 @@ Class Wall
 	
 		Global BumpSound:Sound
 		
-		Field bump_channel:Channel
+		Field bump_fader:Fader
 		Field bump_channel_time:Int
 		
 		Field walls:Model []
@@ -144,8 +148,8 @@ Class Wall
 
 		' Sound for bumping into invisible walls at outer edge of terrain/upper ceiling limit...
 
-		bump_channel		= BumpSound.Play (False)
-		bump_channel.Paused	= True
+		bump_fader			= Game.MainMixer.AddFader ("PhysicsTerrain: Bump", BumpSound.Play (False))
+		bump_fader.Paused	= True
 		bump_channel_time	= Millisecs ()
 
 		' Invisible walls around terrain...
@@ -220,12 +224,12 @@ Class Wall
 			
 						' Un-pause channel (ie. play)...
 						
-						bump_channel.Paused = False
+						bump_fader.Paused = False
 					
 						' Start a new instance playing, but paused...
 						
-						bump_channel = BumpSound.Play (False)
-						bump_channel.Paused = True
+						bump_fader = Game.MainMixer.AddFader ("PhysicsTerrain: ", BumpSound.Play (False))
+						bump_fader.Paused = True
 						
 						' Reset timer...
 						
@@ -278,12 +282,12 @@ Class Wall
 		
 					' Un-pause channel (ie. play)...
 					
-					bump_channel.Paused = False
+					bump_fader.Paused = False
 				
 					' Start a new instance playing, but paused...
 					
-					bump_channel = BumpSound.Play (False)
-					bump_channel.Paused = True
+					bump_fader = Game.MainMixer.AddFader ("PhysicsTerrain: Buump", BumpSound.Play (False))
+					bump_fader.Paused = True
 					
 					' Reset timer...
 					

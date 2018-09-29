@@ -32,6 +32,7 @@
 #Import "dummyorb"
 #Import "gaussianblur"
 #Import "gamecontroller"
+#Import "mixer"
 
 #Import "temp"
 #Import "todo"

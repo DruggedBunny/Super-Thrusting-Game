@@ -54,6 +54,8 @@ Class HUD
 		
 		Function Render (canvas:Canvas)
 
+			Local font:Font = canvas.Font
+
 			If VR_MODE
 				Game.MainCamera.RenderVR (canvas)
 			Endif
@@ -154,7 +156,19 @@ Class HUD
 				Local current_time:String = PadDigit (Time.Now ().Hours, 2) + ":" + PadDigit (Time.Now ().Minutes, 2) + ":" + PadDigit (Time.Now ().Seconds, 2)
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
+
+				ShadowText (canvas, "Master volume: " + Game.MainMixer.Level, 20.0, 420.0)
 	
+				If Game.GameState.GetCurrentState () = States.Paused
+					
+					Local paused:String = "P A U S E D"
+					
+					Local tw:Float = font.TextWidth (paused)
+
+					ShadowText (canvas, paused, (canvas.Viewport.Width * 0.5) - (tw * 0.5), canvas.Viewport.Height * 0.65)
+
+				Endif
+				
 '				Local nearest:Float = 1000000.0
 '				
 '				For Local gem:SpaceGem = Eachin Game.CurrentLevel.GemList

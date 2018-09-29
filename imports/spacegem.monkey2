@@ -74,8 +74,8 @@ Class SpaceGem Extends Behaviour
 						
 						Entity.Scale				= Entity.Scale * 1.2
 		
-						collected_channel			= CollectedSound.Play (False)
-						collected_channel.Volume	= 0.25
+						collected_fader				= Game.MainMixer.AddFader ("SpaceGem: Collected", CollectedSound.Play (False))
+						collected_fader.Level		= 0.25
 						
 						collected					= True
 						
@@ -93,15 +93,19 @@ Class SpaceGem Extends Behaviour
 	
 			If collected
 	
-				Local secs_per_frame:Float = 1000.0 / App.FPS
+				If Game.GameState.GetCurrentState () <> States.Paused
 				
-				Entity.Alpha = Entity.Alpha - (THOUSANDTH * secs_per_frame) * 0.25 ' Don't get why 0.25 scales this to 1 sec!
+					Local secs_per_frame:Float = 1000.0 / App.FPS
+					
+					Entity.Alpha = Entity.Alpha - (THOUSANDTH * secs_per_frame) * 0.25 ' Don't get why 0.25 scales this to 1 sec!
+					
+					If Entity.Alpha > THOUSANDTH
+						SpaceGemBody.ApplyForce (Game.GameScene.World.Gravity * New Vec3f (1.0, -5.0, 1.0)) ' Boost upwards...
+					Else
+						Game.CurrentLevel.RemoveSpaceGem (Self)
+						Destroy ()
+					Endif
 				
-				If Entity.Alpha > THOUSANDTH
-					SpaceGemBody.ApplyForce (Game.GameScene.World.Gravity * New Vec3f (1.0, -5.0, 1.0)) ' Boost upwards...
-				Else
-					Game.CurrentLevel.RemoveSpaceGem (Self)
-					Destroy ()
 				Endif
 				
 			Endif
@@ -121,9 +125,7 @@ Class SpaceGem Extends Behaviour
 		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
 	
 		Global CollectedSound:Sound
-		
-		Field collected_channel:Channel
 	
 		Field collected:Bool = False
-		
+		Field collected_fader:Fader
 End

@@ -13,9 +13,9 @@ Class DummyOrb
 
 		Method FadeAudio (rate:Float)
 		
-			collected_channel.Volume	= collected_channel.Volume - rate
+			collected_fader.Level = collected_fader.Level - rate
 
-			If collected_channel.Volume	< 0.0 Then collected_channel.Volume	= 0.0
+			If collected_fader.Level < 0.0 Then collected_fader.Level = 0.0
 
 		End
 		
@@ -42,9 +42,9 @@ Class DummyOrb
 		
 				body.Collided += Lambda (other_body:RigidBody)
 	
-					collected_channel.Paused = False
+					collected_fader.Paused = False
 		
-					ResetCollectedAudio ()			' NB. Playing channel continues independently until done
+					ResetCollectedAudio ()
 					
 					Destroy ()
 	
@@ -80,10 +80,10 @@ Class DummyOrb
 	
 		Method ResetCollectedAudio ()
 	
-			collected_channel			= CollectedSound.Play (False)
-			collected_channel.Volume	= COLLECTED_VOLUME_MAX
-			collected_channel.Rate		= collected_channel.Rate * 0.75 ' Pitched slightly up from rocket boom
-			collected_channel.Paused	= True
+			collected_fader					= Game.MainMixer.AddFader ("DummyOrb: Collected", CollectedSound.Play (False))
+			collected_fader.Level			= COLLECTED_VOLUME_MAX
+			collected_fader.Channel.Rate	= collected_fader.Channel.Rate * 0.75 ' Pitched slightly up from rocket boom
+			collected_fader.Paused			= True
 	
 		End
 	
@@ -91,6 +91,7 @@ Class DummyOrb
 		Const COLLECTED_VOLUME_MAX:Float = 0.5
 	
 		Global CollectedSound:Sound
-		Field collected_channel:Channel
+
+		Field collected_fader:Fader
 		
 End

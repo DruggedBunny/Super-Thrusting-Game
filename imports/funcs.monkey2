@@ -17,7 +17,7 @@ Function IsPow2:Long (value:Long)
 	Return Not (value & (value - 1)) ' Caveat: 0 is not Pow2! https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
 End
 
-Function CountEntities:Int (entity:Entity = Null, depth:Int = 0)
+Function CountEntities:Int (entity:Entity = Null)
 	
 	Local scene:Scene = Scene.GetCurrent ()
 
@@ -34,7 +34,7 @@ Function CountEntities:Int (entity:Entity = Null, depth:Int = 0)
 	Local count:Int = branch.Length
 	
 	For Local e:Entity = Eachin branch
-		count = count + CountEntities (e, depth + 1)
+		count = count + CountEntities (e)
 	Next
 	
 	Return count

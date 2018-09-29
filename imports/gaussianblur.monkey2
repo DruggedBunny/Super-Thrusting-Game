@@ -127,6 +127,17 @@ Class GaussianFilter
 				Next
 		Next
 	End Method
+	
+	Method Clamp:Int (val:Int)
+		If val < 0
+			Return 0
+		ElseIf val > 255
+			Return 255
+		Else
+			Return val
+		EndIf
+	End
+
 End
 
 Class Kernel
@@ -148,13 +159,3 @@ Class Kernel
 	End Method
 
 End
-
-Function Clamp:Int (val:Int)
-If val < 0
-	Return 0
-ElseIf val > 255
-	Return 255
-Else
-	Return val
-EndIf
-End Function

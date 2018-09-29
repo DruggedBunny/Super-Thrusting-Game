@@ -2,7 +2,9 @@
 Class GameWindow Extends Window
 
 	Public
-
+		
+		Field MainMixer:Mixer
+		
 		' Temp: Used only by GameMenu.Control -> R or Gamepad Start to reset level during development!
 		
 		Method TMP_ResetLevel ()
@@ -48,7 +50,11 @@ Class GameWindow Extends Window
 		End
 	
 		Method OnCreateWindow () Override
-	
+
+			MainMixer					= New Mixer
+
+				MainMixer.Level			= 0.0
+			
 			' ----------------------------------------------------------------
 			' Pre-load sounds...
 			' ----------------------------------------------------------------
@@ -120,6 +126,10 @@ Class GameWindow Extends Window
 			' ----------------------------------------------------------------
 
 			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
+
+			' Mixer debug...
+			
+			MainMixer.PrintFaders ()
 			
 		End
 
@@ -210,6 +220,8 @@ Class GameWindow Extends Window
 
 			GameState.SetCurrentState (States.PlayStarting)
 
+			MainMixer.PrintFaders ()
+			
 		End
 		
 		' --------------------------------------------------------------------

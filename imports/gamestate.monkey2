@@ -7,8 +7,8 @@ Enum States
 	LevelTween,		' Between levels
 	StartMenu,		' Start menu options
 	InGameMenu,		' In-game menu options
-	Exiting			' Exiting game
-	
+	Exiting,		' Exiting game
+	Paused			' Paused
 End
 
 Class GameState
@@ -19,7 +19,7 @@ Class GameState
 			
 			' Gah, fuck reflection!
 			
-			StateName = New String [7]
+			StateName = New String [8]
 			
 				StateName [States.Playing]		= "Playing"
 				StateName [States.PlayStarting]	= "Play starting"
@@ -28,6 +28,7 @@ Class GameState
 				StateName [States.StartMenu]	= "Start menu"
 				StateName [States.InGameMenu]	= "In-game menu"
 				StateName [States.Exiting]		= "Exiting game"
+				StateName [States.Paused]		= "Paused"
 			
 			SetCurrentState (States.PlayStarting)
 			
