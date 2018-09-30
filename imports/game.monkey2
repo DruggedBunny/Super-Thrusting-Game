@@ -141,9 +141,8 @@ Class GameWindow Extends Window
 										End
 			
 			' Mixer debug...
-			
-			MainMixer.PrintFaders ()
-			
+			' MainMixer.PrintFaders ()
+
 		End
 
 		Method SetWindowTitle ()
@@ -282,6 +281,10 @@ Class GameWindow Extends Window
 			
 			SetAmbientLight ()
 			
+			greyscale_effect			= New GreyscaleEffect (0) ' Param = greyscale mode, 0-3.
+
+			GameScene.AddPostEffect (greyscale_effect)
+			
 			If VR_MODE
 				renderer = New VRRenderer
 			Endif
@@ -292,7 +295,7 @@ Class GameWindow Extends Window
 		' Set setup helper functions...
 		' --------------------------------------------------------------------
 
-		Method SetFogColor (clear_color:Color = Color.Sky * 0.75)
+		Method SetFogColor (clear_color:Color = Color.Sky * 0.5)
 			GameScene.ClearColor	= clear_color
 			GameScene.FogColor		= clear_color
 		End
@@ -320,5 +323,7 @@ Class GameWindow Extends Window
 		Field renderer:VRRenderer ' VR renderer
 		
 		Field last_state:States
+		
+		Field greyscale_effect:GreyscaleEffect
 		
 End

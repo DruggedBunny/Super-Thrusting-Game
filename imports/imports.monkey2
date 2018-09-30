@@ -34,6 +34,8 @@
 #Import "gamecontroller"
 #Import "mixer"
 
+#Import "shaders/greyscale.monkey2"
+
 #Import "temp"
 #Import "todo"
 

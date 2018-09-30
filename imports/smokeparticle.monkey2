@@ -1,6 +1,17 @@
 
 Class SmokeParticle Extends Behaviour
 
+#Rem
+
+		Local smat:SpriteMaterial = New SpriteMaterial ()
+		smat.ColorFactor = Color.White
+		
+		sprite = New Sprite (smat)
+		
+		sprite.Move (0, 0, 1)
+		
+#End
+
 	Public
 	
 		Function Create:SmokeParticle (rocket:Rocket, thrust:Vec3f = New Vec3f (1.0, 1.0, 1.0))
@@ -24,19 +35,45 @@ Class SmokeParticle Extends Behaviour
 			
 			Local size:Float			= 0.5
 			Local mat:PbrMaterial		= New PbrMaterial (col)
+
+			Local TMP_use_sprites:Bool = True
 			
-			' TODO: Temp model, need something better, maybe sprites...
-
-			Local model:Model			= Model.CreateBox (New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5), 2, 2, 2, mat, rocket.RocketModel)
+			Local sp:SmokeParticle
 			
-				model.Move (Rnd (-1.0, 1.0), -Rnd (2.5, 3.5), Rnd (-1.0, 1.0))
+			If Not TMP_use_sprites
+						
+				' TODO: Temp model, need something better, maybe sprites...
+	
+				Local model:Model				= Model.CreateBox (New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5), 2, 2, 2, mat, rocket.RocketModel)
+	'			
+					model.Move (Rnd (-1.0, 1.0), -Rnd (2.5, 3.5), Rnd (-1.0, 1.0))
+	'
+					model.Parent				= Null
+					model.Alpha					= 1.0
 
-				model.Parent			= Null
-				model.Alpha				= 1.0
+				sp		= New SmokeParticle (model)
 
-			Local sp:SmokeParticle		= New SmokeParticle (model)
+			Else
 
-				sp.thrust				= thrust
+				Local smat:SpriteMaterial		= New SpriteMaterial ()
+			
+					smat.ColorFactor			= col
+					
+				Local sprite:Sprite = New Sprite (smat, rocket.RocketModel)
+			
+					sprite.Move (Rnd (-1.0, 1.0), -Rnd (2.5, 3.5), Rnd (-1.0, 1.0))
+					
+					Local sprite_scale:Float	= Rnd (0.05, 0.75)
+					
+					sprite.Scale				= New Vec3f (sprite_scale, sprite_scale, sprite_scale)
+					sprite.Parent				= Null
+					sprite.Alpha				= 0.5 ' TMP
+					
+				sp								= New SmokeParticle (sprite)
+
+			Endif
+			
+			sp.thrust							= thrust
 
 			Return sp
 			
@@ -74,7 +111,7 @@ Class SmokeParticle Extends Behaviour
 			
 			If Game.GameState.GetCurrentState () <> States.Paused
 			
-				Entity.Alpha = Entity.Alpha * 0.9 ' TODO: Needs adjusting for framerate!
+				Entity.Alpha = Entity.Alpha * 0.95 ' TODO: Needs adjusting for framerate!
 				
 				If Entity.Alpha < 0.1
 					Entity.Destroy ()

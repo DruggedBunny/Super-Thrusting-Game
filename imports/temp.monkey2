@@ -3,6 +3,14 @@ Class Temp
 
 	Function Controls ()
 
+		If Keyboard.KeyHit (Key.G)
+			If GreyscaleEffect.GetMode () = 3
+				GreyscaleEffect.SetMode (0)
+			Else
+				GreyscaleEffect.SetMode (GreyscaleEffect.GetMode () + 1)
+			Endif
+		Endif
+		
 		If Keyboard.KeyHit (Key.F)
 			Game.MainMixer.PrintFaders ()
 		Endif

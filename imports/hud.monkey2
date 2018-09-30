@@ -159,6 +159,8 @@ Class HUD
 
 				ShadowText (canvas, "Master volume: " + Game.MainMixer.Level, 20.0, 420.0)
 	
+				ShadowText (canvas, "G for greyscale [mode: " + GreyscaleEffect.GreyModeName () + "]", 20.0, 460.0)
+	
 				If Game.GameState.GetCurrentState () = States.Paused
 					
 					Local paused:String = "P A U S E D"
