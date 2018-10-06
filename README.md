@@ -8,7 +8,7 @@ Randomly-generated levels, using port of PlayfulJS terrain:
 
 http://www.playfuljs.com/realistic-terrain-in-130-lines/
 
-Uses keyboard and, optionally, first Xbox controller detected. (Press A to enable.)
+Uses keyboard and, optionally, first Xbox controller detected.
 
 Collect all Space Gems [tm\*] to spawn the Atomic Orb [tm\*], which appears at your start point, before heading for the Space Portal [tm\*]. Refuel by landing on pads.
 
