@@ -117,14 +117,12 @@ Class HUD
 				
 				ShadowText (canvas, "FPS: " + App.FPS, 20.0, 20.0)
 		
-				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost", 20.0, 60.0)
+				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
 				
 				ShadowText (canvas, "R to reset!", 20.0, 80.0)
-				ShadowText (canvas, "TEMP: H to halve fuel", 20.0, 120.0)
-				ShadowText (canvas, "TEMP: C for next level (what was that, Continue??)", 20.0, 140.0)
 				
-				ShadowText (canvas, "Press A on first XBox pad to enable...", 20.0, 160.0)
-				
+				ShadowText (canvas, "TEMP: N for next level", 20.0, 140.0)
+			
 				If Game.Player.Fuel = 0.0
 					FuelTextColor = Color.Grey
 				Elseif Game.Player.Fuel > 50.0
@@ -140,15 +138,6 @@ Class HUD
 				ShadowText (canvas, "Space gems: " + Game.CurrentLevel.SpaceGemsCollected + " / " + Game.CurrentLevel.SpaceGemCount, 20.0, 200)
 				ShadowText (canvas, "Fuel: " + Int (Game.Player.Fuel), 20.0, 220.0, FuelTextColor)
 				
-				Local cam_dist:Float = Game.Player.RocketModel.Position.Distance (Game.MainCamera.Camera3D.Position)
-				
-				ShadowText (canvas, "Cam distance: " + cam_dist, 20.0, 240.0)
-				ShadowText (canvas, "Cam FOV: " + Game.MainCamera.Camera3D.FOV, 20.0, 260.0)
-				
-'				If Game.CurrentLevel.Complete ()
-'					ShadowText (canvas, "LEVEL COMPLETE!", 20.0, 300.0)
-'				Endif
-	
 				ShadowText (canvas, "Entities in scene: " + CountEntities (), 20.0, 340.0)
 				
 				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
@@ -157,9 +146,8 @@ Class HUD
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
 
-				ShadowText (canvas, "Master volume: " + Game.MainMixer.Level, 20.0, 420.0)
-	
-				ShadowText (canvas, "G for greyscale [mode: " + GreyscaleEffect.GreyModeName () + "]", 20.0, 460.0)
+				ShadowText (canvas, "G to toggle greyscale shader", 20.0, 460.0)
+				ShadowText (canvas, "S to toggle [WIP] Spectrum shader", 20.0, 480.0)
 	
 				If Game.GameState.GetCurrentState () = States.Paused
 					

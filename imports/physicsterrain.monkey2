@@ -1,6 +1,12 @@
 
 Class PhysicsTerrain ' WIP
 
+	Public
+		
+		Property TerrainData:PlayfulJSTerrainMap ()
+			Return terrain_data
+		End
+		
 	Private
 
 		Field terrain:Model

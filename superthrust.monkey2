@@ -17,7 +17,7 @@ Using mojo3d..
 Const AppName:String = "Super Thrusting Game!"
 
 Global Game:GameWindow
-		
+
 ' Hacks...
 
 Const VR_MODE:Int = False
@@ -26,6 +26,8 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
 Function InitTODOs ()
+	
+	' Done: landing pad damage, greyscale shader, speccy shader WIP
 	
 	TODO ("LIKELY MOJO BUG: Deactivating window and releasing joystick, then activating window, acts as if joystick still held")
 	

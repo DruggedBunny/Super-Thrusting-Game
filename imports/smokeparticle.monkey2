@@ -14,7 +14,7 @@ Class SmokeParticle Extends Behaviour
 
 	Public
 	
-		Function Create:SmokeParticle (rocket:Rocket, thrust:Vec3f = New Vec3f (1.0, 1.0, 1.0))
+		Function Create:SmokeParticle (rocket:Rocket, thrust:Vec3f)
 
 			Local col:Color
 			
@@ -58,17 +58,18 @@ Class SmokeParticle Extends Behaviour
 				Local smat:SpriteMaterial		= New SpriteMaterial ()
 			
 					smat.ColorFactor			= col
+					smat.AlphaDiscard			= 0.1
 					
 				Local sprite:Sprite = New Sprite (smat, rocket.RocketModel)
 			
-					sprite.Move (Rnd (-1.0, 1.0), -Rnd (2.5, 3.5), Rnd (-1.0, 1.0))
+					sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
 					
-					Local sprite_scale:Float	= Rnd (0.05, 0.75)
+					Local sprite_scale:Float	= Rnd (0.05, 0.25)
 					
 					sprite.Scale				= New Vec3f (sprite_scale, sprite_scale, sprite_scale)
 					sprite.Parent				= Null
-					sprite.Alpha				= 0.5 ' TMP
-					
+					sprite.Alpha				= 1.0 ' TMP
+
 				sp								= New SmokeParticle (sprite)
 
 			Endif
@@ -98,8 +99,8 @@ Class SmokeParticle Extends Behaviour
 				body.Restitution		= 0.5
 				body.Friction			= 0.1
 	
-				body.CollisionMask		= COLL_SMOKE
-				body.CollisionGroup		= SMOKE_COLLIDES_WITH
+				body.CollisionMask		= COLL_NOTHING'COLL_SMOKE
+				'body.CollisionGroup		= SMOKE_COLLIDES_WITH
 			
 				body.ApplyImpulse (thrust)
 			

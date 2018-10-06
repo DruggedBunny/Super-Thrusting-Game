@@ -4,6 +4,16 @@ Class Level
 	Public
 		
 		Const FIXED_GEM_COUNT:Int = 10 ' Not sure if temp...
+
+		Property CurrentGemMap:GemMap ()
+			Return gem_map
+		End
+		
+		Property GemList:List <SpaceGem> ()
+			Return gems
+			Setter (new_list:List <SpaceGem>)
+				gems = new_list
+		End
 		
 		Property LevelName:String ()
 			Return level_name
@@ -112,6 +122,8 @@ Class Level
 
 			ExitPortal = New Portal (0.0, terrain.Height + 100.0, terrain.Depth * 0.25)
 
+			gem_map = New GemMap (256.0)
+			
 		End
 
 		Method SpawnLevel:Vec3f ()
@@ -216,11 +228,14 @@ Class Level
 				
 				' Got a valid position! Create pad here...
 				
+				
 				Local pad:Pad = Pad.Create (pad_x, pad_y, pad_z)
 
 					PadList.AddLast (pad)
-					GemList.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
 					
+					GemList.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
+				
+
 			Next
 
 			' Sets number of gems initially spawned...
@@ -309,7 +324,9 @@ Class Level
 		
 		Field pads:List <Pad>
 		Field gems:List <SpaceGem>
-		
+	
+		Field gem_map:GemMap
+
 		Method SpawnDummyOrb ()
 			Dummy = New DummyOrb (SpawnX, SpawnY + 15, SpawnZ)
 		End
@@ -349,16 +366,12 @@ Class Level
 			Game.SpawnRocket (New Vec3f (x, y, z))
 		End
 
+' TODO: Why are these properties if Private??
+
 		Property PadList:List <Pad> ()
 			Return pads
 			Setter (new_list:List <Pad>)
 				pads = new_list
-		End
-		
-		Property GemList:List <SpaceGem> ()
-			Return gems
-			Setter (new_list:List <SpaceGem>)
-				gems = new_list
 		End
 		
 		Property Dummy:DummyOrb ()

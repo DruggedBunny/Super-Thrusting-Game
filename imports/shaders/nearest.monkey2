@@ -1,49 +1,12 @@
 
-Class GreyscaleEffect Extends PostEffectPlus
+Class NearestEffect Extends PostEffect
 
-	Method New (mode:Int = 0)
+	Method New ()
 		
-		shader		= Shader.Open ("grey")
+		shader		= Shader.Open ("nearest")
 		
 		uniforms	= New UniformBlock (3)
 
-		SetMode (mode)
-		
-	End
-	
-	Function SetMode (mode:Int = 1)
-
-		If mode < 1
-			mode = 3
-		Else
-			If mode > 3
-				mode = 1
-			Endif
-		Endif
-
-		GreyscaleEffect.GreyMode = mode
-
-	End
-	
-	Function GetMode:Int ()
-		Return GreyscaleEffect.GreyMode
-	End
-	
-	Function GreyModeName:String ()
-	
-		Select GetMode ()
-		
-			Case 0
-				Return "Default RGB"
-			Case 1
-				Return "Lightness"
-			Case 2
-				Return "Average"
-			Case 3
-				Return "Luminosity"
-		End
-		
-		Return "Undefined"
 		
 	End
 	
@@ -54,8 +17,6 @@ Class GreyscaleEffect Extends PostEffectPlus
 		
 		Field texture:Texture
 		Field target:RenderTarget
-	
-		Global GreyMode:Int
 	
 	Protected
 	
@@ -84,8 +45,6 @@ Class GreyscaleEffect Extends PostEffectPlus
 			uniforms.SetTexture		("SourceTexture", source)
 			uniforms.SetVec2f		("SourceTextureSize", source.Size)
 			uniforms.SetVec2f		("SourceTextureScale", Cast <Vec2f> (rviewport.Size) / Cast <Vec2f> (source.Size))
-			
-			uniforms.SetInt			("GreyMode", GetMode ())
 			
 			Device.BlendMode	= BlendMode.Opaque
 			Device.RenderPass	= 0

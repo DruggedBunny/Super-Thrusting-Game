@@ -3,7 +3,23 @@ Class GameWindow Extends Window
 
 	Public
 		
-		Field MainMixer:Mixer
+		Property PixelShaders:List <PostEffectPlus> ()
+			Return pixel_shaders
+		End
+		
+		Property GreyscaleShader:PostEffectPlus ()
+			Return grey
+		End
+
+		Property SpeccyShader:PostEffectPlus ()
+			Return speccy
+		End
+
+		Property MainMixer:Mixer ()
+			Return main_mixer
+			Setter (in_mixer:Mixer)
+				main_mixer = in_mixer
+		End
 		
 		' Temp: Used only by GameMenu.Control -> R or Gamepad Start to reset level during development!
 		
@@ -45,11 +61,22 @@ Class GameWindow Extends Window
 				player = new_player
 		End
 
+		Property TMP_Canvas:Canvas ()
+			Return tmp_canvas
+		End
+		
+		Field tmp_image:Image
+		
+		Field tmp_canvas:Canvas
+		
 		Method New (title:String, width:Int, height:Int, flags:WindowFlags)	
-			Super.New (title, width, height, flags)
+			Super.New (title, width, height, flags | WindowFlags.Resizable)
 		End
 	
 		Method OnCreateWindow () Override
+
+			tmp_image = New Image (256, 192, PixelFormat.RGBA8, TextureFlags.Dynamic)
+			tmp_canvas = New Canvas (tmp_image)
 
 			MainMixer					= New Mixer
 
@@ -187,9 +214,16 @@ Class GameWindow Extends Window
 			' ----------------------------------------------------------------
 			' Render scene to canvas...
 			' ----------------------------------------------------------------
-
+'HERE
+'			GameScene.Render (tmp_canvas)
 			GameScene.Render (canvas)
 
+			Game.CurrentLevel.CurrentGemMap.Update ()
+			
+			canvas.Alpha = 0.75
+			canvas.DrawImage (Game.CurrentLevel.CurrentGemMap.GemMapImage, canvas.Viewport.Width - Game.CurrentLevel.CurrentGemMap.GemMapImage.Width, canvas.Viewport.Height - Game.CurrentLevel.CurrentGemMap.GemMapImage.Height)
+			canvas.Alpha = 1.0
+			
 			' ----------------------------------------------------------------
 			' Overlay HUD...
 			' ----------------------------------------------------------------
@@ -232,7 +266,7 @@ Class GameWindow Extends Window
 
 			GameState.SetCurrentState (States.PlayStarting)
 
-			MainMixer.PrintFaders ()
+			'MainMixer.PrintFaders ()
 			
 		End
 		
@@ -281,9 +315,13 @@ Class GameWindow Extends Window
 			
 			SetAmbientLight ()
 			
-			greyscale_effect			= New GreyscaleEffect (0) ' Param = greyscale mode, 0-3.
+			pixel_shaders				= New List <PostEffectPlus>
+			
+			grey						= New GreyscaleEffect (3) ' Greyscale mode 3 (Luminosity)
+			speccy						= New SpeccyEffect ()
 
-			GameScene.AddPostEffect (greyscale_effect)
+			pixel_shaders.Add (grey)
+			pixel_shaders.Add (speccy)
 			
 			If VR_MODE
 				renderer = New VRRenderer
@@ -323,7 +361,12 @@ Class GameWindow Extends Window
 		Field renderer:VRRenderer ' VR renderer
 		
 		Field last_state:States
-		
-		Field greyscale_effect:GreyscaleEffect
-		
+
+		Field pixel_shaders:List <PostEffectPlus>
+
+		Field grey:GreyscaleEffect
+		Field speccy:SpeccyEffect
+
+		Field main_mixer:Mixer
+
 End

@@ -33,8 +33,12 @@
 #Import "gaussianblur"
 #Import "gamecontroller"
 #Import "mixer"
+#Import "gemmap"
 
-#Import "shaders/greyscale.monkey2"
+#Import "posteffectplus"
+
+#Import "shaders/greyscale"
+#Import "shaders/speccy"
 
 #Import "temp"
 #Import "todo"

@@ -3,6 +3,10 @@ Class SpaceGem Extends Behaviour
 
 	Public
 	
+		Property Collected:Bool ()
+			Return collected
+		End
+		
 		Function Create:SpaceGem (pad_model:Model, color:Color)
 
 			Local size:Float	= pad_model.Mesh.Bounds.Width * 0.5

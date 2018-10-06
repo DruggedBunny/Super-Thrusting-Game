@@ -4,28 +4,22 @@ Class Temp
 	Function Controls ()
 
 		If Keyboard.KeyHit (Key.G)
-			If GreyscaleEffect.GetMode () = 3
-				GreyscaleEffect.SetMode (0)
-			Else
-				GreyscaleEffect.SetMode (GreyscaleEffect.GetMode () + 1)
-			Endif
+			Game.GreyscaleShader.Toggle ()
+		Endif
+		
+		If Keyboard.KeyHit (Key.S)
+			Game.SpeccyShader.Toggle ()
 		Endif
 		
 		If Keyboard.KeyHit (Key.F)
 			Game.MainMixer.PrintFaders ()
 		Endif
 		
-		' C to complete level...
+		' N for next level
 		
-		If Keyboard.KeyHit (Key.C)
+		If Keyboard.KeyHit (Key.N)
 			Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSING
 			Game.GameState.SetCurrentState (States.LevelTween)
-		Endif
-		
-		' Halve fuel
-		
-		If Game.Player.Alive And Keyboard.KeyHit (Key.H)
-			Game.Player.Fuel = Game.Player.Fuel * 0.5
 		Endif
 
 		If Keyboard.KeyHit (Key.E)

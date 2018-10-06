@@ -110,6 +110,21 @@ Class Rocket
 						Endif
 						
 						If fuel > 100 Then fuel = 100'; refuel_channel.Level = 0.0
+
+						' Allow for slow touchdown...
+						
+						If Abs (body.LinearVelocity.Length - last_vel.Length) < 5.0
+							Return
+						Endif
+						
+						' DIE!! Well, damage, then die if too damaged...
+						
+						damage = damage + (Abs (body.LinearVelocity.Length - last_vel.Length) * 4.0)
+						
+						If damage >= 100.0
+							If Not exploded Then Explode ()
+							damage = 100.0
+						Endif
 					
 					Case COLL_TERRAIN
 	
@@ -226,8 +241,11 @@ Class Rocket
 					
 					Boost (0.0, boost_factor, 0.0)
 
-					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (0.0, -0.3, 0.0))
-					
+					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
+					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
+					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
+					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
+												
 					fuel = fuel - (MPG * 0.9)
 					If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
 					
@@ -245,76 +263,71 @@ Class Rocket
 				
 				If joy And joy.Attached
 				
-					If joy.ButtonPressed (0)
-						joy_enabled = True
-					Endif
+					'Print joy.GetAxis (0) ' Left stick left/right
+					'Print joy.GetAxis (1) ' Left stick up/down (-1 = back, +1 = forward)
 					
-					If joy_enabled
-	
-						'Print joy.GetAxis (0) ' Left stick left/right
-						'Print joy.GetAxis (1) ' Left stick up/down (-1 = back, +1 = forward)
-						
-						Local jpitch:Float		= joy.GetAxis (1)
-						
-						' Pitch scaling:
-						
-						' Raw input, jpitch, is -1.0 to 1.0...
-						
-						' Want to multiply lower end of 0.0 to [+/-] 1.0 by 0.5 and upper end by 1.2...
-						
-						' Multipliers:
-						
-						Local TEMP_lower:Float	= 0.5
-						Local TEMP_upper:Float	= 1.2
-						
-						Local tpitch:Float		= Abs (jpitch)
-						
-						If jpitch > 0.05 Then PitchBack (Game.MainCamera, jpitch * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
-						If jpitch < -0.05 Then PitchForward (Game.MainCamera, Abs (jpitch) * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
-						
-						Local jlr:Float			= joy.GetAxis (0)
-						Local tlr:Float			= Abs (jpitch)
-						
-						If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
-						If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
+					Local jpitch:Float		= joy.GetAxis (1)
+					
+					' Pitch scaling:
+					
+					' Raw input, jpitch, is -1.0 to 1.0...
+					
+					' Want to multiply lower end of 0.0 to [+/-] 1.0 by 0.5 and upper end by 1.2...
+					
+					' Multipliers:
+					
+					Local TEMP_lower:Float	= 0.5
+					Local TEMP_upper:Float	= 1.2
+					
+					Local tpitch:Float		= Abs (jpitch)
+					
+					If jpitch > 0.05 Then PitchBack (Game.MainCamera, jpitch * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
+					If jpitch < -0.05 Then PitchForward (Game.MainCamera, Abs (jpitch) * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
+					
+					Local jlr:Float			= joy.GetAxis (0)
+					Local tlr:Float			= Abs (jpitch)
+					
+					If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
+					If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 
-						' Boost...
-						
-						Local jyraw:Float		= joy.GetAxis (5)
-						
-						Local jy:Float			= TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
-						
-						' The line below multiplies 0.0 - 1.0 by the range 0.5 - 1.0,
-						' meaning that, at the lower end, input values are halved, yet
-						' remain full at the upper end. Finer control at the lower end!
-						
-						jy						= jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
-						
-						If boost_fader.Level < jyraw * BOOST_VOLUME
-							boost_fader.Level = jyraw * BOOST_VOLUME
-						Endif
-						
-						If jyraw > -1.0
-						
-							boosting = True
-							
-							Boost (0.0, boost_factor * jy, 0.0)
-							
-							SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (0.0, -0.3 * jy, 0.0))
-							
-							fuel = fuel - (MPG * jy)
-							If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
-							
-							If fuel < 0.0
-								fuel					= 0.0
-								boost_fader.Level		= 0.0
-								boosting				= False
-							Endif
-							
-						Endif
+					' Boost...
 					
+					Local jyraw:Float		= joy.GetAxis (5)
+					
+					Local jy:Float			= TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
+					
+					' The line below multiplies 0.0 - 1.0 by the range 0.5 - 1.0,
+					' meaning that, at the lower end, input values are halved, yet
+					' remain full at the upper end. Finer control at the lower end!
+					
+					jy						= jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
+					
+					If boost_fader.Level < jyraw * BOOST_VOLUME
+						boost_fader.Level = jyraw * BOOST_VOLUME
 					Endif
-				
+					
+					If jyraw > -1.0
+					
+						boosting = True
+						
+						Boost (0.0, boost_factor * jy, 0.0)
+						
+						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
+						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
+						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
+						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
+						
+						fuel = fuel - (MPG * jy)
+						If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
+						
+						If fuel < 0.0
+							fuel					= 0.0
+							boost_fader.Level		= 0.0
+							boosting				= False
+						Endif
+						
+					Endif
+					
 				Endif
 			
 			Else

@@ -7,6 +7,10 @@ Class PlayfulJSTerrainMap
 	
 	Public
 	
+		Property Size:Float ()
+			Return size
+		End
+		
 		Method New (seed:ULong, pixmap_size:Int = 1024, in_roughness:Float = 0.5)
 	 
 			Assert (IsPow2 (pixmap_size), "PlayfulJSTerrain.New (pixmap_size) must be power of 2!")
@@ -167,12 +171,14 @@ Class PlayfulJSTerrainMap
 		    
 		End
 
-	Field size:Int
-	Field max:Int
-	Field map:Float[]
-	Field roughness:Float
+	Private
 	
-	Field upper:Float
-	Field lower:Float
+		Field size:Int
+		Field max:Int
+		Field map:Float[]
+		Field roughness:Float
+		
+		Field upper:Float
+		Field lower:Float
  
 End
