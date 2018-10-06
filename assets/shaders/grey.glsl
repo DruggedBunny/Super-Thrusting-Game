@@ -36,11 +36,11 @@ void main(){
 			// Default RGB
 			
 			break;	// Disabled, jumps through to case 3
-						// (as if going through all cases and
-						// simply ending up there)
+					// (as if going through all cases and
+					// simply ending up there)
 			
-						// Enabled, always skips the rest, even
-						// though m_Mode is set to higher value!
+					// Enabled, always skips the rest, even
+					// though m_Mode is set to higher value!
 
 		case 1:
 		
