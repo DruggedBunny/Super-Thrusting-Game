@@ -370,10 +370,10 @@ Class Fader
 				Channel?.Stop ()
 				Channel = Null
 				
-				Print "Removing " + Name
+'				Print "Removing " + Name
 				ParentMixer?.RemoveFromStack (Self)
-				Print "Removed " + Name
-				Print ""
+'				Print "Removed " + Name
+'				Print ""
 				
 			Endif
 			
