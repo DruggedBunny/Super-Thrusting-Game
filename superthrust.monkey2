@@ -26,8 +26,8 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
 Function InitTODOs ()
-	
-	' Done: landing pad damage, greyscale shader, speccy shader WIP
+
+	TODO ("Re-start ModelFromTriangles for bigger chunks in rocket explosions... NOW KINDA WORKING!")
 	
 	TODO ("Should be able to implement now, thanks to recent sprite fix... HUD skull image to 3d sprite (render text to texture??) -- to appear in VR. Started but not working")
 
@@ -36,6 +36,7 @@ Function InitTODOs ()
 	TODO ("Convert remaining physics entities to Behaviours; remaining: Rocket, DummyOrb (too simple?)")
 	TODO ("Move Game.State into GameController")
 	TODO ("Generate misc hit sounds for terrain bumps")
+	TODO ("Damage visibility/explosions")
 	
 	TODO ("Have player drop orb into cup [SPACE PORTAL UNLOCK THINGY]? More involvement/skill, plus flying to portal with orb is... boring")
 	TODO ("Pads have to be spawned AFTER level created... ideally would be in Level.New...")
@@ -45,10 +46,17 @@ Function InitTODOs ()
 	TODO ("Remove over-cautious object?.thing checks")
 	TODO ("Disable one control method if other used -- per-loop (eg. can double-boost using Xbox pad AND space!)")
 	
+	TODO ("Level properties under Private: shouldn't be properties any more!")
+	
 End
 
 Function Main ()
 
+'	SetConfig ("MOJO_OPENGL_PROFILE", "compatibility")
+'	SetConfig ("MOJO3D_RENDERER", "forward")
+
+	' Done: gem map toggle
+	
 	InitTODOs ()
 	ListTODOs ()
 	

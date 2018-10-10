@@ -62,7 +62,9 @@ Class GameController
 
 				' Change to Playing state after HUD has faded-in...
 				
-				If HUD.FadeIn () = 0.0
+				Local TMP_FADE:Float = 0.1
+				
+				If HUD.FadeIn (TMP_FADE) = 0.0
 					' Just to make sure...
 					Game.MainMixer.Level = 1.0
 					GameState.SetCurrentState (States.Playing)

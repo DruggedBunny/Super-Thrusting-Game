@@ -3,6 +3,12 @@ Class GameWindow Extends Window
 
 	Public
 		
+		Property GemMapVisible:Bool ()
+			Return gem_map_visible
+			Setter (state:Bool)
+				gem_map_visible = state
+		End
+		
 		Property PixelShaders:List <PostEffectPlus> ()
 			Return pixel_shaders
 		End
@@ -170,6 +176,12 @@ Class GameWindow Extends Window
 			' Mixer debug...
 			' MainMixer.PrintFaders ()
 
+			test_img = New Image (256, 256)
+			test_cnv = New Canvas (test_img)
+
+			'Print GetConfig ("MOJO3D_RENDERER")
+			'Print opengl.glGetString (opengl.GL_VERSION)
+			
 		End
 
 		Method SetWindowTitle ()
@@ -214,15 +226,25 @@ Class GameWindow Extends Window
 			' ----------------------------------------------------------------
 			' Render scene to canvas...
 			' ----------------------------------------------------------------
-'HERE
-'			GameScene.Render (tmp_canvas)
+			
 			GameScene.Render (canvas)
 
-			Game.CurrentLevel.CurrentGemMap.Update ()
+			'Local px:Pixmap = canvas.CopyPixmap (canvas.Viewport)
+			'canvas.Resize (New Vec2i (canvas.Viewport.Width * 0.25, canvas.Viewport.Height * 0.25))
 			
-			canvas.Alpha = 0.75
-			canvas.DrawImage (Game.CurrentLevel.CurrentGemMap.GemMapImage, canvas.Viewport.Width - Game.CurrentLevel.CurrentGemMap.GemMapImage.Width, canvas.Viewport.Height - Game.CurrentLevel.CurrentGemMap.GemMapImage.Height)
-			canvas.Alpha = 1.0
+'			Local img:Image = New Image (px)
+			
+'			canvas.DrawImage (img, 0, 0, 0, 0.5, 0.5)
+			
+			If GemMapVisible
+
+				Game.CurrentLevel.CurrentGemMap.Update ()
+				
+				canvas.Alpha = 0.75
+				canvas.DrawImage (Game.CurrentLevel.CurrentGemMap.GemMapImage, canvas.Viewport.Width - Game.CurrentLevel.CurrentGemMap.GemMapImage.Width, canvas.Viewport.Height - Game.CurrentLevel.CurrentGemMap.GemMapImage.Height)
+				canvas.Alpha = 1.0
+			
+			Endif
 			
 			' ----------------------------------------------------------------
 			' Overlay HUD...
@@ -368,5 +390,10 @@ Class GameWindow Extends Window
 		Field speccy:SpeccyEffect
 
 		Field main_mixer:Mixer
+	
+		Field test_img:Image
+		Field test_cnv:Canvas
 
+		Field gem_map_visible:Bool = True
+		
 End

@@ -3,8 +3,20 @@ Class Level
 
 	Public
 		
-		Const FIXED_GEM_COUNT:Int = 10 ' Not sure if temp...
+		Const FIXED_GEM_COUNT:Int = 8 ' Not sure if temp...
 
+		Property Dummy:DummyOrb ()
+			Return dummy_orb
+			Setter (new_dummy:DummyOrb)
+				dummy_orb = new_dummy
+		End
+		
+		Property ExitPortal:Portal ()
+			Return portal
+			Setter (new_portal:Portal)
+				portal = new_portal
+		End
+		
 		Property CurrentGemMap:GemMap ()
 			Return gem_map
 		End
@@ -226,8 +238,9 @@ Class Level
 				
 				' NB. ^^ Could cause infinite loop with small enough terrain or REALLY unlucky Rnd results!
 				
-				' Got a valid position! Create pad here...
+				' EDIT: Or high enough number of gems, because of minimum distance requirement!
 				
+				' Got a valid position! Create pad here...
 				
 				Local pad:Pad = Pad.Create (pad_x, pad_y, pad_z)
 
@@ -235,7 +248,6 @@ Class Level
 					
 					GemList.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
 				
-
 			Next
 
 			' Sets number of gems initially spawned...
@@ -374,12 +386,6 @@ Class Level
 				pads = new_list
 		End
 		
-		Property Dummy:DummyOrb ()
-			Return dummy_orb
-			Setter (new_dummy:DummyOrb)
-				dummy_orb = new_dummy
-		End
-		
 		Property TerrainSeed:ULong ()
 			Return terrain_seed
 			Setter (new_seed:ULong)
@@ -390,12 +396,6 @@ Class Level
 			Return terrain
 			Setter (new_terrain:PhysicsTerrain)
 				terrain = new_terrain
-		End
-		
-		Property ExitPortal:Portal ()
-			Return portal
-			Setter (new_portal:Portal)
-				portal = new_portal
 		End
 		
 		Property SpaceGemCount:Int ()

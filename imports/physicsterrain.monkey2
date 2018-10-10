@@ -57,39 +57,39 @@ Class PhysicsTerrain ' WIP
 		
 		Method GenerateTerrain (seed:ULong, size:Int, terrain_height:Float, roughness:Float = 0.5, color0:Color, color1:Color)
 		 
-		 	terrain_data = New PlayfulJSTerrainMap (seed, size, roughness)
+		 	terrain_data						= New PlayfulJSTerrainMap (seed, size, roughness)
 		 
-				heightmap = terrain_data.RenderPixmap (10) ' Gaussian blur level - TODO: Add as parameter?
+				heightmap						= terrain_data.RenderPixmap (10) ' Gaussian blur level - TODO: Add as parameter?
 		 
 				If Not heightmap Then RuntimeError ("Failed to generate heightmap!")
 		 
 				heightmap.FlipY () ' 2D Y (increases downwards) translates to 3D Z (increases upwards)
 			
-			Local terrain_material:PbrMaterial = New PbrMaterial ()
+			Local terrain_material:PbrMaterial	= New PbrMaterial ()
 		 
-				terrain_material.ColorTexture = New Texture (CheckerPixmap (color0, color1), TextureFlags.None)
+				terrain_material.ColorTexture	= New Texture (CheckerPixmap (color0, color1), TextureFlags.None)
 			
-			height_box = New Boxf (-heightmap.Width * 0.5, 0.0, -heightmap.Height * 0.5, heightmap.Width * 0.5, terrain_height, heightmap.Height * 0.5)
-			
-			TerrainModel = Model.CreateTerrain (heightmap, height_box, New PbrMaterial (terrain_material))
+			height_box							= New Boxf (-heightmap.Width * 0.5, 0.0, -heightmap.Height * 0.5, heightmap.Width * 0.5, terrain_height, heightmap.Height * 0.5)
+
+			TerrainModel						= Model.CreateTerrain (heightmap, height_box, New PbrMaterial (terrain_material))
 			
 				If Not TerrainModel Then Abort ("PhysicsTerrain.GenerateTerrain: Failed to create terrain model!")
 			
-				TerrainModel.Name = "Terrain [spawned at " + Time.Now () + "]"
+				TerrainModel.Name				= "Terrain [spawned at " + Time.Now () + "]"
 						
-			body		= TerrainModel.AddComponent <RigidBody> ()
+			body								= TerrainModel.AddComponent <RigidBody> ()
 	
-				body.Mass = 0.0
+				body.Mass						= 0.0
 		
-				body.CollisionMask	= COLL_TERRAIN
-				body.CollisionGroup	= TERRAIN_COLLIDES_WITH
+				body.CollisionMask				= COLL_TERRAIN
+				body.CollisionGroup				= TERRAIN_COLLIDES_WITH
 
-			collider	= TerrainModel.AddComponent <TerrainCollider> ()
+			collider							= TerrainModel.AddComponent <TerrainCollider> ()
 
-				collider.Heightmap	= heightmap
-				collider.Bounds		= height_box
+				collider.Heightmap				= heightmap
+				collider.Bounds					= height_box
 
-			wall = New Wall (height_box)
+			wall								= New Wall (height_box)
 		 
 		End
 		

@@ -24,7 +24,7 @@ Class SpeccyEffect Extends PostEffectPlus
 			Device.BindUniformBlock (uniforms)
 	
 			uniforms.SetTexture	("SourceTexture",		rtexture)
-'			uniforms.SetVec2f	("SourceTextureSize",	rtexture.Size)
+			uniforms.SetVec2f	("SourceTextureSize",	rtexture.Size)
 			uniforms.SetVec2f	("SourceTextureScale",	Cast <Vec2f> (rviewport.Size) / Cast <Vec2f> (rtexture.Size))
 			
 			Device.BlendMode			= BlendMode.Opaque

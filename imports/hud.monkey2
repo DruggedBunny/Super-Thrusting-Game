@@ -149,6 +149,8 @@ Class HUD
 				ShadowText (canvas, "G to toggle greyscale shader", 20.0, 460.0)
 				ShadowText (canvas, "S to toggle [WIP] Spectrum shader", 20.0, 480.0)
 	
+				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 540.0)
+
 				If Game.GameState.GetCurrentState () = States.Paused
 					
 					Local paused:String = "P A U S E D"

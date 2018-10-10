@@ -3,6 +3,10 @@ Class DummyOrb
 
 	Public
 	
+		Property DummyOrbModel:Model ()
+			Return model
+		End
+		
 		Function InitSound ()
 	
 			CollectedSound = Sound.Load (ASSET_PREFIX_AUDIO + "orb_collected.ogg")

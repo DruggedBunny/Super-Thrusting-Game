@@ -3,13 +3,32 @@ Class PhysicsTri Extends Behaviour
 
 	Public
 
-		Function Explode (model:Model, body:RigidBody)
+		Function Explode (model:Model, body:RigidBody, chunk:UInt = 0)
 
+			'Print "mats: " + model.Mesh.NumMaterials
 			For Local mat:Int = 0 Until model.Mesh.NumMaterials
 			
-				For Local loop:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * TRI_SKIPPER ' Set in consts.monkey2
+				' TESTING...
+				
+				Local mat_tris:UInt = model.Mesh.GetIndices (mat).Length / 3
+				
+				If Not chunk Then chunk = Max (12, Int (Rnd (mat_tris)))
+'				Local chunk:UInt = 12
+'				Local chunk:UInt = model.Mesh.GetIndices (mat).Length / 3
+			'	
+			'	Print "mat " + mat + ": " + chunk
+			
+
+				' Going through triangles of each material in turn...
+				
+				For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * chunk' * TRI_SKIPPER ' Set in consts.monkey2
+				
+				
+'				For Local loop:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step chunk * 3 * TRI_SKIPPER ' Set in consts.monkey2
 					
-					Local model:Model		= ModelFromTriangle (model, loop, mat)
+'					Local model:Model		= ModelFromTriangle (model, tri, mat)
+
+					Local model:Model		= ModelFromTriangles (model, tri, chunk, mat)
 					
 						model.Parent		= Null
 						model.CastsShadow	= False

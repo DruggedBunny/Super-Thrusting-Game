@@ -11,6 +11,10 @@ Class Temp
 			Game.SpeccyShader.Toggle ()
 		Endif
 		
+		If Keyboard.KeyHit (Key.M)
+			Game.GemMapVisible = Not Game.GemMapVisible
+		Endif
+		
 		If Keyboard.KeyHit (Key.F)
 			Game.MainMixer.PrintFaders ()
 		Endif

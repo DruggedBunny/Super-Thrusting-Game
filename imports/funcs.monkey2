@@ -215,39 +215,103 @@ End
 
 Function ModelFromTriangle:Model (in_model:Model, index:UInt, mat_index:Int)
 
-	Local tri_model:Model = New Model
+	Local tri_model:Model			= New Model
 
 		Assert (mat_index < in_model.Mesh.NumMaterials, "Material index too high")
 		Assert (index + 2 < in_model.Mesh.NumIndices, "Index too high") ' Think that's right...
-				
+		
 		tri_model.Material			= in_model.Materials [mat_index]
 		tri_model.Material.CullMode	= CullMode.None
 
-		tri_model.Name = "Triangle created at " + Millisecs ()
+		'tri_model.Name = "Triangle created at " + Millisecs ()
 		
-	Local indices:UInt []		= in_model.Mesh.GetIndices (mat_index)
+	Local indices:UInt []			= in_model.Mesh.GetIndices (mat_index)
 
-	Local tri_verts:Vertex3f []	= New Vertex3f [3]
+	Local tri_verts:Vertex3f []		= New Vertex3f [3]
 	
 		' mesh-local co-ords...
 		
-		tri_verts [0]	= in_model.Mesh.GetVertex (indices [index + 0])
-		tri_verts [1]	= in_model.Mesh.GetVertex (indices [index + 1])
-		tri_verts [2]	= in_model.Mesh.GetVertex (indices [index + 2])
+		tri_verts [0]				= in_model.Mesh.GetVertex (indices [index + 0])
+		tri_verts [1]				= in_model.Mesh.GetVertex (indices [index + 1])
+		tri_verts [2]				= in_model.Mesh.GetVertex (indices [index + 2])
 	
-	Local tri_indices:UInt [] = New UInt [3]
+	Local tri_indices:UInt []		= New UInt [3]
 	
-		tri_indices [0]	= 0
-		tri_indices [1]	= 1
-		tri_indices [2]	= 2
+		tri_indices [0]				= 0
+		tri_indices [1]				= 1
+		tri_indices [2]				= 2
 	
-	Local tri_mesh:Mesh	= New Mesh (tri_verts, tri_indices)
+	Local tri_mesh:Mesh				= New Mesh (tri_verts, tri_indices)
 	
-		tri_mesh.UpdateNormals ()
-		tri_mesh.UpdateTangents ()
+		' Appears to make no visible difference for a single tri...
+		
+'		tri_mesh.UpdateNormals ()
+'		tri_mesh.UpdateTangents ()
  
-		tri_model.Mesh		= tri_mesh
- 		tri_model.Parent	= in_model
+		tri_model.Mesh				= tri_mesh
+ 		tri_model.Parent			= in_model
+ 		
+	Return tri_model
+ 
+End
+
+Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:UInt, mat_index:Int)
+
+' TODO: index_start = tri number??
+
+'Print "MODEL: " + (in_model.Mesh.NumIndices / 3)
+
+	' WIP: Start again! Trying to get bigger chunks at a time...
+	
+	Local tri_model:Model				= New Model
+
+		Assert (mat_index < in_model.Mesh.NumMaterials, "Material index too high")
+		Assert (index_start + 2 < in_model.Mesh.NumIndices, "Index too high")			' Think that's right...
+		
+		tri_model.Material				= in_model.Materials [mat_index]
+		tri_model.Material.CullMode		= CullMode.None
+
+		'tri_model.Name = "Triangle created at " + Millisecs ()
+		
+	Local indices:UInt []				= in_model.Mesh.GetIndices (mat_index)
+
+	Local tri_verts:Vertex3f []			= New Vertex3f	[tri_count * 3]
+	Local tri_indices:UInt []			= New UInt		[tri_count * 3]
+	
+	Local index_count:UInt				= tri_count * 3
+	Local index_end:UInt				= index_start + index_count
+	
+'	Print "INFO"
+'	Print index_end
+'	Print indices.Length
+
+	If index_end > indices.Length
+		index_end = indices.Length
+	Endif	
+			
+	For Local tri_index:UInt = index_start Until index_end Step 3
+
+		If tri_index >= indices.Length Then Exit
+		
+		tri_verts [tri_index - index_start]				= in_model.Mesh.GetVertex (indices [tri_index])
+		tri_verts [(tri_index - index_start) + 1]		= in_model.Mesh.GetVertex (indices [tri_index + 1])
+		tri_verts [(tri_index - index_start) + 2]		= in_model.Mesh.GetVertex (indices [tri_index + 2])
+
+		tri_indices [tri_index - index_start]			= tri_index - index_start
+		tri_indices [(tri_index - index_start) + 1]		= (tri_index - index_start) + 1
+		tri_indices [(tri_index - index_start) + 2]		= (tri_index - index_start) + 2
+
+	Next
+		
+	Local tri_mesh:Mesh				= New Mesh (tri_verts, tri_indices)
+	
+		' This appears to make no visible difference for a single tri:
+		
+'		tri_mesh.UpdateNormals ()
+'		tri_mesh.UpdateTangents ()
+
+		tri_model.Mesh				= tri_mesh
+ 		tri_model.Parent			= in_model
  		
 	Return tri_model
  

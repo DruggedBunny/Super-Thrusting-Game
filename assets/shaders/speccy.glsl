@@ -2,7 +2,7 @@
 //@renderpasses 0
 
 uniform sampler2D m_SourceTexture;
-//uniform vec2 m_SourceTextureSize;
+uniform vec2 m_SourceTextureSize;
 uniform vec2 m_SourceTextureScale;
 
 varying vec2 v_TexCoord0;
@@ -22,16 +22,36 @@ void main(){
 
 //@fragment
 
+const float BLOCK_SIZE = 4.0;
+const float HALF_BLOCK_SIZE = BLOCK_SIZE * 0.5;
+
 void main(){
 
-	vec3 pixels			= texture2D (m_SourceTexture, v_TexCoord0).rgb;
+//	vec3 pixels			= texture2D (m_SourceTexture, v_TexCoord0).rgb;
 
-	float brightness	= 1.0 - 0.25 * step ((pixels.r * 2.0 + pixels.b * 2.0 + pixels.g * 2.0) * 0.333, 0.1);
+	vec3 pixels				= texture2D (m_SourceTexture, v_TexCoord0).rgb;
 
-	pixels				= vec3 (step (0.1, pixels.r), step (0.1, pixels.g), step (0.1, pixels.b)) * brightness;
+//		float block_align_x		= max (0.0, gl_FragCoord.x - mod (gl_FragCoord.x, BLOCK_SIZE));
+//		float block_align_y		= max (0.0, gl_FragCoord.y - mod (gl_FragCoord.y, BLOCK_SIZE));
+		
+//		float block_center_x	= block_align_x + HALF_BLOCK_SIZE;
+//		float block_center_y	= block_align_y + HALF_BLOCK_SIZE;
+	
+//		vec2 block_align_vec	= vec2 (block_align_x, block_align_y);
+//		vec2 block_center_vec	= vec2 (block_center_x, block_center_y);
+		
+//		vec3 bg_pixels			= texture2D (m_SourceTexture, block_align_vec / m_SourceTextureSize).rgb;
+
+	float src_brightness	= 1.0 - 0.25 * step ((pixels.r * 2.0 + pixels.b * 2.0 + pixels.g * 2.0) * 0.333, 0.1);
+
+//		bg_pixels				= vec3 (step (0.1, bg_pixels.r), step (0.1, bg_pixels.g), step (0.1, bg_pixels.b)) * src_brightness;
+	
+	pixels					= vec3 (step (0.1, pixels.r), step (0.1, pixels.g), step (0.1, pixels.b)) * src_brightness;
 
 	gl_FragColor = vec4 (pixels, 1.0);
-
+	
+//		gl_FragColor = vec4 (bg_pixels, 1.0);
+	
 }
 
 // Commented/WIP version below...

@@ -335,11 +335,8 @@ Class Fader
 						Channel?.Stop ()
 						Channel = Null
 						
-						'Print "Removing " + Name
 						ParentMixer?.RemoveFromStack (Self)
-						'Print "Removed " + Name
-						'Print ""
-
+						
 					Endif
 
 				Endif
@@ -355,7 +352,7 @@ Class Fader
 		
 		Method Remove (delay_removal:Bool = False)
 		
-			Print "Removing " + Name + " with delay = " + delay_removal
+'			Print "Removing " + Name + " with delay = " + delay_removal
 			
 			If delay_removal
 				
