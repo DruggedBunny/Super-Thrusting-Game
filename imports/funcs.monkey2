@@ -268,7 +268,17 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
 		Assert (mat_index < in_model.Mesh.NumMaterials, "Material index too high")
 		Assert (index_start + 2 < in_model.Mesh.NumIndices, "Index too high")			' Think that's right...
 		
+'		Local black_mat:PbrMaterial		= New PbrMaterial (Color.Black)
+		
+'		Select Int (Rnd (5)) ' 0 - 4
+'			Case 0, 1, 2, 3
+'				tri_model.Material		= black_mat
+'			Default
+'				tri_model.Material		= in_model.Materials [mat_index]
+'		End
+
 		tri_model.Material				= in_model.Materials [mat_index]
+		
 		tri_model.Material.CullMode		= CullMode.None
 
 		'tri_model.Name = "Triangle created at " + Millisecs ()

@@ -3,9 +3,29 @@ Class PhysicsTri Extends Behaviour
 
 	Public
 
-		Function Explode (model:Model, body:RigidBody, chunk:UInt = 0)
+		Function Explode (model:Model, body:RigidBody, chunk:UInt = 0, explosion_particles:Int = 500)
 
-			'Print "mats: " + model.Mesh.NumMaterials
+			Local particle_vel:Float = 1.0
+
+			'QuickTimer.Start ()
+			
+			For Local particles:Int = 0 Until explosion_particles
+
+				Local angle:Vec3f = Game.Player.RocketModel.Basis * New Vec3f (
+				
+									Rnd (-particle_vel, particle_vel),
+									Rnd (-particle_vel, particle_vel),
+									Rnd (-particle_vel, particle_vel))			.Normalize () * Rnd (particle_vel)
+
+				ExplosionParticle.Create	(	Game.Player,		' Rocket
+												angle,				' 3D angle
+												Rnd (0.1, 1.0),		' Size
+												0.99)				' Fadeout-multiplier
+
+			Next
+			
+			'QuickTimer.Stop ()
+
 			For Local mat:Int = 0 Until model.Mesh.NumMaterials
 			
 				' TESTING...
@@ -13,21 +33,11 @@ Class PhysicsTri Extends Behaviour
 				Local mat_tris:UInt = model.Mesh.GetIndices (mat).Length / 3
 				
 				If Not chunk Then chunk = Max (12, Int (Rnd (mat_tris)))
-'				Local chunk:UInt = 12
-'				Local chunk:UInt = model.Mesh.GetIndices (mat).Length / 3
-			'	
-			'	Print "mat " + mat + ": " + chunk
-			
 
 				' Going through triangles of each material in turn...
 				
-				For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * chunk' * TRI_SKIPPER ' Set in consts.monkey2
+				For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * chunk * TRI_SKIPPER ' Set in consts.monkey2
 				
-				
-'				For Local loop:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step chunk * 3 * TRI_SKIPPER ' Set in consts.monkey2
-					
-'					Local model:Model		= ModelFromTriangle (model, tri, mat)
-
 					Local model:Model		= ModelFromTriangles (model, tri, chunk, mat)
 					
 						model.Parent		= Null
@@ -48,8 +58,8 @@ Class PhysicsTri Extends Behaviour
 			Super.New (entity)
 			AddInstance ()
 
-			If Not PhysicsTriList Then PhysicsTriList = New List <PhysicsTri>
-			PhysicsTriList.AddLast (Self)
+			If Not PhysicsTriStack Then PhysicsTriStack = New Stack <PhysicsTri>
+			PhysicsTriStack.Add (Self)
 			
 		End
 		
@@ -96,7 +106,7 @@ Class PhysicsTri Extends Behaviour
 		
 		Method OnUpdate (elapsed:Float) Override
 		
-			Entity.Alpha = Entity.Alpha * 0.9875
+			Entity.Alpha = Entity.Alpha * (0.97 * Game.Delta)
 			
 			If Entity.Alpha < 0.005
 				Entity.Destroy ()
@@ -106,7 +116,7 @@ Class PhysicsTri Extends Behaviour
 	
 	Private
 
-		Global PhysicsTriList:List <PhysicsTri>
+		Global PhysicsTriStack:Stack <PhysicsTri>
 		
 		Field src_body:RigidBody
 		

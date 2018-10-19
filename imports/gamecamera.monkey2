@@ -3,6 +3,12 @@ Class GameCamera
 
 	Public
 	
+		Property CameraDistance:Float ()
+			Return camera_distance
+			Setter (distance:Float)
+				camera_distance = distance
+		End
+		
 		Property Camera3D:Camera ()
 			Return real_camera
 			Setter (new_cam:Camera)
@@ -74,26 +80,26 @@ Class GameCamera
 				prevvel = lastvel
 				
 				If player.RocketBody.LinearVelocity.XZ.Length > 5.0
-					lastvel = lastvel.Blend (player.RocketBody.LinearVelocity, 0.045)
+					lastvel = lastvel.Blend (player.RocketBody.LinearVelocity, 0.045 * Game.Delta)
 				Endif
 				
-				chase_target.Position = player.RocketModel.Position - lastvel * 0.5
-				camera_pivot.Move ((chase_target.Position - camera_pivot.Position) * 0.1, True)
+				chase_target.Position = player.RocketModel.Position - lastvel * CameraDistance
+				camera_pivot.Move ((chase_target.Position - camera_pivot.Position) * (0.1 * Game.Delta), True)
 				camera_pivot.PointAt (player.RocketModel)
 
 				Local cam_dist:Float = Game.Player.RocketModel.Position.Distance (Game.MainCamera.Camera3D.Position)
 				
 				If cam_dist < 10.0
-					Camera3D.FOV = Blend (Camera3D.FOV, TransformRange (cam_dist, 1.0, 10.0, 130.0, 90.0), 0.1)
+					Camera3D.FOV = Blend (Camera3D.FOV, TransformRange (cam_dist, 1.0, 10.0, 130.0, 90.0), 0.1 * Game.Delta)
 				Else
-					Camera3D.FOV = Blend (Camera3D.FOV, 90.0, 0.075)
+					Camera3D.FOV = Blend (Camera3D.FOV, 90.0, 0.075 * Game.Delta)
 				Endif
 				
 			Else
 			
 				' Rising camera post-death...
 				
-				camera_pivot.Move (New Vec3f (0.0, 0.05, -0.05))
+				camera_pivot.Move (New Vec3f (0.0, 0.05, -0.05) * Game.Delta)
 				Camera3D.FOV = Camera3D.FOV * 0.995
 				
 			Endif
@@ -139,4 +145,6 @@ Class GameCamera
 		Field lastvel:Vec3f
 		Field prevvel:Vec3f
 
+		Field camera_distance:Float = 0.55
+		
 End

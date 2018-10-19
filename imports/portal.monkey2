@@ -245,7 +245,7 @@ Class PortalCollider Extends Behaviour
 						
 							' Increase alpha and scale...
 							
-							portal.Alpha = portal.Alpha + 0.002
+							portal.Alpha = portal.Alpha + (0.002 * Game.Delta)
 							portal.Ring.Scale = New Vec3f (portal.Alpha, portal.Alpha, portal.Alpha)
 							
 							' Cap alpha/scale at 1.0 and switch to open state...
@@ -273,12 +273,12 @@ Class PortalCollider Extends Behaviour
 						
 						' Modulate alpha...
 						
-						portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.005)) * 15.0 + 0.5) ' Yikes
+						portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.005)) * 15.0 + 0.5) ' Yikes. Good old trial and error!
 						
 					Case Portal.PORTAL_STATE_OPEN
 					
 						portal.Alpha = 1.0
-						portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.01)) * 15.0 + 0.5) ' Yikes
+						portal.Ring?.Alpha = portal.Alpha * (Degrees (Sin (Millisecs () * 0.01)) * 15.0 + 0.5)
 						
 						If portal.Triggered
 							portal.PortalState = Portal.PORTAL_STATE_CLOSING
@@ -289,7 +289,7 @@ Class PortalCollider Extends Behaviour
 					
 						' TODO: See States.LevelTween
 						
-						portal.Alpha = portal.Alpha - 0.003
+						portal.Alpha = portal.Alpha - (0.003 * Game.Delta)
 						portal.Ring?.Alpha = portal.Alpha
 						
 						If portal.Alpha < 0.01

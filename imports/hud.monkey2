@@ -8,11 +8,11 @@ Class HUD
 		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
 	
 		Global FuelTextColor:Color = Color.Green ' Text colour for fuel display
-		Global FadeOutAlpha:Float = 1.0
+		Global FadeAlpha:Float = 1.0
 		Global FadingOut:Bool = False
 	
 		Global SkullImage:Image
-		
+		Global SkullSprite:Sprite
 		
 	Public
 	
@@ -20,19 +20,25 @@ Class HUD
 		
 			If Not SkullImage Then SkullImage = Image.Load (ASSET_PREFIX_GRAPHIC + "skull.png")
 			If Not SkullImage Then Abort ("HUD: Can't load skull asset!")
+
+'			If Not SkullSprite Then SkullSprite = New Sprite (SpriteMaterial.Load (ASSET_PREFIX_GRAPHIC + "skull.png"), Game.MainCamera.Camera3D)
+'			If Not SkullSprite Then Abort ("HUD: Can't load skull asset!")
+			
+'			SkullSprite.Move (0.0, 0.0, 1.0)
+'			SkullSprite.Scale = New Vec3f (2000.0, 2000.0, 4.0)
 			
 			SkullImage.Handle = New Vec2f (0.5, 0.5)
 
 		End
 		
-		Function FadeOut:Float (delta:Float = 0.0045)
+		Function FadeOut:Float (delta:Float = 0.004)
 			
 			FadingOut = True
 
-			FadeOutAlpha = FadeOutAlpha + delta
-			If FadeOutAlpha >= 1.0 Then FadeOutAlpha = 1.0
+			FadeAlpha = FadeAlpha + (delta * Game.Delta)
+			If FadeAlpha >= 1.0 Then FadeAlpha = 1.0
 			
-			Return FadeOutAlpha
+			Return FadeAlpha
 			
 		End
 		
@@ -40,15 +46,15 @@ Class HUD
 		
 			FadingOut = False
 			
-			FadeOutAlpha = FadeOutAlpha - delta
-			If FadeOutAlpha <= 0.0 Then FadeOutAlpha = 0.0
+			FadeAlpha = FadeAlpha - (delta * Game.Delta)
+			If FadeAlpha <= 0.0 Then FadeAlpha = 0.0
 			
-			Return FadeOutAlpha
+			Return FadeAlpha
 			
 		End
 		
 		Function ResetFadeOut ()
-			FadeOutAlpha = 1.0
+			FadeAlpha = 1.0
 			SkullImage?.Scale = New Vec2f (1.0, 1.0)
 		End
 		
@@ -69,7 +75,7 @@ Class HUD
 					' Fade in...
 					
 					canvas.Color = Color.Black
-					canvas.Alpha = FadeOutAlpha
+					canvas.Alpha = FadeAlpha
 					canvas.DrawRect (App.ActiveWindow.Rect)
 			
 				Case States.PlayEnding ' Player dead...
@@ -80,15 +86,16 @@ Class HUD
 
 						' Draw rect...
 						
-						canvas.Alpha = FadeOutAlpha
+						canvas.Alpha = FadeAlpha
 						canvas.DrawRect (App.ActiveWindow.Rect)
 					
 					canvas.Color = Color.White
 		
 						' Draw skull...
 						
-						SkullImage.Scale = SkullImage.Scale * 1.0075
-						canvas.DrawImage (SkullImage, canvas.Viewport.Center, FadeOutAlpha * TwoPi * 4.0)
+						SkullImage.Scale = SkullImage.Scale * 1.0075 * Game.Delta ' Goes white??
+						
+						canvas.DrawImage (SkullImage, canvas.Viewport.Center, FadeAlpha * TwoPi * 4.0)
 			
 				Case States.LevelTween
 			
@@ -98,7 +105,7 @@ Class HUD
 
 						' Draw rect...
 						
-						canvas.Alpha = FadeOutAlpha
+						canvas.Alpha = FadeAlpha
 						canvas.DrawRect (App.ActiveWindow.Rect)
 					
 				Case States.Exiting
@@ -106,7 +113,7 @@ Class HUD
 					' Fade out...
 					
 					canvas.Color = Color.Black
-					canvas.Alpha = FadeOutAlpha
+					canvas.Alpha = FadeAlpha
 					canvas.DrawRect (App.ActiveWindow.Rect)
 			
 			End
@@ -150,6 +157,8 @@ Class HUD
 				ShadowText (canvas, "S to toggle [WIP] Spectrum shader", 20.0, 480.0)
 	
 				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 540.0)
+
+				ShadowText (canvas, "Delta: " + Game.Delta, 20.0, 580.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					

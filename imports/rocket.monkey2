@@ -101,7 +101,7 @@ Class Rocket
 							' Want to play landing 'thump' once
 '						Endif
 					
-						fuel = fuel + 0.25
+						fuel = fuel + (0.25 * Game.Delta)
 						
 						'refuel_channel.Level = 0.1
 						
@@ -119,7 +119,7 @@ Class Rocket
 						
 						' DIE!! Well, damage, then die if too damaged...
 						
-						damage = damage + (Abs (body.LinearVelocity.Length - last_vel.Length) * 4.0)
+						damage = damage + ((Abs (body.LinearVelocity.Length - last_vel.Length) * 4.0) * Game.Delta)
 						
 						If damage >= 100.0
 							If Not exploded Then Explode ()
@@ -145,7 +145,7 @@ Class Rocket
 						
 						' DIE!! Well, damage, then die if too damaged...
 						
-						damage = damage + (Abs (body.LinearVelocity.Length - last_vel.Length) * 4.0)
+						damage = damage + ((Abs (body.LinearVelocity.Length - last_vel.Length) * 8.5) * Game.Delta)
 						
 						If damage >= 100.0
 							If Not exploded Then Explode ()
@@ -210,24 +210,30 @@ Class Rocket
 
 			Local boosting:Bool = False
 			
+			Local keyboard_used:Bool
+			
 			If fuel ' TODO: Might rearrange to allow hopeless rotating while out of fuel...
 			
 				' KEYBOARD
 				
 				If Keyboard.KeyDown (Key.Left)
-					PitchLeft (Game.MainCamera, 0.75)
+					PitchLeft (Game.MainCamera, 0.75 * Game.Delta)
+					keyboard_used = True
 				Endif
 		
 				If Keyboard.KeyDown (Key.Right)
-					PitchRight (Game.MainCamera, 0.75)
+					PitchRight (Game.MainCamera, 0.75 * Game.Delta)
+					keyboard_used = True
 				Endif
 		
 				If Keyboard.KeyDown (Key.Up)
-					PitchForward (Game.MainCamera, 0.75)
+					PitchForward (Game.MainCamera, 0.75 * Game.Delta)
+					keyboard_used = True
 				Endif
 		
 				If Keyboard.KeyDown (Key.Down)
-					PitchBack (Game.MainCamera, 0.75)
+					PitchBack (Game.MainCamera, 0.75 * Game.Delta)
+					keyboard_used = True
 				Endif
 		
 				If Keyboard.KeyDown (Key.Space)
@@ -235,18 +241,40 @@ Class Rocket
 					boosting = True
 					
 					If boost_fader.Level < BOOST_VOLUME
-						boost_fader.Level = boost_fader.Level + 0.05
+						boost_fader.Level = boost_fader.Level + (0.05 * Game.Delta)
 						If boost_fader.Level > BOOST_VOLUME Then boost_fader.Level = BOOST_VOLUME
 					Endif
 					
 					Boost (0.0, boost_factor, 0.0)
 
-					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
-					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
-					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
-					SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025, Rnd (-0.01, 0.01)))
-												
-					fuel = fuel - (MPG * 0.9)
+					Local TMP_t:Float = 0.005 * Game.Delta
+					Local TMP_y_thrust:Float = -0.025
+					Local TMP_spreadx:Float = Rnd (-TMP_t, TMP_t)
+					Local TMP_spreadz:Float = Rnd (-TMP_t, TMP_t)
+					
+					Local mat:PbrMaterial	= New PbrMaterial (Color.White)
+					
+					Local spread:Vec3f = New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz)
+					
+					' Quad version:
+					
+'					RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.33)
+					
+					' Model version:
+					
+					RocketParticle.Create (Self, RocketModel.Basis * spread, 0.33)
+					
+					
+					'RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.25)
+					'RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.25)
+					'RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.25)
+					
+'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+								
+					fuel = fuel - (MPG * (0.9 * Game.Delta))
 					If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
 					
 					If fuel < 0.0
@@ -255,87 +283,112 @@ Class Rocket
 						boosting				= False
 					Endif
 					
+					keyboard_used = True
+
 				Endif
 				
-				joy = ValidateJoystick (joy) ' Specifically checks for Xbox pad
+				If Not keyboard_used
+				
+					joy = ValidateJoystick (joy) ' Specifically checks for Xbox pad
+		
+					' JOYSTICK
+					
+					If joy And joy.Attached
+					
+						'Print joy.GetAxis (0) ' Left stick left/right
+						'Print joy.GetAxis (1) ' Left stick up/down (-1 = back, +1 = forward)
+						
+						Local jpitch:Float		= joy.GetAxis (1)
+						
+						' Pitch scaling:
+						
+						' Raw input, jpitch, is -1.0 to 1.0...
+						
+						' Want to multiply lower end of 0.0 to [+/-] 1.0 by 0.5 and upper end by 1.2...
+						
+						' Multipliers:
+						
+						Local TEMP_lower:Float	= 0.5
+						Local TEMP_upper:Float	= 1.2
+						
+						Local tpitch:Float		= Abs (jpitch)
+						
+						If jpitch > 0.05 Then PitchBack (Game.MainCamera, jpitch * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
+						If jpitch < -0.05 Then PitchForward (Game.MainCamera, Abs (jpitch) * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
+						
+						Local jlr:Float			= joy.GetAxis (0)
+						Local tlr:Float			= Abs (jpitch)
+						
+						If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
+						If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 	
-				' JOYSTICK
-				
-				If joy And joy.Attached
-				
-					'Print joy.GetAxis (0) ' Left stick left/right
-					'Print joy.GetAxis (1) ' Left stick up/down (-1 = back, +1 = forward)
-					
-					Local jpitch:Float		= joy.GetAxis (1)
-					
-					' Pitch scaling:
-					
-					' Raw input, jpitch, is -1.0 to 1.0...
-					
-					' Want to multiply lower end of 0.0 to [+/-] 1.0 by 0.5 and upper end by 1.2...
-					
-					' Multipliers:
-					
-					Local TEMP_lower:Float	= 0.5
-					Local TEMP_upper:Float	= 1.2
-					
-					Local tpitch:Float		= Abs (jpitch)
-					
-					If jpitch > 0.05 Then PitchBack (Game.MainCamera, jpitch * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
-					If jpitch < -0.05 Then PitchForward (Game.MainCamera, Abs (jpitch) * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
-					
-					Local jlr:Float			= joy.GetAxis (0)
-					Local tlr:Float			= Abs (jpitch)
-					
-					If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
-					If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
-
-					' Boost...
-					
-					Local jyraw:Float		= joy.GetAxis (5)
-					
-					Local jy:Float			= TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
-					
-					' The line below multiplies 0.0 - 1.0 by the range 0.5 - 1.0,
-					' meaning that, at the lower end, input values are halved, yet
-					' remain full at the upper end. Finer control at the lower end!
-					
-					jy						= jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
-					
-					If boost_fader.Level < jyraw * BOOST_VOLUME
-						boost_fader.Level = jyraw * BOOST_VOLUME
-					Endif
-					
-					If jyraw > -1.0
-					
-						boosting = True
+						' Boost...
 						
-						Boost (0.0, boost_factor * jy, 0.0)
+						Local jyraw:Float		= joy.GetAxis (5)
 						
-						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
-						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
-						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
-						SmokeParticle.Create (Self, RocketModel.Basis * New Vec3f (Rnd (-0.01, 0.01), -0.025 * jy, Rnd (-0.01, 0.01)))
+						Local jy:Float			= TransformRange (jyraw, -1.0, 1.0, 0.0, 1.0)
 						
-						fuel = fuel - (MPG * jy)
-						If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
+						' The line below multiplies 0.0 - 1.0 by the range 0.5 - 1.0,
+						' meaning that, at the lower end, input values are halved, yet
+						' remain full at the upper end. Finer control at the lower end!
 						
-						If fuel < 0.0
-							fuel					= 0.0
-							boost_fader.Level		= 0.0
-							boosting				= False
+						jy						= jy * TransformRange (jy, 0.0, 1.0, 0.1, 1.0)
+						
+						If boost_fader.Level < jyraw * BOOST_VOLUME
+							boost_fader.Level = jyraw * BOOST_VOLUME
+						Endif
+	
+						If jyraw > -1.0
+						
+							boosting = True
+							
+							Boost (0.0, boost_factor * jy, 0.0)
+							
+							Local TMP_t:Float = 0.005 * Game.Delta
+							Local TMP_y_thrust:Float = RocketBody.LinearVelocity.Y * -0.0001 * jy'-0.025
+							Local TMP_spreadx:Float = Rnd (-TMP_t, TMP_t)
+							Local TMP_spreadz:Float = Rnd (-TMP_t, TMP_t)
+							
+							Local mat:PbrMaterial	= New PbrMaterial (Color.White)
+							
+							Local spread:Vec3f = New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz)
+							
+	
+						' Quad version:
+						
+	'					RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.33)
+						
+						' Model version:
+						
+						RocketParticle.Create (Self, RocketModel.Basis * spread, 0.33)
+	
+							
+							'RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+							'RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+							'RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
+							
+							fuel = fuel - (MPG * (jy * Game.Delta))
+							
+							If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
+							
+							If fuel < 0.0
+								fuel					= 0.0
+								boost_fader.Level		= 0.0
+								boosting				= False
+							Endif
+							
 						Endif
 						
 					Endif
-					
+				
 				Endif
-			
+				
 			Else
 				' Orient towards direction of travel... not managed to figure this out :/
 			Endif
 	
 			If Not boosting
-				boost_fader.Level = boost_fader.Level - 0.02
+				boost_fader.Level = boost_fader.Level - (0.02 * Game.Delta)
 				If boost_fader.Level < 0.0 Then boost_fader.Level = 0.0
 			Endif
 

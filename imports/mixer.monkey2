@@ -326,7 +326,7 @@ Class Fader
 			
 				If fading
 
-					Level = Level - fadeout
+					Level = Level - (fadeout * Game.Delta)
 				
 					If Level <= 0.0
 		

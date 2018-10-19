@@ -99,11 +99,9 @@ Class SpaceGem Extends Behaviour
 	
 				If Game.GameState.GetCurrentState () <> States.Paused
 				
-					Local secs_per_frame:Float = 1000.0 / App.FPS
+					Entity.Alpha = Entity.Alpha - 0.005 * Game.Delta
 					
-					Entity.Alpha = Entity.Alpha - (THOUSANDTH * secs_per_frame) * 0.25 ' Don't get why 0.25 scales this to 1 sec!
-					
-					If Entity.Alpha > THOUSANDTH
+					If Entity.Alpha >= 0.0
 						SpaceGemBody.ApplyForce (Game.GameScene.World.Gravity * New Vec3f (1.0, -5.0, 1.0)) ' Boost upwards...
 					Else
 						Game.CurrentLevel.RemoveSpaceGem (Self)

@@ -31,12 +31,12 @@ Class SimplexNoise
 	Field G2:Float = (3.0 - Sqrt(3.0)) / 6.0
 	Field F3:Float = 1.0 / 3.0
 	Field G3:Float = 1.0 / 6.0
-  	
-  	Method Resize (size:Int)
+	
+	Method Resize (size:Int)
 		Assert (size > 0, "SimplexNoise.New () size param must be > 0!")
 		pixmap_size = size
-  	End
-  	
+	End
+	
 	Method New(size:Int = 512)
 	
 		Assert (size > 0, "SimplexNoise.New () size param must be > 0!")
@@ -65,17 +65,17 @@ Class SimplexNoise
 	' Slightly slower in MX2!
 	
 '	Method FastFloor:Int(x:Float)
-'	
+'
 '		Local y:Int
-'	
+'
 '		If x > 0
 '			y = Int (x)
 '		Else
 '			y = Int (x - 1)
 '		End If
-'		
+'
 '		Return y
-'		
+'
 '	End
 	
 	'Dot product for 3D Noise
@@ -92,218 +92,218 @@ Class SimplexNoise
 	
 	End
 	
-  	' 2D simplex noise
-  	Method Noise_2D:Float (xin:Float, yin:Float)
+	' 2D simplex noise
+	Method Noise_2D:Float (xin:Float, yin:Float)
 		
 		' Noise contributions from the three corners
-	    Local n0:Float, n1:Float, n2:Float
+		Local n0:Float, n1:Float, n2:Float
 		
-	    ' Skew the input space to determine which simplex cell we're in
+		' Skew the input space to determine which simplex cell we're in
 		Local s:Float = (xin + yin) * F2 ' Hairy factor for 2D
 		
-	    Local I:Int = Floor(xin + s)
-	    Local j:Int = Floor(yin + s)
+		Local I:Int = Floor(xin + s)
+		Local j:Int = Floor(yin + s)
 		
-	    Local t:Float = (I + j) * G2
+		Local t:Float = (I + j) * G2
 		
 		' Unskew the cell origin back to (x,y) space
-	    Local x0:Float = I - t
-	    Local y0:Float = j - t
+		Local x0:Float = I - t
+		Local y0:Float = j - t
 		
 		' The x,y distances from the cell origin
-	    x0 = xin - x0
-	    y0 = yin - y0
+		x0 = xin - x0
+		y0 = yin - y0
 		
-	    'For the 2D case, the simplex shape is an equilateral triangle.
-	    'Determine which simplex we are in.
+		'For the 2D case, the simplex shape is an equilateral triangle.
+		'Determine which simplex we are in.
 		
 		'Offsets for second (middle) corner of simplex in (i,j) coords
-	    Local i1:Int, j1:Int
+		Local i1:Int, j1:Int
 		
-	    If x0 > y0 Then
+		If x0 > y0 Then
 			' lower triangle, XY order: (0,0)->(1,0)->(1,1)
-	    	i1 = 1
+			i1 = 1
 			j1 = 0
-	    Else
+		Else
 			' upper triangle, YX order: (0,0)->(0,1)->(1,1)
 			i1 = 0
 			j1 = 1
 		EndIf
 		
-	    ' A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
-	    ' a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
-	    ' c = (3-sqrt(3))/6
+		' A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and
+		' a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where
+		' c = (3-sqrt(3))/6
 		
 		' Offsets for middle corner in (x,y) unskewed coords
-	    Local x1:Float = x0 - i1 + G2
-	    Local y1:Float = y0 - j1 + G2
+		Local x1:Float = x0 - i1 + G2
+		Local y1:Float = y0 - j1 + G2
 		
 		' Offsets for last corner in (x,y) unskewed coords
-	    Local x2:Float = x0 - 1.0 + 2.0 * G2
-	    Local y2:Float = y0 - 1.0 + 2.0 * G2
+		Local x2:Float = x0 - 1.0 + 2.0 * G2
+		Local y2:Float = y0 - 1.0 + 2.0 * G2
 		
-	    ' Work out the hashed gradient indices of the three simplex corners
-	    Local ii:Int = I & 255
-	    Local jj:Int = j & 255
-	    Local gi0:Int = permMod12[ii + perm[jj]]
-	    Local gi1:Int = permMod12[ii + i1 + perm[jj + j1]]
-	    Local gi2:Int = permMod12[ii + 1 + perm[jj + 1]]
+		' Work out the hashed gradient indices of the three simplex corners
+		Local ii:Int = I & 255
+		Local jj:Int = j & 255
+		Local gi0:Int = permMod12[ii + perm[jj]]
+		Local gi1:Int = permMod12[ii + i1 + perm[jj + j1]]
+		Local gi2:Int = permMod12[ii + 1 + perm[jj + 1]]
 		
-	    ' Calculate the contribution from the three corners
-	    Local t0:Float = 0.5 - x0 * x0 - y0 * y0
+		' Calculate the contribution from the three corners
+		Local t0:Float = 0.5 - x0 * x0 - y0 * y0
 		
-	    If t0 < 0 Then
+		If t0 < 0 Then
 			n0 = 0.0
-	    Else
-	    	t0 = t0 * t0
-	    	n0 = t0 * t0 * Dot2D(grad3[gi0], x0, y0) ' (x,y) of grad3 used for 2D gradient
-	    EndIf
+		Else
+			t0 = t0 * t0
+			n0 = t0 * t0 * Dot2D(grad3[gi0], x0, y0) ' (x,y) of grad3 used for 2D gradient
+		EndIf
 		
-	    Local t1:Float = 0.5 - x1 * x1 - y1 * y1
+		Local t1:Float = 0.5 - x1 * x1 - y1 * y1
 		
-	    If t1 < 0 Then
+		If t1 < 0 Then
 			n1 = 0.0
-	    Else
+		Else
 			t1 = t1 * t1
-	    	n1 = t1 * t1 * Dot2D(grad3[gi1], x1, y1)
-	    EndIf
+			n1 = t1 * t1 * Dot2D(grad3[gi1], x1, y1)
+		EndIf
 		
-	    Local t2:Float = 0.5 - x2 * x2 - y2 * y2
+		Local t2:Float = 0.5 - x2 * x2 - y2 * y2
 		
-	    If t2 < 0 Then
+		If t2 < 0 Then
 			n2 = 0.0
-	    Else
-	    	t2 = t2 * t2
-	    	n2 = t2 * t2 * Dot2D(grad3[gi2], x2, y2)
-	    EndIf
+		Else
+			t2 = t2 * t2
+			n2 = t2 * t2 * Dot2D(grad3[gi2], x2, y2)
+		EndIf
 		
-	    ' Add contributions from each corner to get the final noise value.
-	    ' The result is scaled to return values in the interval [-1,1].
-	    Return 70.0 * (n0 + n1 + n2)
+		' Add contributions from each corner to get the final noise value.
+		' The result is scaled to return values in the interval [-1,1].
+		Return 70.0 * (n0 + n1 + n2)
 		
-  	End
+	End
 	
 	' 3D simplex noise
 	Method Noise_3D:Float(xin:Float, yin:Float, zin:Float)
-	    
+		
 		' Noise contributions from the four corners
 		Local n0:Float, n1:Float, n2:Float, n3:Float
-	    
-		' Skew the input space to determine which simplex cell we're in
-	    Local s:Float = (xin + yin + zin) * F3 ' Very nice And simple skew factor For 3D
-	    Local i:Int = Floor(xin + s)
-	    Local j:Int = Floor(yin + s)
-	    Local k:Int = Floor(zin + s)
 		
-	    Local t:Float = (i + j + k) * G3
+		' Skew the input space to determine which simplex cell we're in
+		Local s:Float = (xin + yin + zin) * F3 ' Very nice And simple skew factor For 3D
+		Local i:Int = Floor(xin + s)
+		Local j:Int = Floor(yin + s)
+		Local k:Int = Floor(zin + s)
+		
+		Local t:Float = (i + j + k) * G3
 		
 		' Unskew the cell origin back to (x,y,z) space
-	    Local x0:Float = i - t
-	    Local y0:Float = j - t
-	    Local z0:Float = k - t
+		Local x0:Float = i - t
+		Local y0:Float = j - t
+		Local z0:Float = k - t
 		
 		' The x,y,z distances from the cell origin
-	    x0 = xin - x0
-	    y0 = yin - y0
-	    z0 = zin - z0
+		x0 = xin - x0
+		y0 = yin - y0
+		z0 = zin - z0
 		
-	    ' For the 3D case, the simplex shape is a slightly irregular tetrahedron.
-	    ' Determine which simplex we are in.
+		' For the 3D case, the simplex shape is a slightly irregular tetrahedron.
+		' Determine which simplex we are in.
 		
 		' Offsets for second corner of simplex in (i,j,k) coords
-	    Local i1:Int, j1:Int, k1:Int
+		Local i1:Int, j1:Int, k1:Int
 		
 		' Offsets for third corner of simplex in (i,j,k) coords
-	    Local i2:Int, j2:Int, k2:Int
+		Local i2:Int, j2:Int, k2:Int
 		
-	    If x0 >= y0 Then
-	    	If y0 >= z0 Then
-	        	i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0 ' X Y Z order
-	        Else If x0 >= z0
+		If x0 >= y0 Then
+			If y0 >= z0 Then
+				i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0 ' X Y Z order
+			Else If x0 >= z0
 				i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1 ' X Z Y order
-	        Else
+			Else
 				i1 = 0; j1 = 0; k1 = 1; i2 = 1; j2 = 0; k2 = 1 ' Z X Y order
-	    	EndIf
-	    Else ' x0<y0
-	    	If y0 < z0
-		  		i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1 ' Z Y X order
-		  	Else If x0 < z0
+			EndIf
+		Else ' x0<y0
+			If y0 < z0
+				i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1 ' Z Y X order
+			Else If x0 < z0
 				i1 = 0; j1 = 1; k1 = 0; i2 = 0; j2 = 1; k2 = 1 ' Y Z X order
-	      	Else
+			Else
 				i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0 ' Y X Z order
 			EndIf
-	    EndIf
+		EndIf
 		
-	    ' A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
-	    ' a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
-	    ' a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where
-	    ' c = 1/6.
+		' A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
+		' a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
+		' a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where
+		' c = 1/6.
 		
 		' Offsets for second corner in (x,y,z) coords
-	    Local x1:Float = x0 - i1 + G3
-	    Local y1:Float = y0 - j1 + G3
-	    Local z1:Float = z0 - k1 + G3
+		Local x1:Float = x0 - i1 + G3
+		Local y1:Float = y0 - j1 + G3
+		Local z1:Float = z0 - k1 + G3
 		
 		' Offsets for third corner in (x,y,z) coords
-	    Local x2:Float = x0 - i2 + 2.0 * G3
-	    Local y2:Float = y0 - j2 + 2.0 * G3
-	    Local z2:Float = z0 - k2 + 2.0 * G3
+		Local x2:Float = x0 - i2 + 2.0 * G3
+		Local y2:Float = y0 - j2 + 2.0 * G3
+		Local z2:Float = z0 - k2 + 2.0 * G3
 		
 		' Offsets for last corner in (x,y,z) coords
-	    Local x3:Float = x0 - 1.0 + 3.0 * G3
-	    Local y3:Float = y0 - 1.0 + 3.0 * G3
-	    Local z3:Float = z0 - 1.0 + 3.0 * G3
+		Local x3:Float = x0 - 1.0 + 3.0 * G3
+		Local y3:Float = y0 - 1.0 + 3.0 * G3
+		Local z3:Float = z0 - 1.0 + 3.0 * G3
 		
-	    ' Work out the hashed gradient indices of the four simplex corners
-	    Local ii:Int = i & 255
-	    Local jj:Int = j & 255
-	    Local kk:Int = k & 255
-	    Local gi0:Int = permMod12[ii + perm[jj + perm[kk]] ]
-	    Local gi1:Int = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]] ]
-	    Local gi2:Int = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]] ]
-	    Local gi3:Int = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]] ]
+		' Work out the hashed gradient indices of the four simplex corners
+		Local ii:Int = i & 255
+		Local jj:Int = j & 255
+		Local kk:Int = k & 255
+		Local gi0:Int = permMod12[ii + perm[jj + perm[kk]] ]
+		Local gi1:Int = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]] ]
+		Local gi2:Int = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]] ]
+		Local gi3:Int = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]] ]
 		
-	    ' Calculate the contribution from the four corners
+		' Calculate the contribution from the four corners
 		
-	    Local t0:Float = 0.6 - x0 * x0 - y0 * y0 - z0 * z0
+		Local t0:Float = 0.6 - x0 * x0 - y0 * y0 - z0 * z0
 		
-	    If t0 < 0
+		If t0 < 0
 			n0 = 0.0
 		Else
-	      t0 = t0 * t0
-	      n0 = t0 * t0 * grad3[gi0].Dot (New Vec3f (x0, y0, z0)) ' Dot3D (grad3[gi0], x0, y0, z0)
-	    EndIf
+		t0 = t0 * t0
+		n0 = t0 * t0 * grad3[gi0].Dot (New Vec3f (x0, y0, z0)) ' Dot3D (grad3[gi0], x0, y0, z0)
+		EndIf
 		
-	    Local t1:Float = 0.6 - x1 * x1 - y1 * y1 - z1 * z1
+		Local t1:Float = 0.6 - x1 * x1 - y1 * y1 - z1 * z1
 		
-	    If t1 < 0
+		If t1 < 0
 			n1 = 0.0
-	    Else
-	      t1 = t1 * t1
-	      n1 = t1 * t1 * Dot3D(grad3[gi1], x1, y1, z1)
-	    EndIf
+		Else
+		t1 = t1 * t1
+		n1 = t1 * t1 * Dot3D(grad3[gi1], x1, y1, z1)
+		EndIf
 		
-	    Local t2:Float = 0.6 - x2 * x2 - y2 * y2 - z2 * z2
+		Local t2:Float = 0.6 - x2 * x2 - y2 * y2 - z2 * z2
 		
-	    If t2 < 0
+		If t2 < 0
 			n2 = 0.0
-	    Else
-	      t2 = t2 * t2
-	      n2 = t2 * t2 * Dot3D(grad3[gi2], x2, y2, z2)
-	    EndIf
+		Else
+		t2 = t2 * t2
+		n2 = t2 * t2 * Dot3D(grad3[gi2], x2, y2, z2)
+		EndIf
 		
-	    Local t3:Float = 0.6 - x3 * x3 - y3 * y3 - z3 * z3
+		Local t3:Float = 0.6 - x3 * x3 - y3 * y3 - z3 * z3
 		
-	    If t3 < 0
+		If t3 < 0
 			n3 = 0.0
-	    Else
-	      t3 = t3 * t3
-	      n3 = t3 * t3 * Dot3D(grad3[gi3], x3, y3, z3)
-	    EndIf
+		Else
+		t3 = t3 * t3
+		n3 = t3 * t3 * Dot3D(grad3[gi3], x3, y3, z3)
+		EndIf
 		
-	    ' Add contributions from each corner to get the final noise value.
-	    ' The result is scaled to stay just inside [-1,1]
-	    Return 32.0 * (n0 + n1 + n2 + n3)
+		' Add contributions from each corner to get the final noise value.
+		' The result is scaled to stay just inside [-1,1]
+		Return 32.0 * (n0 + n1 + n2 + n3)
 		
 	End
 
@@ -392,15 +392,15 @@ End
 'Class Grad
 '
 '	Field x:Float, y:Float, z:Float
-'	
+'
 '	Function Create:Grad(x:Float, y:Float, z:Float = 0.0)
-'	
+'
 '		Self.x = x
 '		Self.y = y
 '		Self.z = z
-'		
+'
 '		Return Self
-'	
+'
 '	End
 '
 'End

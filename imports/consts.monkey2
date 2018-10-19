@@ -5,8 +5,6 @@
 	Const TRI_SKIPPER:Int = 2
 #Endif
 
-' TODO: Smoke particle cleanup after death, not instant delete
-
 ' Collision types
 
 Const COLL_NOTHING:Short			= 0
@@ -33,10 +31,6 @@ Const TRI_COLLIDES_WITH:Short		= COLL_TERRAIN	| COLL_PAD
 Const GEM_COLLIDES_WITH:Short		= COLL_ROCKET
 Const PORTAL_COLLIDES_WITH:Short	= COLL_ROCKET
 Const WALL_COLLIDES_WITH:Short		= COLL_ROCKET
-
-' Used for FPS stuff...
-
-Const THOUSANDTH:Float = 1.0 / 1000.0
 
 ' For radians-based calculations...
 

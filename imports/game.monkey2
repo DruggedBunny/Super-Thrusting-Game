@@ -3,6 +3,14 @@ Class GameWindow Extends Window
 
 	Public
 		
+		Property GameTimer:DeltaTimer ()
+			Return delta_timer
+		End
+		
+		Property Delta:Float ()
+			Return delta_timer.delta
+		End
+		
 		Property GemMapVisible:Bool ()
 			Return gem_map_visible
 			Setter (state:Bool)
@@ -176,11 +184,13 @@ Class GameWindow Extends Window
 			' Mixer debug...
 			' MainMixer.PrintFaders ()
 
-			test_img = New Image (256, 256)
-			test_cnv = New Canvas (test_img)
+'			test_img = New Image (256, 256)
+'			test_cnv = New Canvas (test_img)
 
 			'Print GetConfig ("MOJO3D_RENDERER")
 			'Print opengl.glGetString (opengl.GL_VERSION)
+			
+			delta_timer = New DeltaTimer (GameScene.UpdateRate)
 			
 		End
 
@@ -395,5 +405,7 @@ Class GameWindow Extends Window
 		Field test_cnv:Canvas
 
 		Field gem_map_visible:Bool = True
-		
+
+		Field delta_timer:DeltaTimer
+				
 End

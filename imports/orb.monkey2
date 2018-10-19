@@ -37,9 +37,9 @@ Class Orb Extends Behaviour
 
 		Method FadeAudio (rate:Float)
 		
-			boom_fader.Level = boom_fader.Level - rate
+			boom_fader.Level = boom_fader.Level - (rate * Game.Delta)
 
-			If boom_fader.Level	< 0.0 Then boom_fader.Level	= 0.0
+			If boom_fader.Level	<= 0.0 Then boom_fader.Level	= 0.0
 
 		End
 		

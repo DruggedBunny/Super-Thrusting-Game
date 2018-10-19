@@ -5,6 +5,38 @@ Class Level
 		
 		Const FIXED_GEM_COUNT:Int = 8 ' Not sure if temp...
 
+		Property Terrain:PhysicsTerrain ()
+			Return terrain
+			Setter (new_terrain:PhysicsTerrain)
+				terrain = new_terrain
+		End
+		
+		Property SpaceGemCount:Int ()
+			Return space_gem_count
+		End
+		
+		Property SpaceGemsCollected:Int ()
+			Return space_gems_collected
+		End
+	
+		Property SpawnX:Float ()
+			Return spawn_x
+			Setter (x:Float)
+				spawn_x = x
+		End
+		
+		Property SpawnY:Float ()
+			Return spawn_y
+			Setter (y:Float)
+				spawn_y = y
+		End
+		
+		Property SpawnZ:Float ()
+			Return spawn_z
+			Setter (z:Float)
+				spawn_z = z
+		End
+	
 		Property Dummy:DummyOrb ()
 			Return dummy_orb
 			Setter (new_dummy:DummyOrb)
@@ -77,7 +109,7 @@ Class Level
 			' Init level data...
 			' -----------------------------------------------------------------
 
-			TerrainSeed				= seed
+			terrain_seed				= seed
 			
 			LevelName				= ""
 
@@ -92,11 +124,11 @@ Class Level
 			
 			' (Level creation will use random terrain/colours after that.)
 			
-			If TerrainSeed < levels.Length
+			If terrain_seed < levels.Length
 
-				LevelName			= levels [TerrainSeed].name
-				color0				= levels [TerrainSeed].color0
-				color1				= levels [TerrainSeed].color1
+				LevelName			= levels [terrain_seed].name
+				color0				= levels [terrain_seed].color0
+				color1				= levels [terrain_seed].color1
 			
 			Endif
 			
@@ -124,7 +156,7 @@ Class Level
 			' Generate a new terrain...
 			' -----------------------------------------------------------------
 		
-			terrain					= New PhysicsTerrain (TerrainSeed, sides, 384, 0.5, color0, color1)
+			terrain					= New PhysicsTerrain (terrain_seed, sides, 384, 0.5, color0, color1)
 
 			sun.PointAt (terrain.TerrainModel)
 
@@ -142,10 +174,11 @@ Class Level
 
 			' Remove pads and gems from scene if they exist already (eg. on loading new level)...
 
-			If PadList Or GemList Then DestroyPadsAndGems ()
+			If pads Or gems Then DestroyPadsAndGems ()
+			If pads Or gems Then DestroyPadsAndGems ()
 			
-			PadList							= New List <Pad>
-			GemList 						= New List <SpaceGem>
+			pads							= New List <Pad>
+			gems	 						= New List <SpaceGem>
 			
 			Local pad_y_offset:Float		= 4.0
 			Local player_pad_y_offset:Float	= 20.0
@@ -166,13 +199,13 @@ Class Level
 			
 			' Player pad position is height at centre of map, plus y offset...
 			
-			SpawnX							= terrain.TerrainXFromHeightMap (pixmap_x)
-			SpawnY							= terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + player_pad_y_offset
-			SpawnZ							= terrain.TerrainZFromHeightMap (pixmap_y)
+			spawn_x							= terrain.TerrainXFromHeightMap (pixmap_x)
+			spawn_y							= terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + player_pad_y_offset
+			spawn_z							= terrain.TerrainZFromHeightMap (pixmap_y)
 			
-			Local pad:Pad					= Pad.Create (SpawnX, SpawnY, SpawnZ, 8)
+			Local pad:Pad					= Pad.Create (spawn_x, spawn_y, spawn_z, 8)
 			
-			PadList.AddLast (pad)
+			pads.AddLast (pad)
 
 			' -----------------------------------------------------------------
 			' Other pads...
@@ -215,7 +248,7 @@ Class Level
 	
 					' Check position against all spawned pads...
 					
-					For Local existing:Pad = Eachin PadList
+					For Local existing:Pad = Eachin pads
 
 						' New position as 3D vector...
 						
@@ -244,19 +277,19 @@ Class Level
 				
 				Local pad:Pad = Pad.Create (pad_x, pad_y, pad_z)
 
-					PadList.AddLast (pad)
+					pads.AddLast (pad)
 					
-					GemList.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
+					gems.AddLast (SpawnSpaceGem (pad, Color.Rnd ()))
 				
 			Next
 
 			' Sets number of gems initially spawned...
 			
-			spacegems_spawned = SpaceGemCount
+			spacegems_spawned = space_gem_count
 		
 			' This returns the player's position. Bit naughty...
 			
-			Return New Vec3f (SpawnX, SpawnY, SpawnZ)
+			Return New Vec3f (spawn_x, spawn_y, spawn_z)
 		
 		End
 
@@ -286,7 +319,7 @@ Class Level
 			
 			GameState.SetCurrentState (States.PlayStarting)
 			
-			Return New Vec3f (SpawnX, SpawnY, SpawnZ)
+			Return New Vec3f (spawn_x, spawn_y, spawn_z)
 			
 		End
 		
@@ -301,7 +334,7 @@ Class Level
 		Method Destroy ()
 		
 			sun.Destroy ()
-			Terrain.Destroy ()
+			terrain.Destroy ()
 			ExitPortal.Destroy ()
 
 			DestroyPadsAndGems ()
@@ -340,7 +373,7 @@ Class Level
 		Field gem_map:GemMap
 
 		Method SpawnDummyOrb ()
-			Dummy = New DummyOrb (SpawnX, SpawnY + 15, SpawnZ)
+			Dummy = New DummyOrb (spawn_x, spawn_y + 15, spawn_z)
 		End
 		
 		Method SpawnSpaceGem:SpaceGem (pad:Pad, color:Color)
@@ -361,16 +394,16 @@ Class Level
 		
 		Method DestroyPadsAndGems ()
 			
-			For Local p:Pad = Eachin PadList
+			For Local p:Pad = Eachin pads
 				p.PadModel.Destroy ()
 			Next
 			
-			For Local sg:SpaceGem = Eachin GemList
+			For Local sg:SpaceGem = Eachin gems
 				sg.SpaceGemModel.Destroy ()
 			Next
 			
-			PadList.Clear ()
-			GemList.Clear ()
+			pads.Clear ()
+			gems.Clear ()
 			
 		End
 		
@@ -378,52 +411,6 @@ Class Level
 			Game.SpawnRocket (New Vec3f (x, y, z))
 		End
 
-' TODO: Why are these properties if Private??
-
-		Property PadList:List <Pad> ()
-			Return pads
-			Setter (new_list:List <Pad>)
-				pads = new_list
-		End
-		
-		Property TerrainSeed:ULong ()
-			Return terrain_seed
-			Setter (new_seed:ULong)
-				terrain_seed = new_seed
-		End
-		
-		Property Terrain:PhysicsTerrain ()
-			Return terrain
-			Setter (new_terrain:PhysicsTerrain)
-				terrain = new_terrain
-		End
-		
-		Property SpaceGemCount:Int ()
-			Return space_gem_count
-		End
-		
-		Property SpaceGemsCollected:Int ()
-			Return space_gems_collected
-		End
-
-		Property SpawnX:Float ()
-			Return spawn_x
-			Setter (x:Float)
-				spawn_x = x
-		End
-		
-		Property SpawnY:Float ()
-			Return spawn_y
-			Setter (y:Float)
-				spawn_y = y
-		End
-		
-		Property SpawnZ:Float ()
-			Return spawn_z
-			Setter (z:Float)
-				spawn_z = z
-		End
-				
 End
 
 Class LevelData

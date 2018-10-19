@@ -27,8 +27,6 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	TODO ("Re-start ModelFromTriangles for bigger chunks in rocket explosions... NOW KINDA WORKING!")
-	
 	TODO ("Should be able to implement now, thanks to recent sprite fix... HUD skull image to 3d sprite (render text to texture??) -- to appear in VR. Started but not working")
 
 	TODO ("LIKELY MOJO BUG: Deactivating window and releasing joystick, then activating window, acts as if joystick still held")
@@ -41,12 +39,8 @@ Function InitTODOs ()
 	TODO ("Have player drop orb into cup [SPACE PORTAL UNLOCK THINGY]? More involvement/skill, plus flying to portal with orb is... boring")
 	TODO ("Pads have to be spawned AFTER level created... ideally would be in Level.New...")
 	TODO ("VR: Scaling not right on monitor display")
-	TODO ("HUD blackout should be framerate-independent (as should lots of other things)")
 	TODO ("Point in direction of fall when ballistic (out of fuel)... ? FUCKING IMPOSSIBLE")
 	TODO ("Remove over-cautious object?.thing checks")
-	TODO ("Disable one control method if other used -- per-loop (eg. can double-boost using Xbox pad AND space!)")
-	
-	TODO ("Level properties under Private: shouldn't be properties any more!")
 	
 End
 

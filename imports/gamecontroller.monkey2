@@ -5,6 +5,8 @@ Class GameController
 	
 	Method ProcessGame ()
 
+		Game.GameTimer.Update ()
+
 		GameMenu.Control ()									' Application controls (Esc to quit, etc)
 
 		Game.CurrentLevel.Update ()
@@ -62,7 +64,7 @@ Class GameController
 
 				' Change to Playing state after HUD has faded-in...
 				
-				Local TMP_FADE:Float = 0.1
+				Local TMP_FADE:Float = 0.05
 				
 				If HUD.FadeIn (TMP_FADE) = 0.0
 					' Just to make sure...
