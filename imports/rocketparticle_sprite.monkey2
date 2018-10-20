@@ -17,6 +17,7 @@ Class RocketParticle Extends Behaviour
 				sprite.Scale				= New Vec3f (size, size, 0.0)
 				sprite.Alpha				= 1.0
 				sprite.CastsShadow			= False
+				'sprite.Mode					= SpriteMode.Fixed
 				
 			Local sp:RocketParticle			= New RocketParticle (sprite)
 			

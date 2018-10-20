@@ -153,12 +153,14 @@ Class HUD
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
 
-				ShadowText (canvas, "G to toggle greyscale shader", 20.0, 460.0)
-				ShadowText (canvas, "S to toggle [WIP] Spectrum shader", 20.0, 480.0)
+				ShadowText (canvas, "F1: disable pixel shaders", 20.0, 460.0)
+				ShadowText (canvas, "F2: toggle greyscale shader", 20.0, 480.0)
+				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 500.0)
+				ShadowText (canvas, "F4: toggle B&W (mono) shader", 20.0, 520.0)
 	
-				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 540.0)
+				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 560.0)
 
-				ShadowText (canvas, "Delta: " + Game.Delta, 20.0, 580.0)
+				ShadowText (canvas, "Delta: " + Game.Delta, 20.0, 600.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					

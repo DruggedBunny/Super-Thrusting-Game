@@ -29,6 +29,10 @@ Class GameWindow Extends Window
 			Return speccy
 		End
 
+		Property MonoShader:PostEffectPlus ()
+			Return mono
+		End
+
 		Property MainMixer:Mixer ()
 			Return main_mixer
 			Setter (in_mixer:Mixer)
@@ -351,9 +355,11 @@ Class GameWindow Extends Window
 			
 			grey						= New GreyscaleEffect (3) ' Greyscale mode 3 (Luminosity)
 			speccy						= New SpeccyEffect ()
+			mono						= New MonoEffect ()
 
 			pixel_shaders.Add (grey)
 			pixel_shaders.Add (speccy)
+			pixel_shaders.Add (mono)
 			
 			If VR_MODE
 				renderer = New VRRenderer
@@ -398,6 +404,7 @@ Class GameWindow Extends Window
 
 		Field grey:GreyscaleEffect
 		Field speccy:SpeccyEffect
+		Field mono:MonoEffect
 
 		Field main_mixer:Mixer
 	

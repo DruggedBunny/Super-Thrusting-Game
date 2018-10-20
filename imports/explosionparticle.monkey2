@@ -1,17 +1,6 @@
 
 Class ExplosionParticle Extends Behaviour
 
-#Rem
-
-		Local smat:SpriteMaterial = New SpriteMaterial ()
-		smat.ColorFactor = Color.White
-		
-		sprite = New Sprite (smat)
-		
-		sprite.Move (0, 0, 1)
-		
-#End
-
 	Public
 	
 		Function Create:ExplosionParticle (rocket:Rocket, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
@@ -90,14 +79,8 @@ Class ExplosionParticle Extends Behaviour
 			
 			If Game.GameState.GetCurrentState () <> States.Paused
 			
-				'Print update_fader
-				'Print Game.Delta
-				'Print update_fader * Game.Delta
-				'Print ""
-				
-				'Print Game.Delta
-				
 				Entity.Alpha = Entity.Alpha * (update_fader * Game.Delta) ' TODO: Needs adjusting for framerate!
+				
 				' Slow particle down (like air resistance)... very dependent on start speed and alpha fade amount...
 				
 				Entity.GetComponent <RigidBody> ().LinearDamping = (1.0 - Entity.Alpha)' * 0.95 ' Trial and error!

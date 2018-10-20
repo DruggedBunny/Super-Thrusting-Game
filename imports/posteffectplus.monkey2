@@ -7,6 +7,19 @@ Class PostEffectPlus Extends PostEffect
 
 	Field active:Bool
 	
+	Function Clear ()
+
+		For Local pe:PostEffectPlus = Eachin Game.PixelShaders
+		
+			If pe.Active
+				Game.GameScene.RemovePostEffect (pe)
+				pe.active = Not pe.active
+			Endif
+
+		Next
+		
+	End
+	
 	Method Toggle ()
 	
 		For Local pe:PostEffectPlus = Eachin Game.PixelShaders

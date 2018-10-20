@@ -23,8 +23,8 @@
 #Import "physicstri"
 #Import "orb"
 #Import "explosionparticle"
-#Import "rocketparticle"
-'#Import "rocketparticle_sprite"
+'#Import "rocketparticle"
+#Import "rocketparticle_sprite"
 '#Import "rocketparticle_quad"
 #Import "physicsterrain"
 #Import "portal"
@@ -43,6 +43,7 @@
 
 #Import "shaders/greyscale"
 #Import "shaders/speccy"
+#Import "shaders/mono"
 
 #Import "temp"
 #Import "todo"

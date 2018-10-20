@@ -3,12 +3,20 @@ Class Temp
 
 	Function Controls ()
 
-		If Keyboard.KeyHit (Key.G)
+		If Keyboard.KeyHit (Key.F1)
+			PostEffectPlus.Clear ()
+		Endif
+
+		If Keyboard.KeyHit (Key.F2)
 			Game.GreyscaleShader.Toggle ()
 		Endif
 		
-		If Keyboard.KeyHit (Key.S)
+		If Keyboard.KeyHit (Key.F3)
 			Game.SpeccyShader.Toggle ()
+		Endif
+		
+		If Keyboard.KeyHit (Key.F4)
+			Game.MonoShader.Toggle ()
 		Endif
 		
 		If Keyboard.KeyHit (Key.M)
