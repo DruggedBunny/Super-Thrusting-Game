@@ -189,6 +189,31 @@ Class PortalCollider Extends Behaviour
 			
 		End
 		
+		Property Triggered:Bool ()
+			Return triggered
+			Setter (state:Bool)
+				triggered = state
+		End
+
+		Method SetPortal (new_portal:Portal, upper:Bool)
+			portal = new_portal
+		End
+		
+		Property SpaceGemModel:Model ()
+			Return Cast <Model> (Entity)
+		End
+		
+		Property PortalColliderBody:RigidBody ()
+			Return Entity.GetComponent <RigidBody> ()
+		End
+	
+	Private
+
+		Field portal:Portal
+	
+		Field radius:Float
+		Field triggered:Bool
+
 		Method New (entity:Entity)
 			
 			Super.New (entity)
@@ -223,16 +248,6 @@ Class PortalCollider Extends Behaviour
 
 		End
 
-		Property Triggered:Bool ()
-			Return triggered
-			Setter (state:Bool)
-				triggered = state
-		End
-
-		Method SetPortal (new_portal:Portal, upper:Bool)
-			portal = new_portal
-		End
-		
 		Method OnUpdate (elapsed:Float) Override
 			
 			If Game.GameState.GetCurrentState () <> States.Paused
@@ -311,20 +326,5 @@ Class PortalCollider Extends Behaviour
 			Endif
 			
 		End
-
-		Property SpaceGemModel:Model ()
-			Return Cast <Model> (Entity)
-		End
-		
-		Property PortalColliderBody:RigidBody ()
-			Return Entity.GetComponent <RigidBody> ()
-		End
-	
-	Private
-
-		Field portal:Portal
-	
-		Field radius:Float
-		Field triggered:Bool
 
 End

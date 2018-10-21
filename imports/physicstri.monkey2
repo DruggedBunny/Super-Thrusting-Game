@@ -53,6 +53,12 @@ Class PhysicsTri Extends Behaviour
 		
 		End
 		
+	Private
+
+		Global PhysicsTriStack:Stack <PhysicsTri>
+		
+		Field src_body:RigidBody
+		
 		Method New (entity:Entity)
 			
 			Super.New (entity)
@@ -114,10 +120,4 @@ Class PhysicsTri Extends Behaviour
 			
 		End
 	
-	Private
-
-		Global PhysicsTriStack:Stack <PhysicsTri>
-		
-		Field src_body:RigidBody
-		
 End

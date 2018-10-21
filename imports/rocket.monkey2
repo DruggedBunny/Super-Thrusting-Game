@@ -15,6 +15,12 @@ Class Rocket
 
 		End
 		
+		Property Landed:Bool ()
+			Return landed
+			Setter (state:Bool)
+				landed = state
+		End
+		
 		Property Alive:Bool ()
 			Return Not exploded
 		End
@@ -92,6 +98,8 @@ Class Rocket
 				
 					Case COLL_PAD
 					
+						landed = True
+				
 						' Add landing speed check?
 						
 						' TODO: Angle!
@@ -127,7 +135,9 @@ Class Rocket
 						Endif
 					
 					Case COLL_TERRAIN
-	
+
+						landed = True
+		
 						' Landing speed check... TODO: Angle!
 						
 						' No fuel, instant explode...
@@ -256,24 +266,8 @@ Class Rocket
 					
 					Local spread:Vec3f = New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz)
 					
-					' Quad version:
-					
-'					RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.33)
-					
-					' Model version:
-					
 					RocketParticle.Create (Self, RocketModel.Basis * spread, 0.33)
-					
-					
-					'RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.25)
-					'RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.25)
-					'RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.25)
-					
-'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-'					RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-								
+							
 					fuel = fuel - (MPG * (0.9 * Game.Delta))
 					If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
 					
@@ -345,7 +339,7 @@ Class Rocket
 							Boost (0.0, boost_factor * jy, 0.0)
 							
 							Local TMP_t:Float = 0.005 * Game.Delta
-							Local TMP_y_thrust:Float = RocketBody.LinearVelocity.Y * -0.0001 * jy'-0.025
+							Local TMP_y_thrust:Float = (RocketBody.LinearVelocity.Y * -0.0001) * jy'-0.025
 							Local TMP_spreadx:Float = Rnd (-TMP_t, TMP_t)
 							Local TMP_spreadz:Float = Rnd (-TMP_t, TMP_t)
 							
@@ -353,20 +347,8 @@ Class Rocket
 							
 							Local spread:Vec3f = New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz)
 							
+							RocketParticle.Create (Self, RocketModel.Basis * spread, 0.33)
 	
-						' Quad version:
-						
-	'					RocketParticle.Create (Self, mat, RocketModel.Basis * spread, 0.33)
-						
-						' Model version:
-						
-						RocketParticle.Create (Self, RocketModel.Basis * spread, 0.33)
-	
-							
-							'RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-							'RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-							'RocketParticle.Create (Self, RocketModel.Basis * New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz))
-							
 							fuel = fuel - (MPG * (jy * Game.Delta))
 							
 							If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
@@ -448,6 +430,7 @@ Class Rocket
 		Field fuel:Float
 		Field exploded:Bool	= False
 
+		Field landed:Bool
 		Field damage:Float
 		
 		Field joy:Joystick

@@ -25,9 +25,11 @@ Class DummyOrb
 		
 		Method New (x:Float, y:Float, z:Float)
 	
+			Local radius:Float = 2.0
+			
 			Local mat:PbrMaterial		= New PbrMaterial (Color.HotPink)
 				
-			model						= Model.CreateSphere (2.0, 8, 8, mat)
+			model						= Model.CreateSphere (radius, 8, 8, mat)
 	
 				model.Move (x, y, z)
 	
@@ -35,7 +37,8 @@ Class DummyOrb
 				model.Name				= "Dummy Orb [spawned at " + Time.Now () + "]"
 				
 			collider					= model.AddComponent <SphereCollider> ()
-	
+			collider.Radius				= radius
+			
 			body						= model.AddComponent <RigidBody> ()
 	
 				body.Mass				= 0.0

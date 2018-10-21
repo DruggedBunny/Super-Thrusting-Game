@@ -101,10 +101,6 @@ Class Orb Extends Behaviour
 	
 		End
 		
-		Method OnUpdate (elapsed:Float) Override
-			last_vel = Entity.GetComponent <RigidBody> ().LinearVelocity
-		End
-	
 		Method OnStart () Override
 	
 			Local glow:Light				= New Light (Entity)
@@ -173,6 +169,10 @@ Class Orb Extends Behaviour
 
 		End
 
+		Method OnUpdate (elapsed:Float) Override
+			last_vel = Entity.GetComponent <RigidBody> ().LinearVelocity
+		End
+	
 		Method Explode ()
 	
 			PhysicsTri.Explode (Cast <Model> (Entity), Entity.GetComponent <RigidBody> (), 2)

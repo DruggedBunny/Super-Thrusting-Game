@@ -11,7 +11,7 @@ Class ExplosionParticle Extends Behaviour
 			
 			Local sprite:Sprite = New Sprite (SpriteMat [Int (Rnd (5))], rocket.RocketModel)
 		
-				sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
+				'sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
 				
 				sprite.Parent				= Null
 				sprite.Scale				= New Vec3f (size, size, size)

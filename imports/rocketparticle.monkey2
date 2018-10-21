@@ -3,28 +3,58 @@ Class RocketParticle Extends Behaviour
 
 	Public
 	
+		Global SMat:SpriteMaterial
+		
 		Function Create:RocketParticle (rocket:Rocket, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
 
-			Local model:Model = Model.CreateBox (New Boxf (-0.5, -0.5, -0.5, 0.5, 0.5, 0.5), 1, 1, 1, New PbrMaterial (Color.White), rocket.RocketModel)'New Sprite (New SpriteMaterial (), rocket.RocketModel)
+			If Not SpriteMat Then SpriteInit ()
+
+'			Local sprite:Sprite = New Sprite (SpriteMat [4], rocket.RocketModel)
+
+			' TEMP: Should be as above, but cannot change materials on-the-fly -- mojo3d bug?
+			
+			Local sprite:Sprite = New Sprite (New SpriteMaterial (), rocket.RocketModel)
 		
-				model.Move (0.0, -2.1, 0.0)
+				sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
 				
-				model.Parent				= Null
-				model.Scale					= New Vec3f (size, size, size)
-				model.Alpha					= 1.0
-				model.CastsShadow			= False
+				sprite.Parent				= Null
+				sprite.Scale				= New Vec3f (size, size, 1.0)
+				sprite.Alpha				= 1.0
+				sprite.CastsShadow			= False
 				
-			Local sp:RocketParticle			= New RocketParticle (model)
+			Local sp:RocketParticle			= New RocketParticle (sprite)
 			
 				sp.thrust					= thrust
 				sp.update_fader				= fadeout
-			
+				
 			Return sp
 			
 		End
 
 	Private
 	
+		Global SpriteMat:SpriteMaterial []
+
+		Function SpriteInit ()
+
+			' Sprite material array setup...
+			
+			If SpriteMat Then Return
+			
+			SpriteMat								= SpriteMat.Resize (5)
+			
+			For Local loop:Int = 0 Until SpriteMat.Length
+				SpriteMat [loop]					= New SpriteMaterial ()
+			Next
+		
+			SpriteMat [0].ColorFactor				= Color.Black
+			SpriteMat [1].ColorFactor				= Color.Red
+			SpriteMat [2].ColorFactor				= Color.Orange
+			SpriteMat [3].ColorFactor				= Color.Yellow
+			SpriteMat [4].ColorFactor				= Color.White
+				
+		End
+			
 		Method New (entity:Entity)
 		
 			Super.New (entity)
@@ -55,31 +85,41 @@ Class RocketParticle Extends Behaviour
 			
 			If Game.GameState.GetCurrentState () <> States.Paused
 			
-				Local cs:Model			= Cast <Model> (Entity)
-				Local sm:PbrMaterial	= Cast <PbrMaterial> (cs.Material)
+				Local cs:Sprite	= Cast <Sprite> (Entity)
+				Local sm:SpriteMaterial	= Cast <SpriteMaterial> (cs.Material)
+
+				Local t:Int = Int (color_change * 5.0)
 				
-				Select Int (color_change * 5.0) ' There are 5 sprite materials
+				Select Int (color_change * 5.0)
+'				sm = SpriteMat [t] ' There are 5 sprite materials
 					Case 0
+'						Entity.Color = Color.Black
 						sm.ColorFactor = Color.Black
 					Case 1
-						sm.ColorFactor = Color.Red
+'						Entity.Color = Color.Red
+						sm.ColorFactor = (Color.Red + (Color.Orange * 0.75) * 0.5)
 					Case 2
+'						Entity.Color = Color.Orange
 						sm.ColorFactor = Color.Orange
 					Case 3
+'						Entity.Color = Color.Yellow
 						sm.ColorFactor = Color.Yellow
 					Case 4
+'						Entity.Color = Color.White
 						sm.ColorFactor = Color.White
 				End
-				
-				If sm.ColorFactor = Color.Black
-					Entity.Alpha = Entity.Alpha * (0.95 * Game.Delta) ' TODO: Needs adjusting for framerate!
+'				
+				If sm.ColorFactor = Color.Black' = SpriteMat [0]
+					Entity.Alpha = Entity.Alpha * (0.96 * Game.Delta)
+					Entity.Scale = Entity.Scale * ((1.0 + Rnd (0.033)) * Game.Delta)
+					Entity.GetComponent <RigidBody> ().ApplyForce (New Vec3f (0.0, 0.15, 0.0))
 				Else
-					color_change = color_change * update_fader ' TODO: Needs adjusting for framerate!
+					color_change = color_change * (update_fader * Game.Delta) ' TODO: Needs adjusting for framerate!
 				End
 				
 				' Slow particle down (air resistance)... very dependent on start speed and alpha fade amount...
 				
-				Entity.GetComponent <RigidBody> ().LinearDamping = (1.0 - color_change)
+				Entity.GetComponent <RigidBody> ().LinearDamping = (1.0 - color_change)' * 0.95 ' Trial and error!
 				
 				If Entity.Alpha < 0.075
 					Entity.Destroy ()

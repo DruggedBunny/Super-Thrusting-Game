@@ -5,25 +5,20 @@ Class RocketParticle Extends Behaviour
 	
 		Function Create:RocketParticle (rocket:Rocket, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
 
-			Local sprite:Sprite = New Sprite (New SpriteMaterial (), rocket.RocketModel)
+			Local model:Model = Model.CreateBox (New Boxf (-0.5, -0.5, -0.5, 0.5, 0.5, 0.5), 1, 1, 1, New PbrMaterial (Color.White), rocket.RocketModel)'New Sprite (New SpriteMaterial (), rocket.RocketModel)
 		
-				Cast <SpriteMaterial> (sprite.Material).ColorFactor = Color.White
+				model.Move (0.0, -2.1, 0.0)
 				
-				'sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
+				model.Parent				= Null
+				model.Scale					= New Vec3f (size, size, size)
+				model.Alpha					= 1.0
+				model.CastsShadow			= False
 				
-				sprite.Move (0.0, -2.1, 0.0)
-				
-				sprite.Parent				= Null
-				sprite.Scale				= New Vec3f (size, size, 0.0)
-				sprite.Alpha				= 1.0
-				sprite.CastsShadow			= False
-				'sprite.Mode					= SpriteMode.Fixed
-				
-			Local sp:RocketParticle			= New RocketParticle (sprite)
+			Local sp:RocketParticle			= New RocketParticle (model)
 			
 				sp.thrust					= thrust
 				sp.update_fader				= fadeout
-				
+			
 			Return sp
 			
 		End
@@ -60,9 +55,9 @@ Class RocketParticle Extends Behaviour
 			
 			If Game.GameState.GetCurrentState () <> States.Paused
 			
-				Local cs:Sprite	= Cast <Sprite> (Entity)
-				Local sm:SpriteMaterial	= Cast <SpriteMaterial> (cs.Material)
-
+				Local cs:Model			= Cast <Model> (Entity)
+				Local sm:PbrMaterial	= Cast <PbrMaterial> (cs.Material)
+				
 				Select Int (color_change * 5.0) ' There are 5 sprite materials
 					Case 0
 						sm.ColorFactor = Color.Black
@@ -77,14 +72,14 @@ Class RocketParticle Extends Behaviour
 				End
 				
 				If sm.ColorFactor = Color.Black
-					Entity.Alpha = Entity.Alpha * 0.975 * Game.Delta ' TODO: Needs adjusting for framerate!
+					Entity.Alpha = Entity.Alpha * (0.95 * Game.Delta) ' TODO: Needs adjusting for framerate!
 				Else
 					color_change = color_change * update_fader ' TODO: Needs adjusting for framerate!
 				End
 				
 				' Slow particle down (air resistance)... very dependent on start speed and alpha fade amount...
 				
-				Entity.GetComponent <RigidBody> ().LinearDamping = (1.0 - color_change)' * 0.95 ' Trial and error!
+				Entity.GetComponent <RigidBody> ().LinearDamping = (1.0 - color_change)
 				
 				If Entity.Alpha < 0.075
 					Entity.Destroy ()

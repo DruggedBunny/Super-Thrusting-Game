@@ -5,6 +5,8 @@ Class GameController
 	
 	Method ProcessGame ()
 
+		Game.Player.Landed = False
+
 		Game.GameTimer.Update ()
 
 		GameMenu.Control ()									' Application controls (Esc to quit, etc)
@@ -66,7 +68,7 @@ Class GameController
 				
 				Local TMP_FADE:Float = 0.05
 				
-				If HUD.FadeIn (TMP_FADE) = 0.0
+				If Game.HUD.FadeIn (TMP_FADE) = 0.0
 					' Just to make sure...
 					Game.MainMixer.Level = 1.0
 					GameState.SetCurrentState (States.Playing)
@@ -84,7 +86,7 @@ Class GameController
 				
 				' Reset after HUD has faded out...
 				
-				Local hud_fade:Float = HUD.FadeOut ()
+				Local hud_fade:Float = Game.HUD.FadeOut ()
 				
 '				If Game.GameScene.World.TimeScale > 0.25 Then Game.GameScene.World.TimeScale = Game.GameScene.World.TimeScale * 0.99
 				
@@ -109,7 +111,7 @@ Class GameController
 				Game.Player.CurrentOrb?.FadeAudio (rate)
 				Game.CurrentLevel.Dummy?.FadeAudio (rate)
 
-				If HUD.FadeOut (rate) >= 1.0
+				If Game.HUD.FadeOut (rate) >= 1.0
 					If Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED
 						Game.SpawnNextLevel ()
 					Endif
@@ -124,7 +126,7 @@ Class GameController
 				
 				' Exit after HUD has faded out...
 				
-				If HUD.FadeOut (0.025) >= 1.0
+				If Game.HUD.FadeOut (0.025) >= 1.0
 					App.Terminate ()
 				Endif
 			

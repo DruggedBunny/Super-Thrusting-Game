@@ -3,6 +3,12 @@ Class GameWindow Extends Window
 
 	Public
 		
+		Property HUD:HUDOverlay ()
+			Return hud
+			Setter (in_hud:HUDOverlay)
+				hud = in_hud
+		End
+		
 		Property GameTimer:DeltaTimer ()
 			Return delta_timer
 		End
@@ -107,7 +113,7 @@ Class GameWindow Extends Window
 			Orb.		InitSound ()
 			DummyOrb.	InitSound ()
 			Rocket.		InitSound ()
-			Wall.		InitSound ()
+			TrumpWall.	InitSound ()
 			Portal.		InitSound ()
 			SpaceGem.	InitSound ()
 			
@@ -155,10 +161,10 @@ Class GameWindow Extends Window
 			Mouse.PointerVisible	= False
 	
 			' ----------------------------------------------------------------
-			' Init HUD (TODO: Use an object instead of class functions)...
+			' Init HUD...
 			' ----------------------------------------------------------------
 
-			HUD.Init ()
+			HUD = New HUDOverlay
 
 			' ----------------------------------------------------------------
 			' Init gameloop...
@@ -298,7 +304,7 @@ Class GameWindow Extends Window
 
 				If Not Player Then Abort ("ResetLevel: SpawnRocket failed to spawn rocket!")
 			
-			HUD.ResetFadeOut ()
+'			HUD.ResetFadeOut ()
 
 			GameState.SetCurrentState (States.PlayStarting)
 
@@ -328,6 +334,8 @@ Class GameWindow Extends Window
 						
 			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, terrain_side)
 			
+			HUD						= New HUDOverlay ' HUD needs to pick up new camera
+
 			SetWindowTitle ()
 			
 			GameState.SetCurrentState (States.PlayStarting)
@@ -414,5 +422,7 @@ Class GameWindow Extends Window
 		Field gem_map_visible:Bool = True
 
 		Field delta_timer:DeltaTimer
-				
+		
+		Field hud:HUDOverlay
+		
 End

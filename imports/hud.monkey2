@@ -1,5 +1,5 @@
 
-Class HUD
+Class HUDOverlay
 	
 	' This is all pretty nasty/temp/WIP...
 	
@@ -7,58 +7,57 @@ Class HUD
 	
 		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
 	
-		Global FuelTextColor:Color = Color.Green ' Text colour for fuel display
-		Global FadeAlpha:Float = 1.0
-		Global FadingOut:Bool = False
+		Global FuelTextColor:Color	= Color.Green ' Text colour for fuel display
+		Global FadeAlpha:Float		= 1.0
+		Global FadingOut:Bool		= False
 	
-		Global SkullImage:Image
 		Global SkullSprite:Sprite
+		
+		Field sprite_start_scale:Vec3f ' TEMP
 		
 	Public
 	
-		Function Init ()
+		Method New ()
 		
-			If Not SkullImage Then SkullImage = Image.Load (ASSET_PREFIX_GRAPHIC + "skull.png")
-			If Not SkullImage Then Abort ("HUD: Can't load skull asset!")
-
-'			If Not SkullSprite Then SkullSprite = New Sprite (SpriteMaterial.Load (ASSET_PREFIX_GRAPHIC + "skull.png"), Game.MainCamera.Camera3D)
-'			If Not SkullSprite Then Abort ("HUD: Can't load skull asset!")
+			sprite_start_scale	= New Vec3f (0.05, 0.05, 1.0)
 			
-'			SkullSprite.Move (0.0, 0.0, 1.0)
-'			SkullSprite.Scale = New Vec3f (2000.0, 2000.0, 4.0)
+			SkullSprite			= New Sprite (SpriteMaterial.Load (ASSET_PREFIX_GRAPHIC + "skull.png"), Game.MainCamera.Camera3D)
 			
-			SkullImage.Handle = New Vec2f (0.5, 0.5)
-
+				If Not SkullSprite Then Abort ("HUD: Can't load skull asset!")
+			
+			SkullSprite.Move (0.0, 0.0, 1.0)
+			
+			SkullSprite.Mode	= SpriteMode.Fixed
+			SkullSprite.Scale	= sprite_start_scale
+			SkullSprite.Visible	= False
+			
 		End
 		
-		Function FadeOut:Float (delta:Float = 0.004)
+		Method FadeOut:Float (delta:Float = 0.004)
 			
 			FadingOut = True
 
 			FadeAlpha = FadeAlpha + (delta * Game.Delta)
+			
 			If FadeAlpha >= 1.0 Then FadeAlpha = 1.0
 			
 			Return FadeAlpha
 			
 		End
 		
-		Function FadeIn:Float (delta:Float = 0.01)
+		Method FadeIn:Float (delta:Float = 0.01)
 		
 			FadingOut = False
 			
 			FadeAlpha = FadeAlpha - (delta * Game.Delta)
+			
 			If FadeAlpha <= 0.0 Then FadeAlpha = 0.0
 			
 			Return FadeAlpha
 			
 		End
 		
-		Function ResetFadeOut ()
-			FadeAlpha = 1.0
-			SkullImage?.Scale = New Vec2f (1.0, 1.0)
-		End
-		
-		Function Render (canvas:Canvas)
+		Method Render (canvas:Canvas)
 
 			Local font:Font = canvas.Font
 
@@ -72,6 +71,14 @@ Class HUD
 			
 				Case States.PlayStarting
 
+					If SkullSprite.Visible
+					
+						SkullSprite.Visible		= False
+						SkullSprite.Scale		= sprite_start_scale
+						SkullSprite.Rotation	= New Vec3f (0.0, 0.0, 0.0)
+						
+					Endif
+					
 					' Fade in...
 					
 					canvas.Color = Color.Black
@@ -93,9 +100,14 @@ Class HUD
 		
 						' Draw skull...
 						
-						SkullImage.Scale = SkullImage.Scale * 1.0075 * Game.Delta ' Goes white??
+						If Not SkullSprite.Visible
+							SkullSprite.Visible = True
+						Endif
+
+						SkullSprite.Scale		= SkullSprite.Scale * 1.025 * Game.Delta
+						SkullSprite.Rotation	= Game.MainCamera.Camera3D.Rotation + New Vec3f (0.0, 0.0, SkullSprite.Rotation.Z + 5.0)
 						
-						canvas.DrawImage (SkullImage, canvas.Viewport.Center, FadeAlpha * TwoPi * 4.0)
+'						If quad_mode = SpriteMode.Billboard
 			
 				Case States.LevelTween
 			
@@ -123,12 +135,10 @@ Class HUD
 				canvas.Alpha = 1.0
 				
 				ShadowText (canvas, "FPS: " + App.FPS, 20.0, 20.0)
-		
 				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
-				
-				ShadowText (canvas, "R to reset!", 20.0, 80.0)
-				
+				ShadowText (canvas, "TEMP: R to reset!", 20.0, 80.0)
 				ShadowText (canvas, "TEMP: N for next level", 20.0, 140.0)
+				ShadowText (canvas, "TEMP: Landed: " + Game.Player.Landed, 20.0, 160.0)
 			
 				If Game.Player.Fuel = 0.0
 					FuelTextColor = Color.Grey
@@ -144,31 +154,24 @@ Class HUD
 		
 				ShadowText (canvas, "Space gems: " + Game.CurrentLevel.SpaceGemsCollected + " / " + Game.CurrentLevel.SpaceGemCount, 20.0, 200)
 				ShadowText (canvas, "Fuel: " + Int (Game.Player.Fuel), 20.0, 220.0, FuelTextColor)
-				
-				ShadowText (canvas, "Entities in scene: " + CountEntities (), 20.0, 340.0)
-				
+				ShadowText (canvas, "TEMP: Entities in scene: " + CountEntities (), 20.0, 340.0)
 				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
 
 				Local current_time:String = PadDigit (Time.Now ().Hours, 2) + ":" + PadDigit (Time.Now ().Minutes, 2) + ":" + PadDigit (Time.Now ().Seconds, 2)
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
-
 				ShadowText (canvas, "F1: disable pixel shaders", 20.0, 460.0)
 				ShadowText (canvas, "F2: toggle greyscale shader", 20.0, 480.0)
 				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 500.0)
 				ShadowText (canvas, "F4: toggle B&W (mono) shader", 20.0, 520.0)
-	
 				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 560.0)
-
-				ShadowText (canvas, "Delta: " + Game.Delta, 20.0, 600.0)
+				ShadowText (canvas, "TEMP: Delta: " + Game.Delta, 20.0, 600.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					
 					Local paused:String = "P A U S E D"
-					
-					Local tw:Float = font.TextWidth (paused)
 
-					ShadowText (canvas, paused, (canvas.Viewport.Width * 0.5) - (tw * 0.5), canvas.Viewport.Height * 0.65)
+					ShadowText (canvas, paused, (canvas.Viewport.Width * 0.5) - (font.TextWidth (paused) * 0.5), canvas.Viewport.Height * 0.65)
 
 				Endif
 				

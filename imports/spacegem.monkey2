@@ -46,13 +46,6 @@ Class SpaceGem Extends Behaviour
 
 		End
 
-		Method New (entity:Entity)
-			
-			Super.New (entity)
-			AddInstance ()
-	
-		End
-		
 		Method AddRigidBody (box:Boxf)
 	
 			Local collider:BoxCollider	= Entity.AddComponent <BoxCollider> ()
@@ -91,6 +84,30 @@ Class SpaceGem Extends Behaviour
 	
 		End
 		
+		Property SpaceGemModel:Model ()
+			Return Cast <Model> (Entity)
+		End
+		
+		Property SpaceGemBody:RigidBody ()
+			Return Entity.GetComponent <RigidBody> ()
+		End
+	
+	Private
+
+		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
+	
+		Global CollectedSound:Sound
+	
+		Field collected:Bool = False
+		Field collected_fader:Fader
+
+		Method New (entity:Entity)
+			
+			Super.New (entity)
+			AddInstance ()
+	
+		End
+		
 		Method OnUpdate (elapsed:Float) Override
 		
 			SpaceGemBody.ApplyForce (Game.GameScene.World.Gravity * New Vec3f (1.0, -1.0, 1.0))	
@@ -114,20 +131,4 @@ Class SpaceGem Extends Behaviour
 			
 		End
 
-		Property SpaceGemModel:Model ()
-			Return Cast <Model> (Entity)
-		End
-		
-		Property SpaceGemBody:RigidBody ()
-			Return Entity.GetComponent <RigidBody> ()
-		End
-	
-	Private
-
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
-	
-		Global CollectedSound:Sound
-	
-		Field collected:Bool = False
-		Field collected_fader:Fader
 End

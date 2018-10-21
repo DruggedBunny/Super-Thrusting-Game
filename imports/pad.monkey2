@@ -23,6 +23,18 @@ Class Pad Extends Behaviour
 			
 		End
 
+		Property PadModel:Model ()
+			Return Cast <Model> (Entity)
+		End
+		
+		Property PadBody:RigidBody ()
+			Return Entity.GetComponent <RigidBody> ()
+		End
+	
+	Private
+
+		Field collision_box:Boxf
+		
 		Method New (entity:Entity)
 			
 			Super.New (entity)
@@ -44,17 +56,5 @@ Class Pad Extends Behaviour
 				body.CollisionGroup		= PAD_COLLIDES_WITH
 		
 		End
-		
-		Property PadModel:Model ()
-			Return Cast <Model> (Entity)
-		End
-		
-		Property PadBody:RigidBody ()
-			Return Entity.GetComponent <RigidBody> ()
-		End
-	
-	Private
-
-		Field collision_box:Boxf
 		
 End
