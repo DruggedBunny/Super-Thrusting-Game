@@ -27,11 +27,9 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	' Done: It was while adding TrumpWall ("er...") that I realised Private-isation is a wonderful thing. Fixed public Behaviour stuff that should have been private.
-	' Done: Orb is easier to collect now that IT HAS A COLLISION RADIUS!
-	' Done: HUD is now a proper object with methods, rather than a collection of public functions.
-	' Done: HUD death-skull is finally a sprite! Should (SHOULD) now appear in VR, yet to test...
-	' Done: Smoke is now more dynamic; clears up quicker and rises. May need to be changed to an option for performance, dunno yet.
+	' Done: Fixed Pause mode by not updating delta timer while paused. Duh.
+	
+	TODO ("Reset can leave skull on screen!")
 	
 	TODO ("DO SOON! Pause fups uck Game.Delta, leads to camera looking at nothing! R or Xbox pad Start to reset")
 	
@@ -65,7 +63,7 @@ Function Main ()
 	Local width:Int		= 1024
 	Local height:Int	= 768
 	
-	Run3D (AppName, width, height, WindowFlags.Center)
-'	Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
+'	Run3D (AppName, width, height, WindowFlags.Center)
+	Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
 	
 End

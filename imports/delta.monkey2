@@ -7,8 +7,9 @@ Class DeltaTimer
 	End
 	
 	Method Update ()
-'		delta = Game.GameScene.UpdateRate / App.FPS
-		delta = App.FPS / Game.GameScene.UpdateRate
+		If GameState.GetCurrentState () <> States.Paused
+			delta = App.FPS / Game.GameScene.UpdateRate
+		Endif
 	End
 	
 End
