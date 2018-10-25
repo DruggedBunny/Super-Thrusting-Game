@@ -1,4 +1,8 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
 ' Yes, this is stupid! But it highlights TODOs better and prompts me to reduce clutter in Output window!
 
 Global ToDoList:List <String> = New List <String>

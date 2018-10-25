@@ -1,10 +1,18 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' Landing pad, above which SpaceGems are spawned. Implements creation and collision behaviours.
+
+' Of note: very simple example of a physics-based entity!
+
 Class Pad Extends Behaviour
 
 	Public
-	
+
 		Function Create:Pad (x:Float, y:Float, z:Float, size:Float = 8.0)
-		
+
 			Local thickness:Float	= 1.0 ' Pass in as param?
 			
 			Local box:Boxf			= New Boxf (-size * 0.5, -thickness * 0.5, -size * 0.5, size * 0.5, thickness * 0.5, size * 0.5)

@@ -1,4 +1,8 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
 ' WIP! To split into individual walls. Another class to manage as one?
 
 Class TrumpWall' Extends Behaviour

@@ -1,4 +1,12 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' A simple 3D game/mojo3d demonstration featuring (difficult) "Thrust"-style controls.
+
+' This is the main file, handling core application initialisation, some temp hacks, plus TODO items...
+
 ' SUPER THRUSTING GAME!
 
 ' https://translate.google.com/?source=osdd#auto/ja/super%20thrusting%20game
@@ -27,26 +35,27 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	' Done: Fixed Pause mode by not updating delta timer while paused. Duh.
+	' Done: Orb explosions at correct location!
+	' Done: temp refueling sound on landing
+	' Done: moved most Game functionality into GameController, making Game mainly window init and collection of global properties/methods
+	' Done: started documenting what each file does (See "What is it?" at top of each file.)
 	
 	TODO ("Reset can leave skull on screen!")
-	
-	TODO ("DO SOON! Pause fups uck Game.Delta, leads to camera looking at nothing! R or Xbox pad Start to reset")
-	
-	TODO ("Can now add refueling sound after figuring out reliable non-colliding state; reset a collision flag each loop in GameController.ProcessGame!")
-	TODO ("TrumpWall needs re-arranged in Level so each border can flash when hit")
+	TODO ("New refueling sound. Maybe add landing timer to delay before triggering -- slightly tricky due to need to reset Rocket.landed per-frame!")
+	TODO ("Can end up carrying two orbs if collecting new one prior to old one being destroyed (where rocket dies first)")
+	TODO ("TrumpWall needs re-arranged in Level so each solid border can flash when hit. Might, er, rename TrumpWall...")
 	TODO ("Damage visibility/explosions")
 	TODO ("Add Options class for performance tweaks, etc")
-	TODO ("HUD skull image to 3d sprite (render text to texture??) -- to appear in VR. Should be able to implement now, thanks to recent sprite fix.")
 	TODO ("Convert remaining physics entities to Behaviours; remaining: Rocket, DummyOrb (too simple?)")
-	TODO ("Move Game.State into GameController")
 	TODO ("Generate misc hit sounds for terrain bumps")
-	
 	TODO ("Have player drop orb into cup [SPACE PORTAL UNLOCK THINGY]? More involvement/skill, plus flying to portal with orb is... boring")
 	TODO ("Pads have to be spawned AFTER level created... ideally would be in Level.New...")
 	TODO ("VR: Scaling not right on monitor display")
+	TODO ("VR: See if skull sprite works, and may need to create full-screen sprite in place of fading canvas to black, not sure yet...")
 	TODO ("Point in direction of fall when ballistic (out of fuel)... ? FUCKING IMPOSSIBLE")
 	TODO ("Remove over-cautious object?.thing checks")
+	TODO ("Sprite clouds?")
+	TODO ("Add endless unskippable logos at startup")
 	
 '	TODO ("LIKELY MOJO BUG: Deactivating window and releasing joystick, then activating window, acts as if joystick still held")
 	
@@ -63,7 +72,7 @@ Function Main ()
 	Local width:Int		= 1024
 	Local height:Int	= 768
 	
-'	Run3D (AppName, width, height, WindowFlags.Center)
-	Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
+	Run3D (AppName, width, height, WindowFlags.Center)
+	'Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
 	
 End

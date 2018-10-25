@@ -1,4 +1,21 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' A pixel shader implementing the Sinclair ZX Spectrum graphics palette.
+
+' TODO: Figure out how to render as 256 x 192 and scale to current display
+' size; then implement 'attribute' clash -- impractical with 1080p (have to
+' scan 8x8 pixel blocks and determine most-used colours), but might work at
+' very low res like Spectrum's!
+
+' Shaders are loaded from "Assets::shaders/" -- Shader.Open adds ".glsl" to
+' the shader name if not provided.
+
+' NB. The actual shader processing code is located within the associated .glsl
+' file, using the OpenGL GLSL language.
+
 Class SpeccyEffect Extends PostEffectPlus
 
 	Method New ()

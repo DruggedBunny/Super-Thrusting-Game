@@ -1,4 +1,8 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
 Class PhysicsTerrain ' WIP
 
 	Public
@@ -67,7 +71,7 @@ Class PhysicsTerrain ' WIP
 			
 			Local terrain_material:PbrMaterial	= New PbrMaterial ()
 		 
-				terrain_material.ColorTexture	= New Texture (CheckerPixmap (color0, color1), TextureFlags.None)
+				terrain_material.ColorTexture	= New Texture (CheckerPixmap (256, 256, color0, color1), TextureFlags.None)
 			
 			height_box							= New Boxf (-heightmap.Width * 0.5, 0.0, -heightmap.Height * 0.5, heightmap.Width * 0.5, terrain_height, heightmap.Height * 0.5)
 

@@ -1,22 +1,20 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' In-game display/overlay. Bit of a mess, very "WIP" and temporary!
+
 Class HUDOverlay
 	
-	' This is all pretty nasty/temp/WIP...
-	
-	Private
-	
-		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
-	
-		Global FuelTextColor:Color	= Color.Green ' Text colour for fuel display
-		Global FadeAlpha:Float		= 1.0
-		Global FadingOut:Bool		= False
-	
-		Global SkullSprite:Sprite
-		
-		Field sprite_start_scale:Vec3f ' TEMP
-		
 	Public
 	
+		Property GemMapVisible:Bool ()
+			Return gem_map_visible
+			Setter (state:Bool)
+				gem_map_visible = state
+		End
+		
 		Method New ()
 		
 			sprite_start_scale	= New Vec3f (0.05, 0.05, 1.0)
@@ -138,7 +136,6 @@ Class HUDOverlay
 				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
 				ShadowText (canvas, "TEMP: R to reset!", 20.0, 80.0)
 				ShadowText (canvas, "TEMP: N for next level", 20.0, 140.0)
-				ShadowText (canvas, "TEMP: Landed: " + Game.Player.Landed, 20.0, 160.0)
 			
 				If Game.Player.Fuel = 0.0
 					FuelTextColor = Color.Grey
@@ -204,5 +201,21 @@ Class HUDOverlay
 			Endif
 			
 		End
+
+	' This is all pretty nasty/temp/WIP...
+	
+	Private
+	
+		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
+	
+		Global FuelTextColor:Color	= Color.Green ' Text colour for fuel display
+		Global FadeAlpha:Float		= 1.0
+		Global FadingOut:Bool		= False
+	
+		Global SkullSprite:Sprite
+		
+		Field sprite_start_scale:Vec3f ' TEMP
+
+		Field gem_map_visible:Bool = True
 
 End

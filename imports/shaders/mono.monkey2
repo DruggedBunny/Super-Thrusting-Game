@@ -1,4 +1,20 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' A true monochrome shader (pure black or white pixels) implementing a very
+' harsh dot-matrix printer-type effect -- not really practical, just fun.
+
+' NB. The GLSL shader includes code by Ashaman73, borrowed from:
+' https://www.gamedev.net/blogs/entry/2154392-alpha-transparency-in-deferred-shader/
+
+' Shaders are loaded from "Assets::shaders/" -- Shader.Open adds ".glsl" to
+' the shader name if not provided.
+
+' NB. The actual shader processing code is located within the associated .glsl
+' file, using the OpenGL GLSL language.
+
 Class MonoEffect Extends PostEffectPlus
 
 	Method New (mode:Int = 0)

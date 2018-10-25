@@ -1,4 +1,11 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' The player's rocket, referred to globally via Game.Player. Implements rocket
+' creation, destruction, collision behaviours and control.
+
 Class Rocket
 
 	Public
@@ -8,17 +15,13 @@ Class Rocket
 			BoostSound	= Sound.Load (ASSET_PREFIX_AUDIO + "boost.ogg")
 			AlertSound	= Sound.Load (ASSET_PREFIX_AUDIO + "alert.ogg")
 			BoomSound	= Sound.Load (ASSET_PREFIX_AUDIO + "boom.ogg")
+			FuelSound	= Sound.Load (ASSET_PREFIX_AUDIO + "refuel.ogg")
 
 			If Not BoostSound	Then Abort ("Rocket: Failed to load boost audio!")
 			If Not AlertSound	Then Abort ("Rocket: Failed to load alert audio!")
 			If Not BoomSound	Then Abort ("Rocket: Failed to load boom audio!")
+			If Not FuelSound	Then Abort ("Rocket: Failed to load refueling audio!")
 
-		End
-		
-		Property Landed:Bool ()
-			Return landed
-			Setter (state:Bool)
-				landed = state
 		End
 		
 		Property Alive:Bool ()
@@ -109,16 +112,35 @@ Class Rocket
 							' Want to play landing 'thump' once
 '						Endif
 					
-						fuel = fuel + (0.25 * Game.Delta)
+						If fuel < 100.0
 						
-						'refuel_channel.Level = 0.1
+							fuel = fuel + (0.25 * Game.Delta)
+
+							If fuel > 5.0 And fuel < 95.0
+								If fuel_fader.Level < (FUEL_VOLUME)
+									fuel_fader.Level = fuel_fader.Level + (0.05 * Game.Delta)
+									If fuel_fader.Level > FUEL_VOLUME Then fuel_fader.Level = FUEL_VOLUME
+								Endif
+							Endif
+
+							If alert_fader.Level
+								If fuel > 25.0 Then alert_fader.Level = 0.0
+							Endif
+							
+							If fuel > 100.0 Then fuel = 100.0 '; refuel_channel.Level = 0.0
 						
-						If alert_fader.Level
-							If fuel > 25.0 Then alert_fader.Level = 0.0
+						Else
+
+							If fuel_fader.Level > 0.0
+
+								fuel_fader.Level = fuel_fader.Level - (0.05 * Game.Delta)
+
+								If fuel_fader.Level < 0.0 Then fuel_fader.Level = 0.0
+
+							Endif
+
 						Endif
 						
-						If fuel > 100 Then fuel = 100'; refuel_channel.Level = 0.0
-
 						' Allow for slow touchdown...
 						
 						If Abs (body.LinearVelocity.Length - last_vel.Length) < 5.0
@@ -182,15 +204,30 @@ Class Rocket
 			boost_fader					= Game.MainMixer.AddFader ("Rocket: Boost",	BoostSound.Play (True))
 			alert_fader					= Game.MainMixer.AddFader ("Rocket: Alert",	AlertSound.Play (True))
 			boom_fader					= Game.MainMixer.AddFader ("Rocket: Boom",	BoomSound.Play (False))
+			fuel_fader					= Game.MainMixer.AddFader ("Rocket: Fuel",	FuelSound.Play (True))
 
 			boost_fader.Level			= 0.0
 			alert_fader.Level			= 0.0
 			boom_fader.Level			= BOOM_VOLUME
+			fuel_fader.Level			= 0.0
 
 			boom_fader.Channel.Paused	= True
-			
+		
 		End
 	
+		Method PerLoopReset ()
+
+			If Not landed
+				If fuel_fader.Level > 0.0
+					fuel_fader.Level = fuel_fader.Level - (0.05 * Game.Delta)
+					If fuel_fader.Level < 0.0 Then fuel_fader.Level = 0.0
+				Endif
+			Endif
+			
+			landed = False
+
+		End
+		
 		' Called from Orb.DetachFromRocket...
 		
 		Method NullifyOrb ()
@@ -202,6 +239,7 @@ Class Rocket
 			boost_fader.Channel.Paused	= True
 			boom_fader.Channel.Paused	= False
 			alert_fader.Channel.Paused	= True
+			fuel_fader.Channel.Paused	= True
 			
 			PhysicsTri.Explode (model, body)
 			
@@ -391,6 +429,7 @@ Class Rocket
 			Game.MainMixer.RemoveFader (boost_fader, False)
 			Game.MainMixer.RemoveFader (alert_fader, False)
 			Game.MainMixer.RemoveFader (boom_fader, False)
+			Game.MainMixer.RemoveFader (fuel_fader, False)
 
 		End
 	
@@ -401,17 +440,20 @@ Class Rocket
 		Const BOOM_VOLUME:Float				= 0.5
 		Const BOOST_VOLUME:Float			= 0.5
 		Const ALERT_VOLUME:Float			= 0.05
-		
+		Const FUEL_VOLUME:Float				= 0.125
+
 		Const ASSET_PREFIX_AUDIO:String		= "asset::audio/common/"
 		Const ASSET_PREFIX_MODEL:String		= "asset::models/common/"
 	
 		Global BoostSound:Sound
 		Global AlertSound:Sound
 		Global BoomSound:Sound
+		Global FuelSound:Sound
 
 		Field boost_fader:Fader
 		Field alert_fader:Fader
 		Field boom_fader:Fader
+		Field fuel_fader:Fader
 		
 		Field model:Model				' mojo3d Model
 		Field collider:ConeCollider		' Bullet physics collider

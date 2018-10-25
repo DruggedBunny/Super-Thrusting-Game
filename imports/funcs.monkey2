@@ -1,4 +1,13 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' Collection of non game-specific functions.
+
+' PadDigit: Used here to pad individual time elements (hour, min, sec) to
+' show in 00:00:00 format.
+
 Function PadDigit:String (number:String, pad:Int)
 	
 	' 0 -> 00
@@ -13,9 +22,13 @@ Function PadDigit:String (number:String, pad:Int)
 	
 End
 
+' IsPow2: Returns True if number is a power of 2.
+
 Function IsPow2:Long (value:Long)
 	Return Not (value & (value - 1)) ' Caveat: 0 is not Pow2! https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
 End
+
+' CountEntities: Returns number of entities in scene, or number of child entities if entity is passed in.
 
 Function CountEntities:Int (entity:Entity = Null)
 	
@@ -23,7 +36,7 @@ Function CountEntities:Int (entity:Entity = Null)
 
 		Assert (scene, "CountEntities: No current scene!")
 
-	Local branch:Entity[]
+	Local branch:Entity []
 	
 	If Not entity
 		branch = scene.GetRootEntities ()
@@ -40,6 +53,10 @@ Function CountEntities:Int (entity:Entity = Null)
 	Return count
 	
 End
+
+' PrintEntities: Prints a tree-view of entities in scene to the console, or children of an entity if passed in.
+
+' IMPORTANT: Don't use depth parameter! This is used by the function to determine level of recursion!
 
 Function PrintEntities:Int (e:Entity = Null, depth:Int = 0)
 	
@@ -76,14 +93,24 @@ Function PrintEntities:Int (e:Entity = Null, depth:Int = 0)
 	
 End
 
-Function Degrees:Float (radian:Float)
-	Return radian * RadDivider
+' Degrees: Converts radians to degrees; needed by some mojo/mojo3d functions if
+' you don't think in radians or value your sanity!
+
+Function Degrees:Float (radians:Float)
+	Return radians * RAD_DIVIDER
 End
+
+' Abort: Terminates app with error message passed in.
 
 Function Abort (msg:String)
 	Notify ("Fatal error in " + AppName, msg, True)
 	App.Terminate ()
 End
+
+' TransformRange: Incredibly useful for warping a value from one range of values into another
+' range, eg. from 0-255 into 0.0-1.0, where a value of 127 would be transformed to (approx?) 0.5.
+
+' Search source for TransformRange to see wide range of uses!
 
 Function TransformRange:Float (input_value:Float, from_min:Float, from_max:Float, to_min:Float, to_max:Float)
 
@@ -98,14 +125,20 @@ Function TransformRange:Float (input_value:Float, from_min:Float, from_max:Float
 	
 End
 
+' Blend: Blends between input value and target value by delta value.
+
 Function Blend:Float (in:Float, target:Float, delta:Float = 0.1)
 	If Abs (target - in) < Abs (delta) Then Return target
 	Return in + ((target - in) * delta)
 End
 
+' Quoted: Adds quotes around string.
+
 Function Quoted:String (msg:String)
 	Return "~q" + msg + "~q"
 End
+
+' Iterates through gamepads/sticks to find first attached Xbox pad in list.
 
 Function FindFirstXboxPad:Joystick ()
 
@@ -134,6 +167,9 @@ Function FindFirstXboxPad:Joystick ()
 	
 End
 
+' ValidateJoystick: Tries to re-attach gamepad to game if lost. Handles
+' gamepad battery outages, removal from computer, etc.
+
 Function ValidateJoystick:Joystick (j:Joystick)
 
 	If Not j Or Not j.Attached
@@ -143,6 +179,8 @@ Function ValidateJoystick:Joystick (j:Joystick)
 	Return j
 	
 End
+
+' PixmapFormat: Returns pixel format as a string.
 
 Function PixmapFormat:String (pixmap:Pixmap)
 
@@ -181,6 +219,8 @@ Function PixmapFormat:String (pixmap:Pixmap)
 
 End
 
+' ShadowText: Used in HUD to draw text with shadow, to enhance readability.
+
 Function ShadowText:Void (canvas:Canvas, s:String, x:Float, y:Float, fore:Color = Null, back:Color = Null)
 
 	If Not fore Then fore = Color.White
@@ -194,9 +234,12 @@ Function ShadowText:Void (canvas:Canvas, s:String, x:Float, y:Float, fore:Color 
 
 End
 
-Function CheckerPixmap:Pixmap (color0:Color = Color.Black, color1:Color = Color.White)
+' CheckerPixmap: Creates a checkerboard pixmap from two colours. Used for terrain textures here.
+
+Function CheckerPixmap:Pixmap (width:Int, height:Int, color0:Color = Color.Black, color1:Color = Color.White)
  
-	Local pixels:Pixmap = New Pixmap (256, 256, PixelFormat.RGBA8)
+	Local pixels:Pixmap = New Pixmap (width, height, PixelFormat.RGBA8)
+	
 	pixels.Clear (color0)
 	
 	Local pixel_toggle:Bool = False
@@ -212,6 +255,11 @@ Function CheckerPixmap:Pixmap (color0:Color = Color.Black, color1:Color = Color.
 	Return pixels
 	
 End
+
+' ModelFromTriangle: Possibly no longer relevant, but generates a separate
+' triangle model from a model's specified triangle.
+
+' See ModelFromTriangles, below!
 
 Function ModelFromTriangle:Model (in_model:Model, index:UInt, mat_index:Int)
 
@@ -254,6 +302,9 @@ Function ModelFromTriangle:Model (in_model:Model, index:UInt, mat_index:Int)
 	Return tri_model
  
 End
+
+' ModelFromTriangles: Generates a separate model from a range of existing model triangles.
+' Used for chunky explosions via PhysicsTri class!
 
 Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:UInt, mat_index:Int)
 
@@ -327,6 +378,8 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
  
 End
 
+' Run3D: Just simplifies application setup code.
+
 Function Run3D (title:String, width:Int, height:Int, flags:WindowFlags = WindowFlags.Center)
 
 	New AppInstance
@@ -341,6 +394,9 @@ Function Run3D (title:String, width:Int, height:Int, flags:WindowFlags = WindowF
 	App.Run ()
 
 End
+
+' LonePixel: Probably no longer used, but tests if a given pixel is bordered by any
+' pixels of same colour. If not, returns True to reflect a lone pixel. May need again!
 
 Function LonePixel:Bool (x:Int, y:Int, argb:Color, pixmap:Pixmap)
 

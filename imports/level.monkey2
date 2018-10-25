@@ -1,4 +1,11 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' Level creation and control, along with a small class to hold basic level
+' data; the latter isn't really necessary, just simplified setup code.
+
 Class Level
 
 	Public
@@ -408,7 +415,7 @@ Class Level
 		End
 		
 		Method SpawnRocket (x:Float, y:Float, z:Float)
-			Game.SpawnRocket (New Vec3f (x, y, z))
+			Game.Controller.SpawnRocket (New Vec3f (x, y, z))
 		End
 
 End

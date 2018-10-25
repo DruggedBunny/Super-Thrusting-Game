@@ -1,15 +1,28 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' A physics-based 3D sprite particle, generated in the event of an explosion.
+
+' TODO: Still WIP, as Sprite isn't fully working -- shouldn't need to create
+' materials, instead just changing colour/alpha directly. Using separate
+' materials like this prevents mojo3d from 'batching' sprites together
+' for greater efficiency.
+
+' Above reported at https://github.com/blitz-research/monkey2/issues/434#issuecomment-432054239
+
 Class ExplosionParticle Extends Behaviour
 
 	Public
 	
-		Function Create:ExplosionParticle (rocket:Rocket, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
+		Function Create:ExplosionParticle (model:Model, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
 
 			ExplosionParticle.SpriteInit ()
 			
 			Local sp:ExplosionParticle
 			
-			Local sprite:Sprite = New Sprite (SpriteMat [Int (Rnd (5))], rocket.RocketModel)
+			Local sprite:Sprite = New Sprite (SpriteMat [Int (Rnd (5))], model)
 		
 				'sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
 				

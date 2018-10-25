@@ -1,4 +1,8 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
 Class PhysicsTri Extends Behaviour
 
 	Public
@@ -11,13 +15,13 @@ Class PhysicsTri Extends Behaviour
 			
 			For Local particles:Int = 0 Until explosion_particles
 
-				Local angle:Vec3f = Game.Player.RocketModel.Basis * New Vec3f (
+				Local angle:Vec3f = model.Basis * New Vec3f (
 				
 									Rnd (-particle_vel, particle_vel),
 									Rnd (-particle_vel, particle_vel),
 									Rnd (-particle_vel, particle_vel))			.Normalize () * Rnd (particle_vel)
 
-				ExplosionParticle.Create	(	Game.Player,		' Rocket
+				ExplosionParticle.Create	(	model,		' Rocket
 												angle,				' 3D angle
 												Rnd (0.1, 1.0),		' Size
 												0.99)				' Fadeout-multiplier

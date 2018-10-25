@@ -1,4 +1,8 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
 Class Temp
 
 	Function Controls ()
@@ -20,7 +24,7 @@ Class Temp
 		Endif
 		
 		If Keyboard.KeyHit (Key.M)
-			Game.GemMapVisible = Not Game.GemMapVisible
+			Game.HUD.GemMapVisible = Not Game.HUD.GemMapVisible
 		Endif
 		
 		If Keyboard.KeyHit (Key.F)

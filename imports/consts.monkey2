@@ -1,4 +1,13 @@
 
+' -----------------------------------------------------------------------------
+' What is it?
+' -----------------------------------------------------------------------------
+
+' A collection of constant values used throughout the game.
+
+' TODO: Currently includes collision constants -- ought to be separated out.
+' (Then again, it's MOSTLY collision constants!)
+
 #If __TARGET__ = "emscripten"
 	Const TRI_SKIPPER:Int = 3 ' Skip every TRI_SKIPPER triangles for speed -- used in model.Collided Lambda
 #Else
@@ -34,4 +43,4 @@ Const WALL_COLLIDES_WITH:Short		= COLL_ROCKET
 
 ' For radians-based calculations...
 
-Const RadDivider:Float = Pi / 180.0
+Const RAD_DIVIDER:Float = Pi / 180.0
