@@ -31,6 +31,7 @@
 #Import "trumpwall"
 #Import "physicsterrain"
 #Import "portal"
+#Import "portallock"
 #Import "gamemenu"
 #Import "gamestate"
 #Import "simplex"

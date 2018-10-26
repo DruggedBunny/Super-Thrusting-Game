@@ -24,6 +24,10 @@ Class Rocket
 
 		End
 		
+		Property Refueling:Bool ()
+			Return refueling
+		End
+		
 		Property Alive:Bool ()
 			Return Not exploded
 		End
@@ -117,6 +121,7 @@ Class Rocket
 							fuel = fuel + (0.25 * Game.Delta)
 
 							If fuel > 5.0 And fuel < 95.0
+								refueling = True
 								If fuel_fader.Level < (FUEL_VOLUME)
 									fuel_fader.Level = fuel_fader.Level + (0.05 * Game.Delta)
 									If fuel_fader.Level > FUEL_VOLUME Then fuel_fader.Level = FUEL_VOLUME
@@ -225,7 +230,8 @@ Class Rocket
 			Endif
 			
 			landed = False
-
+			refueling = False
+			
 		End
 		
 		' Called from Orb.DetachFromRocket...
@@ -304,7 +310,7 @@ Class Rocket
 					
 					Local spread:Vec3f = New Vec3f (TMP_spreadx, TMP_y_thrust, TMP_spreadz)
 					
-					RocketParticle.Create (Self, RocketModel.Basis * spread, 0.33)
+					RocketParticle.Create (Self, RocketModel.Basis * spread, Rnd (0.25, 0.4))
 							
 					fuel = fuel - (MPG * (0.9 * Game.Delta))
 					If fuel < 25.0 Then alert_fader.Level = ALERT_VOLUME
@@ -474,6 +480,7 @@ Class Rocket
 
 		Field landed:Bool
 		Field damage:Float
+		Field refueling:Bool
 		
 		Field joy:Joystick
 		Field joy_enabled:Bool

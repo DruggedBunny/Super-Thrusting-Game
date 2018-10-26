@@ -45,6 +45,8 @@ Class GameCamera
 			
 			chase_target.Name = "Camera chase target [spawned at " + Time.Now () + "]"
 			
+			up = New Vec3f (0.0, up_y_default, 0.0)
+			
 			Reset ()
 			
 		End
@@ -87,7 +89,7 @@ Class GameCamera
 					lastvel = lastvel.Blend (player.RocketBody.LinearVelocity, 0.045 * Game.Delta)
 				Endif
 				
-				chase_target.Position = player.RocketModel.Position - lastvel * CameraDistance
+				chase_target.Position = (player.RocketModel.Position + up) - lastvel * CameraDistance
 				camera_pivot.Move ((chase_target.Position - camera_pivot.Position) * (0.1 * Game.Delta), True)
 				camera_pivot.PointAt (player.RocketModel)
 
@@ -95,8 +97,10 @@ Class GameCamera
 				
 				If cam_dist < 10.0
 					Camera3D.FOV = Blend (Camera3D.FOV, TransformRange (cam_dist, 1.0, 10.0, 130.0, 90.0), 0.1 * Game.Delta)
+					up.Y = Blend (up.Y, 3.0, 0.01 * Game.Delta)
 				Else
 					Camera3D.FOV = Blend (Camera3D.FOV, 90.0, 0.075 * Game.Delta)
+					up.Y = Blend (up.Y, up_y_default, 0.01 * Game.Delta)
 				Endif
 				
 			Else
@@ -148,7 +152,10 @@ Class GameCamera
 	
 		Field lastvel:Vec3f
 		Field prevvel:Vec3f
-
+	
+		Field up:Vec3f
+		Field up_y_default:Float = 1.5
+		
 		Field camera_distance:Float = 0.55
 		
 End

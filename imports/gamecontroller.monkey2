@@ -36,7 +36,7 @@ Class GameController
 				If Not Game.MainMixer.Paused Then Game.MainMixer.Paused = True
 
 				If Game.GameScene.UpdateRate
-'					last_timescale = Game.GameScene.UpdateRate
+					last_timescale = Game.GameScene.UpdateRate
 					Game.GameScene.UpdateRate = 0.0
 				Endif
 				

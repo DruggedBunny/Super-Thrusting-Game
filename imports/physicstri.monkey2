@@ -7,7 +7,7 @@ Class PhysicsTri Extends Behaviour
 
 	Public
 
-		Function Explode (model:Model, body:RigidBody, chunk:UInt = 0, explosion_particles:Int = 500)
+		Function Explode (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500)
 
 			Local particle_vel:Float = 1.0
 
@@ -36,13 +36,13 @@ Class PhysicsTri Extends Behaviour
 				
 				Local mat_tris:UInt = model.Mesh.GetIndices (mat).Length / 3
 				
-				If Not chunk Then chunk = Max (12, Int (Rnd (mat_tris)))
+				If Not tris_per_chunk Then tris_per_chunk = Max (12, Int (Rnd (mat_tris)))
 
 				' Going through triangles of each material in turn...
 				
-				For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * chunk * TRI_SKIPPER ' Set in consts.monkey2
+				For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * tris_per_chunk * TRI_SKIPPER ' Set in consts.monkey2
 				
-					Local model:Model		= ModelFromTriangles (model, tri, chunk, mat)
+					Local model:Model		= ModelFromTriangles (model, tri, tris_per_chunk, mat)
 					
 						model.Parent		= Null
 						model.CastsShadow	= False

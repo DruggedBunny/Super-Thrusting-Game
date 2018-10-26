@@ -82,6 +82,8 @@ Class SpaceGem Extends Behaviour
 						
 						Game.CurrentLevel.SpaceGemRemoved ()
 		
+						Game.CurrentLevel.CurrentGemMap.Update ()
+		
 					Endif
 		
 				End

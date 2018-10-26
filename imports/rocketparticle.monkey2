@@ -9,7 +9,7 @@ Class RocketParticle Extends Behaviour
 	
 		Global SMat:SpriteMaterial
 		
-		Function Create:RocketParticle (rocket:Rocket, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
+		Function Create:RocketParticle (rocket:Rocket, thrust:Vec3f, size:Float, fadeout:Float = 0.95)
 
 			If Not SpriteMat Then SpriteInit ()
 
@@ -22,6 +22,15 @@ Class RocketParticle Extends Behaviour
 				sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
 				
 				sprite.Parent				= Null
+				
+				Local spark:Bool = False
+				
+				If Rnd (1.0) > 0.9
+					size = Rnd (0.05, 0.095)
+					thrust = thrust * New Vec3f (2.5, 3.33, 2.5)
+					spark = True
+				Endif
+				
 				sprite.Scale				= New Vec3f (size, size, 1.0)
 				sprite.Alpha				= 1.0
 				sprite.CastsShadow			= False
@@ -30,6 +39,7 @@ Class RocketParticle Extends Behaviour
 			
 				sp.thrust					= thrust
 				sp.update_fader				= fadeout
+				sp.spark					= spark
 				
 			Return sp
 			
@@ -118,7 +128,11 @@ Class RocketParticle Extends Behaviour
 					Entity.Scale = Entity.Scale * ((1.0 + Rnd (0.033)) * Game.Delta)
 					Entity.GetComponent <RigidBody> ().ApplyForce (New Vec3f (0.0, 0.15, 0.0))
 				Else
-					color_change = color_change * (update_fader * Game.Delta) ' TODO: Needs adjusting for framerate!
+					If spark
+						color_change = color_change * ((1.025 * update_fader) * Game.Delta)
+					Else
+						color_change = color_change * (update_fader * Game.Delta)
+					Endif
 				End
 				
 				' Slow particle down (air resistance)... very dependent on start speed and alpha fade amount...
@@ -138,5 +152,5 @@ Class RocketParticle Extends Behaviour
 		Field thrust:Vec3f
 		Field update_fader:Float
 		Field color_change:Float = 0.99
-		
+		Field spark:Bool
 End

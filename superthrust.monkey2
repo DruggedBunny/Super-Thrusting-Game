@@ -35,10 +35,13 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	' Done: Orb explosions at correct location!
-	' Done: temp refueling sound on landing
-	' Done: moved most Game functionality into GameController, making Game mainly window init and collection of global properties/methods
-	' Done: started documenting what each file does (See "What is it?" at top of each file.)
+	' Done: Refueling status/text
+	' Done: RocketParticle now adds sparks
+	' Done: Accidentally improved close-up camera! Raised up to avoid smoke trail and noticed it made close-up work easier. Now raised/lowered dynamically in GameCamera.
+	
+	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
+	
+	TODO ("PortalLock: just started. Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
 	
 	TODO ("Reset can leave skull on screen!")
 	TODO ("New refueling sound. Maybe add landing timer to delay before triggering -- slightly tricky due to need to reset Rocket.landed per-frame!")

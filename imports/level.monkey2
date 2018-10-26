@@ -12,6 +12,12 @@ Class Level
 		
 		Const FIXED_GEM_COUNT:Int = 8 ' Not sure if temp...
 
+		Property Lock:PortalLock ()
+			Return portal_lock
+			Setter (lock:PortalLock)
+				portal_lock = lock
+		End
+		
 		Property Terrain:PhysicsTerrain ()
 			Return terrain
 			Setter (new_terrain:PhysicsTerrain)
@@ -230,13 +236,13 @@ Class Level
 				SeedRnd (terrain_seed)
 			Endif
 			
+			Local valid_position:Bool
+
 			' -----------------------------------------------------------------
 			' Set pad positions...
 			' -----------------------------------------------------------------
 
 			For Local spawning:Int = 0 Until FIXED_GEM_COUNT
-
-				Local valid_position:Bool
 
 				Repeat
 				
@@ -293,7 +299,53 @@ Class Level
 			' Sets number of gems initially spawned...
 			
 			spacegems_spawned = space_gem_count
-		
+
+			' -----------------------------------------------------------------
+			' Portal lock...
+			' -----------------------------------------------------------------
+
+			pad_y_offset = 16
+
+			Repeat
+			
+				' Proposed position: Random x/y, with padding of 10 at borders...
+				
+				pixmap_x = Rnd (10.0, (terrain.Width - 1) - 10.0)
+				pixmap_y = Rnd (10.0, (terrain.Depth - 1) - 10.0)
+				
+				' Start by assuming valid position...
+				
+				valid_position = True
+			
+				pad_x = terrain.TerrainXFromHeightMap (pixmap_x)
+				pad_y = terrain.TerrainYFromHeightMap (pixmap_x, pixmap_y) + pad_y_offset
+				pad_z = terrain.TerrainZFromHeightMap (pixmap_y)
+
+				' Check position against all spawned pads...
+				
+				For Local existing:Pad = Eachin pads
+
+					' New position as 3D vector...
+					
+					Local new_position:Vec3f = New Vec3f (pad_x, pad_y, pad_z)
+
+					' Compare against position of existing gems in level...
+					
+					If new_position.Distance (existing.PadModel.Position) < 50.0
+
+						' Too close to an existing gem... exit pad comparison loop and go back around Repeat/Until loop!
+
+						valid_position = False
+						Exit
+
+					Endif
+
+				Next
+
+			Until valid_position
+
+			Lock = PortalLock.Create (pad_x, pad_y, pad_z)
+			
 			' This returns the player's position. Bit naughty...
 			
 			Return New Vec3f (spawn_x, spawn_y, spawn_z)
@@ -372,6 +424,8 @@ Class Level
 		
 		Field sun:Light
 		Field portal:Portal
+		Field portal_lock:PortalLock
+		
 		Field dummy_orb:DummyOrb
 		
 		Field pads:List <Pad>

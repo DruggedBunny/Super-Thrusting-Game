@@ -134,7 +134,8 @@ Class HUDOverlay
 				
 				ShadowText (canvas, "FPS: " + App.FPS, 20.0, 20.0)
 				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
-				ShadowText (canvas, "TEMP: R to reset!", 20.0, 80.0)
+				ShadowText (canvas, "P to pause", 20.0, 80.0)
+				ShadowText (canvas, "TEMP: R to reset!", 20.0, 100.0)
 				ShadowText (canvas, "TEMP: N for next level", 20.0, 140.0)
 			
 				If Game.Player.Fuel = 0.0
@@ -162,7 +163,6 @@ Class HUDOverlay
 				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 500.0)
 				ShadowText (canvas, "F4: toggle B&W (mono) shader", 20.0, 520.0)
 				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 560.0)
-				ShadowText (canvas, "TEMP: Delta: " + Game.Delta, 20.0, 600.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					
@@ -170,6 +170,16 @@ Class HUDOverlay
 
 					ShadowText (canvas, paused, (canvas.Viewport.Width * 0.5) - (font.TextWidth (paused) * 0.5), canvas.Viewport.Height * 0.65)
 
+				Else
+				
+					If Game.Player.Refueling
+					
+						Local paused:String = "R E F U E L I N G . . ."
+
+						ShadowText (canvas, paused, (canvas.Viewport.Width * 0.5) - (font.TextWidth (paused) * 0.5), canvas.Viewport.Height * 0.65)
+
+					Endif
+					
 				Endif
 				
 '				Local nearest:Float = 1000000.0
