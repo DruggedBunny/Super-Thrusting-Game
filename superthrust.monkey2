@@ -35,15 +35,16 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	' Done: Refueling status/text
-	' Done: RocketParticle now adds sparks
-	' Done: Accidentally improved close-up camera! Raised up to avoid smoke trail and noticed it made close-up work easier. Now raised/lowered dynamically in GameCamera.
+	' Done: Simple rect clouds, need to be integrated properly, though. (Make fixed to camera like skyboxes to minimise range?)
+	' Done: Mostly fixed spectacular mystery fup-uck that destroyed pad positioning!
+	' Done: Basics of DAREDEVIL bonuses... fly close to ground at high speed! (Text in HUD for now. May provide fuel or... lives... risk life to gain lives. Bwu-ha ha! Lives would put a bit more pressure into the game and be a bit more 'retro' too.)
+	' Done: Fixed skull staying on-screen during (temp) reset via R key.
 	
 	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
 	
-	TODO ("PortalLock: just started. Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
+	TODO ("PortalLock: just started. (Pink pads.) Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
 	
-	TODO ("Reset can leave skull on screen!")
+	TODO ("Might add emergency air-jump to fix lying on side on ground... though finally detecting tilt angle and blowing up probably better...")
 	TODO ("New refueling sound. Maybe add landing timer to delay before triggering -- slightly tricky due to need to reset Rocket.landed per-frame!")
 	TODO ("Can end up carrying two orbs if collecting new one prior to old one being destroyed (where rocket dies first)")
 	TODO ("TrumpWall needs re-arranged in Level so each solid border can flash when hit. Might, er, rename TrumpWall...")

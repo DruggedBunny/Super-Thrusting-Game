@@ -41,6 +41,7 @@
 #Import "gamecontroller"
 #Import "mixer"
 #Import "gemmap"
+#Import "cloud"
 #import "quicktimer"
 #Import "posteffectplus"
 #Import "delta"

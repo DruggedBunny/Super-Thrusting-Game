@@ -194,9 +194,11 @@ Class GameController
 		
 			If Not Game.Player Then Abort ("SpawnNextLevel: SpawnRocket failed to spawn rocket!")
 					
-		Game.MainCamera				= New GameCamera (App.ActiveWindow.Rect, Game.MainCamera, Game.TerrainSize)
+		Game.MainCamera				= New GameCamera (App.ActiveWindow.Rect, Game.MainCamera, Game.TerrainSize * 5.0)
 		
-		Game.HUD					= New HUDOverlay ' HUD needs to pick up new camera
+		Game.HUD.Destroy ()
+
+			Game.HUD				= New HUDOverlay ' HUD needs to pick up new camera
 
 		Game.SetWindowTitle ()
 		

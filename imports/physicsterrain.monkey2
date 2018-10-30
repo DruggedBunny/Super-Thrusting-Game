@@ -11,28 +11,6 @@ Class PhysicsTerrain ' WIP
 			Return terrain_data
 		End
 		
-	Private
-
-		Field terrain:Model
-		Field terrain_data:PlayfulJSTerrainMap
-
-		Field pixels:Pixmap
-		Field heightmap:Pixmap
-
-		Field terrain_material:PbrMaterial
-	
-		Field width:Float
-		Field height:Float
-		
-		Field height_box:Boxf
-	
-		Field collider:TerrainCollider		' Bullet physics collider
-		Field body:RigidBody				' Bullet physics body
-
-		Field wall:TrumpWall
-		
-	Public
-		
 		Property TerrainBody:RigidBody ()
 			Return body
 		End
@@ -112,11 +90,51 @@ Class PhysicsTerrain ' WIP
 		Method TerrainZFromHeightMap:Float (pixmap_y:Float)
 			Return TransformRange (pixmap_y, heightmap.Height - 1, 0.0, -Depth * 0.5, Depth * 0.5)
 		End
+
+		Method TerrainYFromEntity:Float (entity:Entity)
+
+			Local x:Float = entity.X
+			Local z:Float = entity.Z
+			
+			x = TransformRange (x, -heightmap.Width * 0.5, heightmap.Width * 0.5, 0.0, heightmap.Width - 1)
+			z = TransformRange (z, -heightmap.Height * 0.5, heightmap.Height * 0.5, 0.0, heightmap.Height - 1)
+			
+			Local height:Float = heightmap.GetPixel (x, z).R		' Red value from heightmap...
+
+			' height_box.Height * 3.0 + ceiling_box.Height * 0.5 ' from TrumpWall
+			
+			Local upper:Float = (Height * 3.0) - 0.5 ' ceiling_box.Height = 1.0
+			
+			height = TransformRange (height, 0.0, 1.0, 0.0, Height)
+			
+			Return height
+
+		End
 		
 		Method Destroy ()
 			TerrainModel?.Destroy ()
 			TerrainBody?.Destroy ()
 			wall?.Destroy ()
 		End
+		
+	Private
+
+		Field terrain:Model
+		Field terrain_data:PlayfulJSTerrainMap
+
+		Field pixels:Pixmap
+		Field heightmap:Pixmap
+
+		Field terrain_material:PbrMaterial
+	
+		Field width:Float
+		Field height:Float
+		
+		Field height_box:Boxf
+	
+		Field collider:TerrainCollider		' Bullet physics collider
+		Field body:RigidBody				' Bullet physics body
+
+		Field wall:TrumpWall
 		
 End

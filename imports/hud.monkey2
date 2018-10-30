@@ -79,31 +79,15 @@ Class HUDOverlay
 					
 					' Fade in...
 					
-					canvas.Color = Color.Black
-					canvas.Alpha = FadeAlpha
-					canvas.DrawRect (App.ActiveWindow.Rect)
+					Background (canvas)
 			
 				Case States.PlayEnding ' Player dead...
 
 					' Fade out...
 					
-					canvas.Color = Color.Black
+					Background (canvas)
 
-						' Draw rect...
-						
-						canvas.Alpha = FadeAlpha
-						canvas.DrawRect (App.ActiveWindow.Rect)
-					
-					canvas.Color = Color.White
-		
-						' Draw skull...
-						
-						If Not SkullSprite.Visible
-							SkullSprite.Visible = True
-						Endif
-
-						SkullSprite.Scale		= SkullSprite.Scale * 1.025 * Game.Delta
-						SkullSprite.Rotation	= Game.MainCamera.Camera3D.Rotation + New Vec3f (0.0, 0.0, SkullSprite.Rotation.Z + 5.0)
+					DeathSkull (canvas)
 						
 '						If quad_mode = SpriteMode.Billboard
 			
@@ -111,21 +95,16 @@ Class HUDOverlay
 			
 					' Fade out...
 					
-					canvas.Color = Color.Black
-
-						' Draw rect...
-						
-						canvas.Alpha = FadeAlpha
-						canvas.DrawRect (App.ActiveWindow.Rect)
+					Background (canvas)
 					
 				Case States.Exiting
 
 					' Fade out...
 					
-					canvas.Color = Color.Black
-					canvas.Alpha = FadeAlpha
-					canvas.DrawRect (App.ActiveWindow.Rect)
-			
+					Background (canvas)
+
+					DeathSkull (canvas)
+
 			End
 
 			If Not (GameState.GetCurrentState () = States.LevelTween)
@@ -137,7 +116,7 @@ Class HUDOverlay
 				ShadowText (canvas, "P to pause", 20.0, 80.0)
 				ShadowText (canvas, "TEMP: R to reset!", 20.0, 100.0)
 				ShadowText (canvas, "TEMP: N for next level", 20.0, 140.0)
-			
+
 				If Game.Player.Fuel = 0.0
 					FuelTextColor = Color.Grey
 				Elseif Game.Player.Fuel > 50.0
@@ -155,6 +134,12 @@ Class HUDOverlay
 				ShadowText (canvas, "TEMP: Entities in scene: " + CountEntities (), 20.0, 340.0)
 				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
 
+				ShadowText (canvas, "Height above ground: " + Game.Player.HeightAboveGround, 20.0, 400.0)
+
+				If Game.Player.HeightAboveGround < 10.0 And Game.Player.RocketBody.LinearVelocity.Length > 35.0
+					ShadowText (canvas, "*** DAREDEVIL!! *** " + Game.Player.RocketBody.LinearVelocity.Length, 20.0, 420.0)
+				Endif
+
 				Local current_time:String = PadDigit (Time.Now ().Hours, 2) + ":" + PadDigit (Time.Now ().Minutes, 2) + ":" + PadDigit (Time.Now ().Seconds, 2)
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
@@ -163,6 +148,8 @@ Class HUDOverlay
 				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 500.0)
 				ShadowText (canvas, "F4: toggle B&W (mono) shader", 20.0, 520.0)
 				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 560.0)
+
+				ShadowText (canvas, "Map height: " + Game.CurrentLevel.Terrain.TerrainYFromEntity (Game.Player.RocketModel), 20.0, 600.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					
@@ -212,10 +199,40 @@ Class HUDOverlay
 			
 		End
 
+		Method Destroy ()
+			SkullSprite.Destroy ()
+		End
+		
 	' This is all pretty nasty/temp/WIP...
 	
 	Private
+
+		Method Background (canvas:Canvas)
+
+			' TODO: Needs to be replaced by full-screen sprite to work in VR... I think...
+			
+			canvas.Color = Color.Black
 	
+			canvas.Alpha = FadeAlpha
+			canvas.DrawRect (App.ActiveWindow.Rect)
+			
+		End
+		
+		Method DeathSkull (canvas:Canvas)
+
+			canvas.Color = Color.White
+
+			' Draw skull...
+			
+			If Not SkullSprite.Visible
+				SkullSprite.Visible = True
+			Endif
+
+			SkullSprite.Scale		= SkullSprite.Scale * 1.025 * Game.Delta
+			SkullSprite.Rotation	= Game.MainCamera.Camera3D.Rotation + New Vec3f (0.0, 0.0, SkullSprite.Rotation.Z + 5.0)
+				
+		End
+			
 		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
 	
 		Global FuelTextColor:Color	= Color.Green ' Text colour for fuel display

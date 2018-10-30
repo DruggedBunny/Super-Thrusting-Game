@@ -77,7 +77,13 @@ Class GameWindow Extends Window
 		' Temp: Used only by GameMenu.Control -> R or Gamepad Start to reset level during development!
 		
 		Method TMP_ResetLevel ()
+			
+			HUD.Destroy ()
+			
+				HUD = New HUDOverlay
+				
 			Controller.ResetLevel ()
+			
 		End
 		
 		Property VR_Renderer:VRRenderer ()
@@ -170,7 +176,15 @@ Class GameWindow Extends Window
 			' Camera setup...
 			' ----------------------------------------------------------------
 
-			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, terrain_size)
+			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, TerrainSize * 5.0)
+
+'			' ----------------------------------------------------------------
+'			' TMP: Clouds
+'			' ----------------------------------------------------------------
+'
+			For Local loop:Int = 1 To 25
+				Local c:Cloud = New Cloud (Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (1024.0, 4096.0), Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (500.0, 1000.0))
+			Next
 			
 			' ----------------------------------------------------------------
 			' Set window title...

@@ -52,6 +52,14 @@ Class Rocket
 			Return model
 		End
 		
+		Property RocketHeight:Float ()
+			Return Game.Player.RocketModel.GetComponent <ConeCollider> ().Length
+		End
+		
+		Property HeightAboveGround:Float ()
+			Return (RocketModel.Position.Y - Game.CurrentLevel.Terrain.TerrainYFromEntity (RocketModel)) - RocketHeight * 0.5
+		End
+		
 		Method New (x:Float, y:Float, z:Float, collision_radius:Float = 1.2, collision_length:Float = 4.0, collision_mass:Float = 10.0)
 
 			model						= Model.Load (ASSET_PREFIX_MODEL + "Rocket_Ship_01.gltf")
