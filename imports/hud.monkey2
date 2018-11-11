@@ -111,10 +111,14 @@ Class HUDOverlay
 				
 				ShadowText (canvas, "FPS: " + App.FPS, 20.0, 20.0)
 				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
-				ShadowText (canvas, "P to pause", 20.0, 80.0)
-				ShadowText (canvas, "TEMP: R to reset!", 20.0, 100.0)
-				ShadowText (canvas, "TEMP: N for next level", 20.0, 140.0)
+				ShadowText (canvas, "Land on pads to refuel", 20.0, 80.0)
+				ShadowText (canvas, "P to pause", 20.0, 100.0)
+				
+				ShadowText (canvas, "TEMP: R to reset!", 20.0, 140.0)
+				ShadowText (canvas, "TEMP: N for next level", 20.0, 160.0)
 
+				' Horrible, horrible logic!!
+				
 				If Game.Player.Fuel = 0.0
 					FuelTextColor = Color.Grey
 				Elseif Game.Player.Fuel > 50.0
@@ -125,18 +129,29 @@ Class HUDOverlay
 					FuelTextColor = Color.Orange
 				Endif
 				
+				If Game.Player.Damage = 100.0
+					DamageTextColor = Color.Grey
+				Elseif Game.Player.Damage > 75.0
+					DamageTextColor = Color.Red
+				Elseif Game.Player.Damage >= 25.0
+					DamageTextColor = Color.Orange
+				Elseif Game.Player.Damage < 25.0
+					DamageTextColor = Color.Green
+				Endif
+				
 				canvas.Color = Color.White
 		
 				ShadowText (canvas, "Space gems: " + Game.CurrentLevel.SpaceGemsCollected + " / " + Game.CurrentLevel.SpaceGemCount, 20.0, 200)
 				ShadowText (canvas, "Fuel: " + Int (Game.Player.Fuel), 20.0, 220.0, FuelTextColor)
-				ShadowText (canvas, "TEMP: Entities in scene: " + CountEntities (), 20.0, 340.0)
-				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 380.0)
+				ShadowText (canvas, "Damage: " + Game.Player.Damage, 20.0, 240.0, DamageTextColor)
 
-				ShadowText (canvas, "Height above ground: " + Game.Player.HeightAboveGround, 20.0, 400.0)
+				ShadowText (canvas, "Height above ground: " + Game.Player.HeightAboveGround, 20.0, 280.0)
 
 				If Game.Player.HeightAboveGround < 10.0 And Game.Player.RocketBody.LinearVelocity.Length > 35.0
-					ShadowText (canvas, "*** DAREDEVIL!! *** " + Game.Player.RocketBody.LinearVelocity.Length, 20.0, 420.0)
+					ShadowText (canvas, "*** DAREDEVIL!! *** " + Game.Player.RocketBody.LinearVelocity.Length, 20.0, 300.0, Color.Red)
 				Endif
+
+				ShadowText (canvas, "TEMP: Entities in scene: " + CountEntities (), 20.0, 320.0)
 
 				Local current_time:String = PadDigit (Time.Now ().Hours, 2) + ":" + PadDigit (Time.Now ().Minutes, 2) + ":" + PadDigit (Time.Now ().Seconds, 2)
 
@@ -145,15 +160,13 @@ Class HUDOverlay
 				ShadowText (canvas, "FPS:                   " + App.FPS, canvas.Viewport.Width - 140.0, 60.0)
 				ShadowText (canvas, "Scene update: " + Game.GameScene.UpdateRate, canvas.Viewport.Width - 140.0, 80.0)
 				
-				ShadowText (canvas, "F1: disable pixel shaders", 20.0, 460.0)
-				ShadowText (canvas, "F2: toggle greyscale shader", 20.0, 480.0)
-				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 500.0)
-				ShadowText (canvas, "F4: toggle B&W (mono) shader", 20.0, 520.0)
-				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 560.0)
+				ShadowText (canvas, "F1: disable pixel shaders", 20.0, 360.0)
+				ShadowText (canvas, "F2: toggle greyscale shader", 20.0, 380.0)
+				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 400.0)
+				ShadowText (canvas, "F4: toggle B&W (mono) shader", 20.0, 420.0)
+				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 460.0)
 
 				ShadowText (canvas, "Map height: " + Game.CurrentLevel.Terrain.TerrainYFromEntity (Game.Player.RocketModel), 20.0, 600.0)
-
-ShadowText (canvas, "AVG: " + PhysicsTri.TMP_SHOW_ME, 20.0, 640.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					
@@ -239,9 +252,10 @@ ShadowText (canvas, "AVG: " + PhysicsTri.TMP_SHOW_ME, 20.0, 640.0)
 			
 		Const ASSET_PREFIX_GRAPHIC:String = "asset::graphics/common/"
 	
-		Global FuelTextColor:Color	= Color.Green ' Text colour for fuel display
-		Global FadeAlpha:Float		= 1.0
-		Global FadingOut:Bool		= False
+		Global FuelTextColor:Color		= Color.Green ' Text colour for fuel display
+		Global DamageTextColor:Color	= Color.Green ' Text colour for damage display
+		Global FadeAlpha:Float			= 1.0
+		Global FadingOut:Bool			= False
 	
 		Global SkullSprite:Sprite
 		

@@ -103,7 +103,11 @@ End
 ' Abort: Terminates app with error message passed in.
 
 Function Abort (msg:String)
+#If __TARGET__ <> "emscripten"
 	Notify ("Fatal error in " + AppName, msg, True)
+#Else
+	Print "*** Fatal error in " + AppName + ": " + msg
+#Endif
 	App.Terminate ()
 End
 

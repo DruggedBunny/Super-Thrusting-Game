@@ -141,8 +141,10 @@ Class GameCamera
 		End
 
 		Method RenderVR (canvas:Canvas)
+#If __TARGET__ <> "emscripten"
 			canvas.DrawRect	(0, App.ActiveWindow.Height, App.ActiveWindow.Width, -App.ActiveWindow.Height, Game.VR_Renderer.LeftEyeImage)
 			canvas.Scale	(App.ActiveWindow.Width / App.ActiveWindow.Width, App.ActiveWindow.Height / App.ActiveWindow.Height)
+#Endif
 		End
 		
 	Private

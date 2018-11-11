@@ -69,10 +69,10 @@ Function Main ()
 	InitTODOs ()
 	ListTODOs ()
 	
-	Local width:Int		= 1024
-	Local height:Int	= 768
+	Local width:Int		= 800'1024
+	Local height:Int	= 480'768
 	
-	Run3D (AppName, width, height, WindowFlags.Center)
+	Run3D (AppName, width, height, WindowFlags.Center | WindowFlags.Resizable)
 	'Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
 	
 End

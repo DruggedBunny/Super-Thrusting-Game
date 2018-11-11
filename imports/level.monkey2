@@ -169,7 +169,7 @@ Class Level
 			' Generate a new terrain...
 			' -----------------------------------------------------------------
 		
-			terrain					= New PhysicsTerrain (terrain_seed, sides, 384, 0.5, color0, color1)
+			terrain					= New PhysicsTerrain (terrain_seed, sides, sides * 0.333, 0.5, color0, color1)
 
 			sun.PointAt (terrain.TerrainModel)
 

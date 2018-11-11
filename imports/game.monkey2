@@ -85,13 +85,15 @@ Class GameWindow Extends Window
 			Controller.ResetLevel ()
 			
 		End
-		
+
+#If __TARGET__ <> "emscripten"
 		Property VR_Renderer:VRRenderer ()
 			Return vr_renderer
 			Setter (renderer:VRRenderer)
 				vr_renderer = renderer
 		End
-		
+#Endif
+
 		Property GameState:GameState ()
 			Return game_state
 			Setter (state:GameState)
@@ -148,7 +150,7 @@ Class GameWindow Extends Window
 			' ----------------------------------------------------------------
 			
 			TerrainSeed				= 0			' Test: Int (RndULong ())
-			TerrainSize				= 1024.0	' Size of terrain cube sides
+			TerrainSize				= 512.0	' Size of terrain cube sides
 			
 			CurrentLevel			= New Level (terrain_seed, terrain_size)
 	
@@ -183,7 +185,7 @@ Class GameWindow Extends Window
 '			' ----------------------------------------------------------------
 '
 			For Local loop:Int = 1 To 25
-				Local c:Cloud = New Cloud (Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (1024.0, 4096.0), Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (500.0, 1000.0))
+				Local c:Cloud = New Cloud (Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (TerrainSize, TerrainSize * 4.0), Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (TerrainSize * 0.5, TerrainSize))
 			Next
 			
 			' ----------------------------------------------------------------
@@ -271,9 +273,11 @@ Class GameWindow Extends Window
 		
 		Field terrain_seed:ULong
 		Field terrain_size:Float
-		
+	
+#If __TARGET__ <> "emscripten"
 		Field vr_renderer:VRRenderer ' VR renderer
-		
+#Endif
+
 		Field last_state:States
 
 		Field pixel_shaders:List <PostEffectPlus>

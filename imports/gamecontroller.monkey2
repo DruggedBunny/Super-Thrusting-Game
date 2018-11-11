@@ -209,6 +209,8 @@ Class GameController
 
 	Method Render (canvas:Canvas)
 			
+#If __TARGET__ <> "emscripten"
+
 		' ----------------------------------------------------------------
 		' VR-only:
 		' ----------------------------------------------------------------
@@ -223,6 +225,8 @@ Class GameController
 			Game.MainCamera.Camera3D.SetPosition	(Game.VR_Renderer.HeadMatrix.t, True)
 		
 		Endif
+
+#Endif
 		
 		' ----------------------------------------------------------------
 		' Update scene (mainly physics)...
@@ -288,9 +292,11 @@ Class GameController
 		Game.PixelShaders.Add (Game.SpeccyShader)
 		Game.PixelShaders.Add (Game.MonoShader)
 		
+#If __TARGET__ <> "emscripten"
 		If VR_MODE
 			Game.VR_Renderer = New VRRenderer
 		Endif
+#Endif
 
 	End
 	
