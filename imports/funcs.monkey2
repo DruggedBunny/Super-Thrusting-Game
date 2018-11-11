@@ -132,6 +132,20 @@ Function Blend:Float (in:Float, target:Float, delta:Float = 0.1)
 	Return in + ((target - in) * delta)
 End
 
+Function FrameStretch:Float (value:Float, elapsed_time:Float, intended_time:Float = (1.0 / Game.GameScene.UpdateRate))
+
+	If intended_time = 0.0 Then Return value ' Avoid divide by zero!
+	
+	'Print timescale
+	'Print elapsed
+	'Print elapsed / timescale
+	'Print timescale / elapsed
+	'Print ""
+	
+	Return value * (elapsed_time / intended_time)
+	
+End
+		
 ' Quoted: Adds quotes around string.
 
 Function Quoted:String (msg:String)
@@ -330,22 +344,24 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
 
 		tri_model.Material				= in_model.Materials [mat_index]
 		
-		tri_model.Material.CullMode		= CullMode.None
+			If tri_count = 1
+				tri_model.Material.CullMode	= CullMode.None
+			Endif
 
 		'tri_model.Name = "Triangle created at " + Millisecs ()
-		
+	
+	' Model's triangle indices...
+	
 	Local indices:UInt []				= in_model.Mesh.GetIndices (mat_index)
 
-	Local tri_verts:Vertex3f []			= New Vertex3f	[tri_count * 3]
-	Local tri_indices:UInt []			= New UInt		[tri_count * 3]
-	
 	Local index_count:UInt				= tri_count * 3
 	Local index_end:UInt				= index_start + index_count
 	
-'	Print "INFO"
-'	Print index_end
-'	Print indices.Length
-
+	' New triangle's indices/vertices...
+	
+	Local tri_indices:UInt []			= New UInt		[index_count]
+	Local tri_verts:Vertex3f []			= New Vertex3f	[index_count]
+	
 	If index_end > indices.Length
 		index_end = indices.Length
 	Endif	
@@ -354,13 +370,13 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
 
 		If tri_index >= indices.Length Then Exit
 		
-		tri_verts [tri_index - index_start]				= in_model.Mesh.GetVertex (indices [tri_index])
-		tri_verts [(tri_index - index_start) + 1]		= in_model.Mesh.GetVertex (indices [tri_index + 1])
-		tri_verts [(tri_index - index_start) + 2]		= in_model.Mesh.GetVertex (indices [tri_index + 2])
+		tri_verts [tri_index - index_start]			= in_model.Mesh.GetVertex (indices [tri_index])
+		tri_verts [(tri_index - index_start) + 1]	= in_model.Mesh.GetVertex (indices [tri_index + 1])
+		tri_verts [(tri_index - index_start) + 2]	= in_model.Mesh.GetVertex (indices [tri_index + 2])
 
-		tri_indices [tri_index - index_start]			= tri_index - index_start
-		tri_indices [(tri_index - index_start) + 1]		= (tri_index - index_start) + 1
-		tri_indices [(tri_index - index_start) + 2]		= (tri_index - index_start) + 2
+		tri_indices [tri_index - index_start]		= tri_index - index_start
+		tri_indices [(tri_index - index_start) + 1]	= (tri_index - index_start) + 1
+		tri_indices [(tri_index - index_start) + 2]	= (tri_index - index_start) + 2
 
 	Next
 		
@@ -378,6 +394,65 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
  
 End
 
+Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500)
+
+	QuickTimer.Start ()
+
+	Local particle_vel:Float = 0.75
+
+	For Local particles:Int = 0 Until explosion_particles
+
+		' Create angle for particle...
+		
+		Local angle:Vec3f = model.Basis * New Vec3f (
+		
+							Rnd (-particle_vel, particle_vel),
+							Rnd (-particle_vel, particle_vel),
+							Rnd (-particle_vel, particle_vel))			.Normalize () * Rnd (particle_vel)
+
+		' Create particle...
+		
+		ExplosionParticle.Create	(	model,		' Rocket
+										angle,				' 3D angle
+										Rnd (0.1, 1.0),		' Size
+										0.99)				' Fadeout-multiplier
+	Next
+	
+	For Local mat:Int = 0 Until model.Mesh.NumMaterials
+	
+		' TESTING...
+		
+		Local mat_tris:UInt = model.Mesh.GetIndices (mat).Length / 3
+		
+		If Not tris_per_chunk Then tris_per_chunk = Max (12, Int (Rnd (mat_tris)))
+
+		' Going through triangles of each material in turn...
+		
+		Local steps:UInt = 3 * tris_per_chunk * TRI_SKIPPER ' TRI_SKIPPER set in consts.monkey2
+		
+		For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step steps
+		
+			Local tri_model:Model		= ModelFromTriangles (model, tri, tris_per_chunk, mat)
+			
+				tri_model.Parent		= Null
+				tri_model.CastsShadow	= False
+
+			Local ptri:PhysicsTri		= New PhysicsTri (tri_model) ' Note to self: Not a 'tri' here, but a chunk!
+
+				ptri.SrcBody			= body
+				
+				If model = Game.Player.RocketModel
+					ptri.FromRocket		= True
+				Endif
+				
+		Next
+	
+	Next
+
+	QuickTimer.Stop ()
+
+End
+		
 ' Run3D: Just simplifies application setup code.
 
 Function Run3D (title:String, width:Int, height:Int, flags:WindowFlags = WindowFlags.Center)

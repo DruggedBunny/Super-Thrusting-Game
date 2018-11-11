@@ -86,7 +86,6 @@ Class HUDOverlay
 					' Fade out...
 					
 					Background (canvas)
-
 					DeathSkull (canvas)
 						
 '						If quad_mode = SpriteMode.Billboard
@@ -102,7 +101,6 @@ Class HUDOverlay
 					' Fade out...
 					
 					Background (canvas)
-
 					DeathSkull (canvas)
 
 			End
@@ -143,6 +141,10 @@ Class HUDOverlay
 				Local current_time:String = PadDigit (Time.Now ().Hours, 2) + ":" + PadDigit (Time.Now ().Minutes, 2) + ":" + PadDigit (Time.Now ().Seconds, 2)
 
 				ShadowText (canvas, "Time: " + current_time, canvas.Viewport.Width - 120.0, 20.0)
+				
+				ShadowText (canvas, "FPS:                   " + App.FPS, canvas.Viewport.Width - 140.0, 60.0)
+				ShadowText (canvas, "Scene update: " + Game.GameScene.UpdateRate, canvas.Viewport.Width - 140.0, 80.0)
+				
 				ShadowText (canvas, "F1: disable pixel shaders", 20.0, 460.0)
 				ShadowText (canvas, "F2: toggle greyscale shader", 20.0, 480.0)
 				ShadowText (canvas, "F3: toggle [WIP] Spectrum shader", 20.0, 500.0)
@@ -150,6 +152,8 @@ Class HUDOverlay
 				ShadowText (canvas, "M to toggle Space Gem map", 20.0, 560.0)
 
 				ShadowText (canvas, "Map height: " + Game.CurrentLevel.Terrain.TerrainYFromEntity (Game.Player.RocketModel), 20.0, 600.0)
+
+ShadowText (canvas, "AVG: " + PhysicsTri.TMP_SHOW_ME, 20.0, 640.0)
 
 				If Game.GameState.GetCurrentState () = States.Paused
 					

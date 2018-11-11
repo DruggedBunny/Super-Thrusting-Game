@@ -86,7 +86,9 @@ Class GameCamera
 				prevvel = lastvel
 				
 				If player.RocketBody.LinearVelocity.XZ.Length > 5.0
-					lastvel = lastvel.Blend (player.RocketBody.LinearVelocity, 0.045 * Game.Delta)
+				' ((1.0 - elapsed) * 
+					lastvel = lastvel.Blend (player.RocketBody.LinearVelocity, 0.045 * Game.Delta) ' FUCKFUCKFUCK no elapsed!
+'					lastvel = lastvel.Blend (player.RocketBody.LinearVelocity, (1.0 - elapsed) * 0.045)
 				Endif
 				
 				chase_target.Position = (player.RocketModel.Position + up) - lastvel * CameraDistance

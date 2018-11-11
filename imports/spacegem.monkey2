@@ -6,7 +6,7 @@
 Class SpaceGem Extends Behaviour
 
 	Public
-	
+
 		Property Collected:Bool ()
 			Return collected
 		End
@@ -122,7 +122,9 @@ Class SpaceGem Extends Behaviour
 	
 				If Game.GameState.GetCurrentState () <> States.Paused
 				
-					Entity.Alpha = Entity.Alpha - 0.005 * Game.Delta
+'					Entity.Alpha = Entity.Alpha - (0.005 * elapsed)'Game.Delta)
+'					Entity.Alpha = Entity.Alpha - (0.25 * (elapsed))'Game.Delta)
+					Entity.Alpha = Entity.Alpha * FrameStretch (0.98, elapsed)
 					
 					If Entity.Alpha >= 0.0
 						SpaceGemBody.ApplyForce (Game.GameScene.World.Gravity * New Vec3f (1.0, -5.0, 1.0)) ' Boost upwards...

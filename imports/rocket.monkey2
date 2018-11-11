@@ -255,7 +255,7 @@ Class Rocket
 			alert_fader.Channel.Paused	= True
 			fuel_fader.Channel.Paused	= True
 			
-			PhysicsTri.Explode (model, body)
+			ExplodeModel (model, body)
 			
 			model.Visible			= False
 			

@@ -32,10 +32,13 @@ Class TrumpWall' Extends Behaviour
 	Public
 	
 	Method Destroy ()
+	
 		For Local wall:Model = Eachin walls
 			wall.Destroy ()
 		Next
+		
 		ceiling?.Destroy ()
+		
 	End
 	
 	Method New (height_box:Boxf)

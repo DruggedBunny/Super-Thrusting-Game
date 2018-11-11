@@ -56,6 +56,7 @@ Class GameController
 
 				If Game.Player.Alive
 					Game.Player.Control		()				' Rocket controls
+					Cloud.Update ()
 					Game.MainCamera.Update	(Game.Player)	' Update camera, follow player
 				Else
 					GameState.SetCurrentState (States.PlayEnding)
@@ -194,7 +195,7 @@ Class GameController
 		
 			If Not Game.Player Then Abort ("SpawnNextLevel: SpawnRocket failed to spawn rocket!")
 					
-		Game.MainCamera				= New GameCamera (App.ActiveWindow.Rect, Game.MainCamera, Game.TerrainSize * 5.0)
+		Game.MainCamera				= New GameCamera (App.ActiveWindow.Rect, Game.MainCamera, Game.TerrainSize * 4.0)
 		
 		Game.HUD.Destroy ()
 
@@ -269,6 +270,8 @@ Class GameController
 		Game.GameScene					= Scene.GetCurrent ()
 		Game.GameScene.World.Gravity 	= Game.GameScene.World.Gravity * New Vec3f (1.0, 0.5, 1.0) ' Half normal gravity
 		Game.GameScene.CSMSplits		= New Float [] (2, 4, 16, 256)
+
+'		Game.GameScene.UpdateRate = 240.0
 
 		SetFogColor ()
 		SetFogRange (96.0, terrain_size)

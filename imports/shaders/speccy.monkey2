@@ -36,6 +36,7 @@ Class SpeccyEffect Extends PostEffectPlus
 		Method OnRender (rtarget:RenderTarget, rviewport:Recti) Override
 			
 			Local rtexture:Texture		= rtarget.GetColorTexture (0)
+'			Local dtexture:Texture		= rtarget.DepthTexture
 			
 			Device.Shader				= shader
 			Device.BindUniformBlock (uniforms)

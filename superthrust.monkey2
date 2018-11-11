@@ -35,10 +35,7 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	' Done: Simple rect clouds, need to be integrated properly, though. (Make fixed to camera like skyboxes to minimise range?)
-	' Done: Mostly fixed spectacular mystery fup-uck that destroyed pad positioning!
-	' Done: Basics of DAREDEVIL bonuses... fly close to ground at high speed! (Text in HUD for now. May provide fuel or... lives... risk life to gain lives. Bwu-ha ha! Lives would put a bit more pressure into the game and be a bit more 'retro' too.)
-	' Done: Fixed skull staying on-screen during (temp) reset via R key.
+	' Done: Made clouds remain at a fixed height above player. Might undo this... :/
 	
 	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
 	
@@ -50,15 +47,14 @@ Function InitTODOs ()
 	TODO ("TrumpWall needs re-arranged in Level so each solid border can flash when hit. Might, er, rename TrumpWall...")
 	TODO ("Damage visibility/explosions")
 	TODO ("Add Options class for performance tweaks, etc")
+	TODO ("Can get stuck between levels if alt-tabbing away/back!")
 	TODO ("Convert remaining physics entities to Behaviours; remaining: Rocket, DummyOrb (too simple?)")
 	TODO ("Generate misc hit sounds for terrain bumps")
-	TODO ("Have player drop orb into cup [SPACE PORTAL UNLOCK THINGY]? More involvement/skill, plus flying to portal with orb is... boring")
 	TODO ("Pads have to be spawned AFTER level created... ideally would be in Level.New...")
 	TODO ("VR: Scaling not right on monitor display")
 	TODO ("VR: See if skull sprite works, and may need to create full-screen sprite in place of fading canvas to black, not sure yet...")
 	TODO ("Point in direction of fall when ballistic (out of fuel)... ? FUCKING IMPOSSIBLE")
 	TODO ("Remove over-cautious object?.thing checks")
-	TODO ("Sprite clouds?")
 	TODO ("Add endless unskippable logos at startup")
 	
 '	TODO ("LIKELY MOJO BUG: Deactivating window and releasing joystick, then activating window, acts as if joystick still held")

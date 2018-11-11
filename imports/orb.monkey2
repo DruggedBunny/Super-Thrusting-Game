@@ -179,7 +179,7 @@ Class Orb Extends Behaviour
 	
 		Method Explode ()
 	
-			PhysicsTri.Explode (Cast <Model> (Entity), Entity.GetComponent <RigidBody> (), 4, 100)
+			ExplodeModel (Cast <Model> (Entity), Entity.GetComponent <RigidBody> (), 4, 100)
 			
 			DetachFromRocket ()
 	

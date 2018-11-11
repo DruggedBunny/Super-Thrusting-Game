@@ -7,71 +7,39 @@ Class PhysicsTri Extends Behaviour
 
 	Public
 
-		Function Explode (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500)
-
-			Local particle_vel:Float = 1.0
-
-			'QuickTimer.Start ()
-			
-			For Local particles:Int = 0 Until explosion_particles
-
-				Local angle:Vec3f = model.Basis * New Vec3f (
-				
-									Rnd (-particle_vel, particle_vel),
-									Rnd (-particle_vel, particle_vel),
-									Rnd (-particle_vel, particle_vel))			.Normalize () * Rnd (particle_vel)
-
-				ExplosionParticle.Create	(	model,		' Rocket
-												angle,				' 3D angle
-												Rnd (0.1, 1.0),		' Size
-												0.99)				' Fadeout-multiplier
-
-			Next
-			
-			'QuickTimer.Stop ()
-
-			For Local mat:Int = 0 Until model.Mesh.NumMaterials
-			
-				' TESTING...
-				
-				Local mat_tris:UInt = model.Mesh.GetIndices (mat).Length / 3
-				
-				If Not tris_per_chunk Then tris_per_chunk = Max (12, Int (Rnd (mat_tris)))
-
-				' Going through triangles of each material in turn...
-				
-				For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step 3 * tris_per_chunk * TRI_SKIPPER ' Set in consts.monkey2
-				
-					Local model:Model		= ModelFromTriangles (model, tri, tris_per_chunk, mat)
-					
-						model.Parent		= Null
-						model.CastsShadow	= False
 	
-					Local ptri:PhysicsTri	= New PhysicsTri (model)
-
-						ptri.src_body		= body
-
-				Next
-			
-			Next
-		
-		End
-		
-	Private
-
-		Global PhysicsTriStack:Stack <PhysicsTri>
-		
-		Field src_body:RigidBody
+		Global TMP_ELAPSED_AVG:Float
+		Global TMP_ELAPSED_LOOPS:Int
+		Global TMP_SHOW_ME:Float
 		
 		Method New (entity:Entity)
 			
 			Super.New (entity)
 			AddInstance ()
 
-			If Not PhysicsTriStack Then PhysicsTriStack = New Stack <PhysicsTri>
-			PhysicsTriStack.Add (Self)
+			If Not physics_tri_stack Then physics_tri_stack = New Stack <PhysicsTri>
+			physics_tri_stack.Add (Self)
 			
 		End
+		
+		Property SrcBody:RigidBody ()
+			Return src_body
+			Setter (body:RigidBody)
+				src_body = body
+		End
+		
+		Property FromRocket:Bool ()
+			Return from_rocket
+			Setter (state:Bool)
+				from_rocket = state
+		End
+		
+	Private
+
+		Field physics_tri_stack:Stack <PhysicsTri>
+		Field src_body:RigidBody
+		
+		Field from_rocket:Bool
 		
 		Method OnStart () Override
 
@@ -115,11 +83,31 @@ Class PhysicsTri Extends Behaviour
 		End
 		
 		Method OnUpdate (elapsed:Float) Override
-		
-			Entity.Alpha = Entity.Alpha * (0.97 * Game.Delta)
+
+			TMP_ELAPSED_AVG = TMP_ELAPSED_AVG + elapsed
+			TMP_ELAPSED_LOOPS = TMP_ELAPSED_LOOPS + 1
 			
-			If Entity.Alpha < 0.005
-				Entity.Destroy ()
+			If TMP_ELAPSED_LOOPS Mod 10 = 0
+				TMP_ELAPSED_AVG = TMP_ELAPSED_AVG / 10.0
+				TMP_SHOW_ME = TMP_ELAPSED_AVG
+				TMP_ELAPSED_AVG = 0
+			Endif
+			
+			If from_rocket
+			
+				If Game.GameState.GetCurrentState () = States.PlayStarting' Or Game.GameState.GetCurrentState () = States.Playing
+					Entity.Destroy ()
+				Endif
+				
+			Else
+
+'				Entity.Alpha = Entity.Alpha * (0.98 * Game.Delta)
+				Entity.Alpha = Entity.Alpha * FrameStretch (0.98, elapsed)'((1.0 - elapsed) * 0.98)
+			
+				If Entity.Alpha < 0.005
+					Entity.Destroy ()
+				Endif
+		
 			Endif
 			
 		End

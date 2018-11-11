@@ -176,10 +176,10 @@ Class GameWindow Extends Window
 			' Camera setup...
 			' ----------------------------------------------------------------
 
-			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, TerrainSize * 5.0)
+			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, TerrainSize * 4.0)
 
 '			' ----------------------------------------------------------------
-'			' TMP: Clouds
+'			' TMP: Clouds. TODO: Move into Cloud class!
 '			' ----------------------------------------------------------------
 '
 			For Local loop:Int = 1 To 25
@@ -189,8 +189,6 @@ Class GameWindow Extends Window
 			' ----------------------------------------------------------------
 			' Set window title...
 			' ----------------------------------------------------------------
-			
-			' TODO: Not quite working, shows non-"randomly-generated level" text!
 			
 			SetWindowTitle ()
 			
