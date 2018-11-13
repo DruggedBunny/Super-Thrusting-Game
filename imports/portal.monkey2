@@ -162,7 +162,6 @@ Class Portal
 		
 		Field flythrough_fader:Fader
 
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
 		Const FLYTHROUGH_VOLUME_MAX:Float = 0.33
 	
 		Field ring:Model

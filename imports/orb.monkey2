@@ -75,7 +75,6 @@ Class Orb Extends Behaviour
 	
 	Private
 	
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
 		Const BOOM_VOLUME:Float = 0.5
 		
 		Global BoomSound:Sound

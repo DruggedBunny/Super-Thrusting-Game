@@ -73,6 +73,8 @@ Class PhysicsTerrain ' WIP
 
 			wall								= New TrumpWall (height_box)
 		 
+'			 	wall.SetDebugAlpha (0.25)
+		 	
 		End
 		
 		Method TerrainXFromHeightMap:Float (pixmap_x:Float)

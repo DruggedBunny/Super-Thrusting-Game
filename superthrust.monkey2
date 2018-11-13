@@ -35,8 +35,6 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
-	' Done: Made clouds remain at a fixed height above player. Might undo this... :/
-	
 	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
 	
 	TODO ("PortalLock: just started. (Pink pads.) Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
@@ -44,7 +42,6 @@ Function InitTODOs ()
 	TODO ("Might add emergency air-jump to fix lying on side on ground... though finally detecting tilt angle and blowing up probably better...")
 	TODO ("New refueling sound. Maybe add landing timer to delay before triggering -- slightly tricky due to need to reset Rocket.landed per-frame!")
 	TODO ("Can end up carrying two orbs if collecting new one prior to old one being destroyed (where rocket dies first)")
-	TODO ("TrumpWall needs re-arranged in Level so each solid border can flash when hit. Might, er, rename TrumpWall...")
 	TODO ("Damage visibility/explosions")
 	TODO ("Add Options class for performance tweaks, etc")
 	TODO ("Can get stuck between levels if alt-tabbing away/back!")
@@ -68,10 +65,15 @@ Function Main ()
 
 	InitTODOs ()
 	ListTODOs ()
-	
+
+#If __TARGET__ = "emscripten"
 	Local width:Int		= 800'1024
 	Local height:Int	= 480'768
-	
+#else
+	Local width:Int		= 1024
+	Local height:Int	= 768
+#Endif
+
 	Run3D (AppName, width, height, WindowFlags.Center | WindowFlags.Resizable)
 	'Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
 	

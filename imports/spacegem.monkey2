@@ -100,8 +100,6 @@ Class SpaceGem Extends Behaviour
 	
 	Private
 
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
-	
 		Global CollectedSound:Sound
 	
 		Field collected:Bool = False

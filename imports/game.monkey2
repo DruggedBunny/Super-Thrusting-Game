@@ -141,7 +141,8 @@ Class GameWindow Extends Window
 			Orb.		InitSound ()
 			DummyOrb.	InitSound ()
 			Rocket.		InitSound () ' Includes pad refueling sound!
-			TrumpWall.	InitSound ()
+			Wall.		InitSound ()
+'			TrumpWall.	InitSound ()
 			Portal.		InitSound ()
 			SpaceGem.	InitSound ()
 			

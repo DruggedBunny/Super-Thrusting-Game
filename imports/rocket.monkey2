@@ -456,9 +456,6 @@ Class Rocket
 		Const ALERT_VOLUME:Float			= 0.05
 		Const FUEL_VOLUME:Float				= 0.125
 
-		Const ASSET_PREFIX_AUDIO:String		= "asset::audio/common/"
-		Const ASSET_PREFIX_MODEL:String		= "asset::models/common/"
-	
 		Global BoostSound:Sound
 		Global AlertSound:Sound
 		Global BoomSound:Sound

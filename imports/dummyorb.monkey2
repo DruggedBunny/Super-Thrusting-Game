@@ -98,7 +98,6 @@ Class DummyOrb
 	
 		End
 	
-		Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
 		Const COLLECTED_VOLUME_MAX:Float = 0.5
 	
 		Global CollectedSound:Sound

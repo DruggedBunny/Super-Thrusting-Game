@@ -110,7 +110,7 @@ Class HUDOverlay
 				canvas.Alpha = 1.0
 				
 				ShadowText (canvas, "FPS: " + App.FPS, 20.0, 20.0)
-				ShadowText (canvas, "Left/right cursors to move Player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
+				ShadowText (canvas, "Use CURSORS to move player; SPACE to boost, or use an attached Xbox pad", 20.0, 60.0)
 				ShadowText (canvas, "Land on pads to refuel", 20.0, 80.0)
 				ShadowText (canvas, "P to pause", 20.0, 100.0)
 				

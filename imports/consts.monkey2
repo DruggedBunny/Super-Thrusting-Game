@@ -14,6 +14,14 @@
 	Const TRI_SKIPPER:Int = 2
 #Endif
 
+' Model assets path...
+
+Const ASSET_PREFIX_MODEL:String		= "asset::models/common/"
+
+' Audio assets path...
+
+Const ASSET_PREFIX_AUDIO:String = "asset::audio/common/"
+
 ' Collision types
 
 Const COLL_NOTHING:Short			= 0
