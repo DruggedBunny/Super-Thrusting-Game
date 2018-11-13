@@ -71,7 +71,7 @@ Class PhysicsTerrain ' WIP
 				collider.Heightmap				= heightmap
 				collider.Bounds					= height_box
 
-			wall								= New TrumpWall (height_box)
+			trump_wall							= New TrumpWall (height_box)
 		 
 '			 	wall.SetDebugAlpha (0.25)
 		 	
@@ -114,9 +114,12 @@ Class PhysicsTerrain ' WIP
 		End
 		
 		Method Destroy ()
+		
 			TerrainModel?.Destroy ()
 			TerrainBody?.Destroy ()
-			wall?.Destroy ()
+			
+			trump_wall?.Destroy ()
+			
 		End
 		
 	Private
@@ -137,6 +140,6 @@ Class PhysicsTerrain ' WIP
 		Field collider:TerrainCollider		' Bullet physics collider
 		Field body:RigidBody				' Bullet physics body
 
-		Field wall:TrumpWall
+		Field trump_wall:TrumpWall
 		
 End

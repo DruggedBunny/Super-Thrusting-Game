@@ -97,16 +97,19 @@ Class Level
 								New Color (0.0275, 0.357, 0.176))	' Terrain color 1
 
 				levels[1]	=	New LevelData ("Desert",
-								((Color.Yellow * 0.5) + (Color.Brown * 0.5) + Color.Orange) * 0.33,
-								((Color.Yellow * 0.8) + Color.Orange * 0.75) * 0.5)
+								((Color.Yellow * 0.5) + (Color.Brown * 0.5) + Color.Orange) * 0.333,
+								((Color.Yellow * 0.8) + Color.Orange * 0.75) * 0.5,
+								(Color.Sky + (Color.Yellow * 0.5)) * 0.5)
 
 				levels[2]	=	New LevelData ("Martian Hell",
 								New Color (1.0, 0.2, 0.2),
-								New Color (0.75, 0.2, 0.2))
+								New Color (0.75, 0.2, 0.2),
+								((Color.Sky * 0.75) + (Color.Orange * 0.5) + (Color.Red * 0.75)) * 0.333)
 
 				levels[3]	=	New LevelData ("Winterlong",
 								New Color (0.95, 0.95, 1.0),
-								New Color (0.75, 0.75, 0.95))
+								New Color (0.75, 0.75, 0.95),
+								Color.Sky * 0.25)
 
 				levels[4]	=	New LevelData ("I'll Be Blue",
 								New Color (0.25, 0.5, 1.0),
@@ -122,14 +125,15 @@ Class Level
 			' Init level data...
 			' -----------------------------------------------------------------
 
-			terrain_seed				= seed
+			terrain_seed			= seed
 			
 			LevelName				= ""
 
 			SeedRnd (Millisecs ())
-			
+
 			Local color0:Color		= Color.Rnd ()
 			Local color1:Color		= Color.Rnd ()
+			Local sky_color:Color	= (color0 + color1) * 0.5
 			
 			' Terrain seed starts at 0 and increases with each level completion.
 			' Six levels are set up by default; if terrain seed is < 6, use the
@@ -142,8 +146,13 @@ Class Level
 				LevelName			= levels [terrain_seed].name
 				color0				= levels [terrain_seed].color0
 				color1				= levels [terrain_seed].color1
-			
+				sky_color			= levels [terrain_seed].sky_color
+
 			Endif
+
+			SetFogColor (sky_color)
+			SetFogRange (96.0, sides)
+			SetAmbientLight ()
 			
 			' -----------------------------------------------------------------
 			' Set up sun...
@@ -471,7 +480,25 @@ Class Level
 		Method SpawnRocket (x:Float, y:Float, z:Float)
 			Game.Controller.SpawnRocket (New Vec3f (x, y, z))
 		End
-
+	
+		' --------------------------------------------------------------------
+		' Set setup helper functions...
+		' --------------------------------------------------------------------
+	
+		Method SetFogColor (clear_color:Color)
+			Game.GameScene.ClearColor	= clear_color
+			Game.GameScene.FogColor		= clear_color
+		End
+		
+		Method SetAmbientLight (ambient_color:Color = Color.White * 0.75)
+			Game.GameScene.AmbientLight = ambient_color
+		End
+		
+		Method SetFogRange (near:Float, far:Float)
+			Game.GameScene.FogNear	= near
+			Game.GameScene.FogFar	= far
+		End
+		
 End
 
 Class LevelData
@@ -482,11 +509,20 @@ Class LevelData
 	
 		Field color0:Color
 		Field color1:Color
-	
-		Method New (in_name:String, in_color0:Color, in_color1:Color)
+		
+		Field sky_color:Color
+		
+		Method New (in_name:String, in_color0:Color, in_color1:Color, sky:Color = Null)
+			
 			name = in_name
+			
 			color0 = in_color0
 			color1 = in_color1
+			
+			If Not sky Then sky = Color.Sky * 0.5
+			
+			sky_color = sky
+			
 		End
 	
 End

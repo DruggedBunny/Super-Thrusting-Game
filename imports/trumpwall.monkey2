@@ -22,10 +22,10 @@ Class TrumpWall
 		Method Destroy ()
 		
 			For Local wall:Wall = Eachin walls
-				wall.Destroy ()
+				wall.Remove ()
 			Next
 			
-			ceiling?.Destroy ()
+			ceiling.Remove ()
 			
 		End
 		

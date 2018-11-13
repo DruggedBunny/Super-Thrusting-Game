@@ -269,7 +269,7 @@ Class GameController
 	' Scene setup...
 	' --------------------------------------------------------------------
 
-	Method InitScene (terrain_size:Float)
+	Method InitScene ()
 
 		Game.GameScene					= Scene.GetCurrent ()
 		Game.GameScene.World.Gravity 	= Game.GameScene.World.Gravity * New Vec3f (1.0, 0.5, 1.0) ' Half normal gravity
@@ -277,11 +277,6 @@ Class GameController
 
 '		Game.GameScene.UpdateRate = 240.0
 
-		SetFogColor ()
-		SetFogRange (96.0, terrain_size)
-		
-		SetAmbientLight ()
-		
 		Game.PixelShaders				= New List <PostEffectPlus>
 		
 		Game.GreyscaleShader			= New GreyscaleEffect (3) ' Greyscale mode 3 (Luminosity)
@@ -299,23 +294,5 @@ Class GameController
 #Endif
 
 	End
-	
-	' --------------------------------------------------------------------
-	' Set setup helper functions...
-	' --------------------------------------------------------------------
 
-	Method SetFogColor (clear_color:Color = Color.Sky * 0.5)
-		Game.GameScene.ClearColor	= clear_color
-		Game.GameScene.FogColor		= clear_color
-	End
-	
-	Method SetAmbientLight (ambient_color:Color = Color.White * 0.75)
-		Game.GameScene.AmbientLight = ambient_color
-	End
-	
-	Method SetFogRange (near:Float, far:Float)
-		Game.GameScene.FogNear	= near
-		Game.GameScene.FogFar	= far
-	End
-		
 End

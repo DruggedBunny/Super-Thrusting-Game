@@ -142,28 +142,23 @@ Class GameWindow Extends Window
 			DummyOrb.	InitSound ()
 			Rocket.		InitSound () ' Includes pad refueling sound!
 			Wall.		InitSound ()
-'			TrumpWall.	InitSound ()
 			Portal.		InitSound ()
 			SpaceGem.	InitSound ()
 			
+			game_controller			= New GameController
+
 			' ----------------------------------------------------------------
-			' Terrain, level and scene setup...
+			' Scene, terrain and level setup...
 			' ----------------------------------------------------------------
 			
+			Controller.InitScene ()
+
 			TerrainSeed				= 0			' Test: Int (RndULong ())
 			TerrainSize				= 512.0	' Size of terrain cube sides
 			
 			CurrentLevel			= New Level (terrain_seed, terrain_size)
 	
 				If Not CurrentLevel Then Abort ("OnCreateWindow: Failed to create level!")
-
-			' ----------------------------------------------------------------
-			' Init gameloop...
-			' ----------------------------------------------------------------
-
-			game_controller			= New GameController
-
-			Controller.InitScene (TerrainSize)
 
 			' ----------------------------------------------------------------
 			' Player setup...

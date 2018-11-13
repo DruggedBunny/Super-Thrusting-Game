@@ -14,6 +14,12 @@ Class Wall Extends Behaviour
 
 	Public
 
+		' Yuk! Thought Behaviour.Destroy would do this!
+		
+		Method Remove ()
+			Entity.Destroy ()
+		End
+		
 		Property DebugAlpha:Float ()
 		
 			Return debug_alpha
