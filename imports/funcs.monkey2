@@ -54,6 +54,45 @@ Function CountEntities:Int (entity:Entity = Null)
 	
 End
 
+' FindEntityFromRigidBody: Returns entity with the attached RigidBody rb, or Null.
+
+' WTFingF? Works for RocketParticle but not ExplosionParticle???
+
+Function FindEntityFromRigidBody:Entity (rb:RigidBody, entity:Entity = Null)
+	
+	Local scene:Scene = Scene.GetCurrent ()
+
+		Assert (scene, "FindEntityFromRigidBody: No current scene!")
+
+	Local branch:Entity []
+	
+	If Not entity
+		branch = scene.GetRootEntities ()
+	Else
+		branch = entity.Children
+	Endif
+	
+	Local found_entity:Entity
+	
+	Local count:Int = branch.Length
+	
+	For Local e:Entity = Eachin branch
+	
+		found_entity = Null
+		
+		If e.GetComponent <RigidBody> () = rb
+			found_entity = e
+			Exit
+		Endif
+		
+		FindEntityFromRigidBody (rb, e)
+
+	Next
+	
+	Return found_entity
+	
+End
+
 ' PrintEntities: Prints a tree-view of entities in scene to the console, or children of an entity if passed in.
 
 ' IMPORTANT: Don't use depth parameter! This is used by the function to determine level of recursion!
@@ -496,4 +535,23 @@ Function LonePixel:Bool (x:Int, y:Int, argb:Color, pixmap:Pixmap)
 	
 	Return True
 
+End
+
+Function RemoveFromStack<T>:Void (o:Object, s:Stack<T>)
+
+	Local iterator:Stack <T>.Iterator
+	
+	iterator = s.All ()
+	
+	While Not iterator.AtEnd
+	
+		If iterator.Current = o
+			iterator.Erase ()
+			Continue			' Go back around loop, avoiding interator.Bump (not to be called after Erase)...
+		Endif
+		
+		iterator.Bump ()
+		
+	Wend
+	
 End

@@ -19,6 +19,8 @@ Class HUDOverlay
 		
 			sprite_start_scale	= New Vec3f (0.05, 0.05, 1.0)
 			
+			SkullSprite?.Destroy () ' Setting up new HUD
+			
 			SkullSprite			= New Sprite (SpriteMaterial.Load (ASSET_PREFIX_GRAPHIC + "skull.png"), Game.MainCamera.Camera3D)
 			
 				If Not SkullSprite Then Abort ("HUD: Can't load skull asset!")
@@ -96,12 +98,19 @@ Class HUDOverlay
 					
 					Background (canvas)
 					
+					' Show skull if player is dead...
+					
+					If Not Game.Player.Alive Then DeathSkull (canvas)
+										
 				Case States.Exiting
 
 					' Fade out...
 					
 					Background (canvas)
-					DeathSkull (canvas)
+
+					' Show skull if player is dead...
+
+					If Not Game.Player.Alive Then DeathSkull (canvas)
 
 			End
 
@@ -116,6 +125,21 @@ Class HUDOverlay
 				
 				ShadowText (canvas, "TEMP: R to reset!", 20.0, 140.0)
 				ShadowText (canvas, "TEMP: N for next level", 20.0, 160.0)
+				
+				'TMP/fucked:
+				
+'				Local debug_rb:Bool = False
+'				
+'				If debug_rb
+'					For Local rb:RigidBody = Eachin Game.PhysStack
+'						If Not FindEntityFromRigidBody (rb)
+'							'RemoveFromStack (rb, Game.PhysStack)
+''							Print "RB removed"
+'						Endif
+'					Next
+'				Endif
+'				
+				ShadowText (canvas, "TEMP: RigidBody count: " + Game.PhysStack.Length, 20.0, 180.0)
 
 				' Horrible, horrible logic!!
 				
@@ -216,10 +240,6 @@ Class HUDOverlay
 			
 		End
 
-		Method Destroy ()
-			SkullSprite.Destroy ()
-		End
-		
 	' This is all pretty nasty/temp/WIP...
 	
 	Private

@@ -45,6 +45,8 @@ Class DummyOrb
 			
 			body						= model.AddComponent <RigidBody> ()
 	
+				Game.PhysStack.Add (body)
+				
 				body.Mass				= 0.0
 				body.btBody.setCollisionFlags (bullet.btCollisionObject.CF_NO_CONTACT_RESPONSE)
 					

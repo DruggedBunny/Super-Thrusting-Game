@@ -1,4 +1,9 @@
 
+' TEMP
+Class PhysObj
+
+End
+
 ' -----------------------------------------------------------------------------
 ' What is it?
 ' -----------------------------------------------------------------------------
@@ -13,6 +18,8 @@
 Class GameWindow Extends Window
 
 	Public
+		
+		Global PhysStack:Stack <RigidBody>
 		
 		Property TerrainSeed:ULong ()
 			Return terrain_seed
@@ -78,9 +85,7 @@ Class GameWindow Extends Window
 		
 		Method TMP_ResetLevel ()
 			
-			HUD.Destroy ()
-			
-				HUD = New HUDOverlay
+			HUD = New HUDOverlay
 				
 			Controller.ResetLevel ()
 			
@@ -126,6 +131,13 @@ Class GameWindow Extends Window
 
 		Method New (title:String, width:Int, height:Int, flags:WindowFlags)	
 			Super.New (title, width, height, flags | WindowFlags.Resizable)
+			
+			
+			' TMP
+			
+			PhysStack = New Stack <RigidBody>
+			
+			
 		End
 	
 		Method OnCreateWindow () Override
@@ -145,6 +157,18 @@ Class GameWindow Extends Window
 			Portal.		InitSound ()
 			SpaceGem.	InitSound ()
 			
+			' ----------------------------------------------------------------
+			' Init game state...
+			' ----------------------------------------------------------------
+
+			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
+
+			last_state				= game_state.GetCurrentState ()
+
+			' ----------------------------------------------------------------
+			' Main control loop setup...
+			' ----------------------------------------------------------------
+
 			game_controller			= New GameController
 
 			' ----------------------------------------------------------------
@@ -153,29 +177,11 @@ Class GameWindow Extends Window
 			
 			Controller.InitScene ()
 
-			TerrainSeed				= 0			' Test: Int (RndULong ())
+			TerrainSeed				= 0		' Random terrain: Int (RndULong ())
 			TerrainSize				= 512.0	' Size of terrain cube sides
 			
-			CurrentLevel			= New Level (terrain_seed, terrain_size)
-	
-				If Not CurrentLevel Then Abort ("OnCreateWindow: Failed to create level!")
-
-			' ----------------------------------------------------------------
-			' Player setup...
-			' ----------------------------------------------------------------
-
-			Local rocket_pos:Vec3f	= CurrentLevel.SpawnLevel ()
+			Controller.SpawnLevel ()
 			
-			Player					= Controller.SpawnRocket (rocket_pos)
-			
-				If Not Player Then Abort ("OnCreateWindow: SpawnRocket failed to spawn rocket!")
-			
-			' ----------------------------------------------------------------
-			' Camera setup...
-			' ----------------------------------------------------------------
-
-			MainCamera				= New GameCamera (App.ActiveWindow.Rect, MainCamera, TerrainSize * 4.0)
-
 '			' ----------------------------------------------------------------
 '			' TMP: Clouds. TODO: Move into Cloud class!
 '			' ----------------------------------------------------------------
@@ -185,31 +191,11 @@ Class GameWindow Extends Window
 			Next
 			
 			' ----------------------------------------------------------------
-			' Set window title...
-			' ----------------------------------------------------------------
-			
-			SetWindowTitle ()
-			
-			' ----------------------------------------------------------------
 			' Hide mouse pointer...
 			' ----------------------------------------------------------------
 
 			Mouse.PointerVisible	= False
 	
-			' ----------------------------------------------------------------
-			' Init HUD...
-			' ----------------------------------------------------------------
-
-			HUD = New HUDOverlay
-
-			' ----------------------------------------------------------------
-			' Init game state...
-			' ----------------------------------------------------------------
-
-			game_state				= New GameState ' Can't be a property due to Getter/Setter weirdness
-
-			last_state				= game_state.GetCurrentState ()
-
 			App.Activated			+=	Lambda ()
 											Print "Activated"
 											GameState.SetCurrentState (last_state)

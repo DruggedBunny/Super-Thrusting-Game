@@ -62,51 +62,6 @@ Class TrumpWall
 				yrot		= -90.0
 				walls [3]	= Wall.Create (wall_box, pos, yrot, New PbrMaterial (Color.White), "Boundary wall, right")
 	
-			For Local wall_instance:Int = 0 Until walls.Length
-			
-	'			' Collider...
-	'			
-	'			Local wall_collider:BoxCollider = walls [wall_instance].WallModel.AddComponent <BoxCollider> ()
-	'				
-	'				wall_collider.Box = wall_box
-	'		
-				' Rigid body...
-				
-	'			Local wall_body:RigidBody = walls [wall_instance].WallModel.AddComponent <RigidBody> ()
-	'			
-	'				wall_body.Mass = 0.0			' 0 = immoveable
-	'				wall_body.Restitution = 1.0	' Bouncy!
-	'				
-	'				wall_body.CollisionMask	= COLL_WALL
-	'				wall_body.CollisionGroup	= WALL_COLLIDES_WITH
-	'			
-	'				' Collision response function...
-	'				
-	'				wall_body.Collided += Lambda (other_body:RigidBody)
-	'			
-	'					' Play bounce sound only every 250 ms (avoids high-speed repetition when colliding)...
-	'					
-	'					If Millisecs () - bump_channel_time > 250
-	'			
-	'						' Un-pause channel (ie. play)...
-	'						
-	'						bump_fader.Paused = False
-	'					
-	'						' Start a new instance playing, but paused...
-	'						
-	'						bump_fader = Game.MainMixer.AddFader ("PhysicsTerrain: ", BumpSound.Play (False))
-	'						bump_fader.Paused = True
-	'						
-	'						' Reset timer...
-	'						
-	'						bump_channel_time = Millisecs ()
-	'						
-	'					Endif
-	'					
-	'				End
-	'		
-			Next
-			
 			' Ceiling, sits at 3 times total terrain height...
 			
 			' Better solution would be limiting rocket boost dependent on height, but would require testing (or actual mathematics) to ensure it remains wall height!
@@ -120,58 +75,8 @@ Class TrumpWall
 				
 			ceiling = Wall.Create (ceiling_box, pos, yrot, New PbrMaterial (Color.White), "Ceiling")
 				
-	'		Local cc:BoxCollider = ceiling.AddComponent <BoxCollider> ()
-	'				
-	'				cc.Box = ceiling_box
-	'		
-	'		Local ceiling_body:RigidBody = ceiling.AddComponent <RigidBody> ()
-	'		
-	'			ceiling_body.Mass = 0.0			' 0 = immoveable
-	'			ceiling_body.Restitution = 1.0	' Bouncy!
-	'			
-	'			ceiling_body.CollisionMask	= COLL_WALL
-	'			ceiling_body.CollisionGroup	= WALL_COLLIDES_WITH
-	'		
-	'			' Collision response function...
-	'			
-	'			ceiling_body.Collided += Lambda (other_body:RigidBody)
-	'		
-	'				' Play bounce sound only every 250 ms (avoids high-speed repetition when colliding)...
-	'				
-	'				If Millisecs () - bump_channel_time > 250
-	'		
-	'					' Un-pause channel (ie. play)...
-	'					
-	'					bump_fader.Paused = False
-	'				
-	'					' Start a new instance playing, but paused...
-	'					
-	'					bump_fader = Game.MainMixer.AddFader ("PhysicsTerrain: Bump", BumpSound.Play (False))
-	'					bump_fader.Paused = True
-	'					
-	'					' Reset timer...
-	'					
-	'					bump_channel_time = Millisecs ()
-	'					
-	'				Endif
-	'				
-	'			End
-	'		
 		End
 	
-	'		Function Create:TrumpWall ()
-	'		
-	'		End
-	'	
-	'	Private
-	'
-	'		Method New (entity:Entity)
-	'			
-	'			Super.New (entity)
-	'			AddInstance ()
-	'	
-	'		End
-	'			
 
 	Private
 	

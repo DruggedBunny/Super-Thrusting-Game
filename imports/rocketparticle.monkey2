@@ -14,23 +14,24 @@ Class RocketParticle Extends Behaviour
 				ParticleSprite			= New Sprite ()
 				ParticleSprite.Color	= Color.White
 				ParticleSprite.Visible	= False
+				ParticleSprite.Name		= "RocketParticle sprite"
 
 			Endif
 			
-			Local sprite:Sprite = ParticleSprite.Copy (rocket.RocketModel)'New Sprite (rocket.RocketModel)
+			Local sprite:Sprite = ParticleSprite.Copy (rocket.RocketModel)
 		
 				sprite.Move (Rnd (-0.1, 0.1), Rnd (-2.1, -2.5), Rnd (-0.1, 0.1))
 				
 				sprite.Parent				= Null
-				sprite.Color				= Color.White
-				
 				sprite.Visible				= True
+				sprite.Color				= Color.White
+				sprite.Name					= "RocketParticle sprite [copy]"
 				
 				Local spark:Bool = False
 				
 				If Rnd (1.0) > 0.9
 					size = Rnd (0.05, 0.095)
-					thrust = thrust * New Vec3f (2.5, 3.33, 2.5)
+					thrust = thrust * New Vec3f (2.5, 2.5, 2.5)
 					spark = True
 				Endif
 				
@@ -64,6 +65,8 @@ Class RocketParticle Extends Behaviour
 
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 ' No Boxf!
+				Game.PhysStack.Add (body)
+
 				body.Mass				= 0.01
 				body.Restitution		= 0.5
 				body.Friction			= 0.1
@@ -75,7 +78,7 @@ Class RocketParticle Extends Behaviour
 				thrust					= Null ' Don't need to keep temp Vec3f object
 				
 				smoke_scaler = 1.0 + Rnd (0.033)
-				
+						
 		End
 		
 		Method OnUpdate (elapsed:Float) Override
@@ -107,8 +110,9 @@ Class RocketParticle Extends Behaviour
 						
 						Entity.GetComponent <RigidBody> ().ApplyForce (New Vec3f (0.0, 0.15, 0.0))
 
-						If Entity.GetComponent <RigidBody> ().LinearDamping > 0.999
+						If Entity.Alpha < 0.1
 							Entity.Destroy ()
+						'	Print "Destroyed1"
 						Endif
 
 					Else
@@ -121,6 +125,8 @@ Class RocketParticle Extends Behaviour
 							sprite.Visible				= True
 							
 							Entity.Destroy ()
+
+						'	Print "Destroyed2"
 
 					Endif
 
@@ -144,7 +150,7 @@ Class RocketParticle Extends Behaviour
 		
 		Field thrust:Vec3f
 		Field update_fader:Float
-		Field color_change:Float = 0.99
+		Field color_change:Float = 0.975
 		Field spark:Bool
 		Field smoke_scaler:Float
 		

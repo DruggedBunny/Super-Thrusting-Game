@@ -35,9 +35,17 @@ Const TMP_LEVEL_COMPLETE:Bool = False
 
 Function InitTODOs ()
 
+	' *** WASM CRASH: "C:\Users\James\Desktop\wasm integer overflow.txt"
+
+	TODO ("Rework SpaceGem physics setup")
+	
+	TODO ("Check if pads, etc, are actually being destroyed! RigidBodies in particular... mark positions and revisit between levels.")
+	
 	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
 	
-	TODO ("PortalLock: just started. (Pink pads.) Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
+	TODO ("GameState -> Proper object!")
+	
+	TODO ("PortalLock: REMOVED FOR NOW -> Level.Populate [...] just started. (Pink pads.) Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
 	TODO ("Why does one pair of clouds show black overlap??")
 	TODO ("Might add emergency air-jump to fix lying on side on ground... though finally detecting tilt angle and blowing up probably better...")
 	TODO ("New refueling sound. Maybe add landing timer to delay before triggering -- slightly tricky due to need to reset Rocket.landed per-frame!")

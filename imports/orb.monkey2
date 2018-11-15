@@ -117,6 +117,8 @@ Class Orb Extends Behaviour
 
 			Local body:RigidBody			= Entity.AddComponent <RigidBody> ()
 	
+				Game.PhysStack.Add (body)
+	
 				body.Mass					= mass
 				body.Restitution			= 0.1
 				body.AngularDamping			= 0.45

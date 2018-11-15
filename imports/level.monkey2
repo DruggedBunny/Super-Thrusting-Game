@@ -192,13 +192,8 @@ Class Level
 			
 		End
 
-		Method SpawnLevel:Vec3f ()
+		Method Populate ()
 
-			' Remove pads and gems from scene if they exist already (eg. on loading new level)...
-
-			If pads Or gems Then DestroyPadsAndGems ()
-			If pads Or gems Then DestroyPadsAndGems ()
-			
 			pads							= New List <Pad>
 			gems	 						= New List <SpaceGem>
 			
@@ -353,14 +348,14 @@ Class Level
 
 			Until valid_position
 
-			Lock = PortalLock.Create (pad_x, pad_y, pad_z)
+			'Lock = PortalLock.Create (pad_x, pad_y, pad_z)
 			
-			' This returns the player's position. Bit naughty...
-			
-			Return New Vec3f (spawn_x, spawn_y, spawn_z)
-		
 		End
 
+		Method RocketStartPosition:Vec3f ()
+			Return New Vec3f (spawn_x, spawn_y, spawn_z)
+		End
+		
 		Method Update:Bool ()
 
 			If TMP_LEVEL_COMPLETE Then space_gems_collected = spacegems_spawned ' TEMP!!!
@@ -399,15 +394,17 @@ Class Level
 			space_gem_count = space_gem_count + 1
 		End
 
-		Method Destroy ()
-		
-			sun.Destroy ()
-			terrain.Destroy ()
-			ExitPortal.Destroy ()
-
-			DestroyPadsAndGems ()
-			
-		End
+'		Method Destroy ()
+'		
+''			sun.Destroy ()
+''			terrain.Destroy ()
+''			ExitPortal.Destroy ()
+''
+''			DestroyPadsAndGems ()
+''			
+'			Game.GameScene.DestroyAllEntities ()
+'			
+'		End
 		
 		' Remove from list, otherwise we crash in DestroyPadsAndGems if a SpaceGem has been destroyed...
 		
@@ -462,21 +459,21 @@ Class Level
 
 		End
 		
-		Method DestroyPadsAndGems ()
-			
-			For Local p:Pad = Eachin pads
-				p.PadModel.Destroy ()
-			Next
-			
-			For Local sg:SpaceGem = Eachin gems
-				sg.SpaceGemModel.Destroy ()
-			Next
-			
-			pads.Clear ()
-			gems.Clear ()
-			
-		End
-		
+'		Method DestroyPadsAndGems ()
+'			
+'			For Local p:Pad = Eachin pads
+'				p.PadModel.Destroy ()
+'			Next
+'			
+'			For Local sg:SpaceGem = Eachin gems
+'				sg.SpaceGemModel.Destroy ()
+'			Next
+'			
+'			pads.Clear ()
+'			gems.Clear ()
+'			
+'		End
+'		
 		Method SpawnRocket (x:Float, y:Float, z:Float)
 			Game.Controller.SpawnRocket (New Vec3f (x, y, z))
 		End

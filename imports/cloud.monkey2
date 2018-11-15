@@ -16,8 +16,12 @@ Class Cloud
 			Endif
 			
 			If Not CloudPivot
-				CloudPivot	= New Pivot ()
+				
+				CloudPivot		= New Pivot ()
+				CloudPivot.Name	= "Cloud sprites pivot"
+				
 				Update ()
+				
 			Endif
 			
 			'If Not CloudMaterial
@@ -33,11 +37,10 @@ Class Cloud
 			sprite								= New Sprite (tmp_mat, CloudPivot)
 			
 				sprite.Scale					= New Vec3f (size, size, 1.0)
-			
 				sprite.Mode						= SpriteMode.Fixed
-			
+				sprite.Name						= "Cloud sprite"
+				
 				sprite.Move (x, y, z)
-			
 				sprite.Rotate (90.0, Rnd (-10.0, 10.0), 0.0)
 			
 			z_move = Rnd (-10.0, 10.0)

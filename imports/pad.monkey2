@@ -59,6 +59,8 @@ Class Pad Extends Behaviour
 				
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 
+				Game.PhysStack.Add (body)
+
 				body.Mass				= 0.0
 				body.CollisionMask		= COLL_PAD
 				body.CollisionGroup		= PAD_COLLIDES_WITH

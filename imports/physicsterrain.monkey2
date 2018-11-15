@@ -61,6 +61,8 @@ Class PhysicsTerrain ' WIP
 						
 			body								= TerrainModel.AddComponent <RigidBody> ()
 	
+				Game.PhysStack.Add (body)
+	
 				body.Mass						= 0.0
 		
 				body.CollisionMask				= COLL_TERRAIN

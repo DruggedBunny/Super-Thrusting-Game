@@ -124,7 +124,7 @@ Class GameController
 
 				If Game.HUD.FadeOut (rate) >= 1.0
 					If Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED
-						SpawnNextLevel ()
+						SpawnLevel ()
 					Endif
 				Endif
 
@@ -176,33 +176,61 @@ Class GameController
 	End
 
 	' --------------------------------------------------------------------
-	' Level complete! Next!
+	' New level!
 	' --------------------------------------------------------------------
 
-	Method SpawnNextLevel ()
+	Method SpawnLevel ()
 
-		Game.CurrentLevel.Destroy ()
+		' ---------------------------------------------------------------------
+		' Clear scene...
+		' ---------------------------------------------------------------------
+
+		Game.GameScene.DestroyAllEntities ()
 		
-		Game.TerrainSeed			= Game.TerrainSeed + 1
+		' ---------------------------------------------------------------------
+		' Level setup...
+		' ---------------------------------------------------------------------
 
 		Game.CurrentLevel			= New Level (Game.TerrainSeed, Game.TerrainSize)
 
 			If Not Game.CurrentLevel Then Abort ("SpawnNextLevel: Failed to create level!")
 		
-		Local rocket_pos:Vec3f		= Game.CurrentLevel.SpawnLevel ()
+		Game.SetWindowTitle ()
+		
+		Game.TerrainSeed			= Game.TerrainSeed + 1 ' Ready for next level
+
+		' ---------------------------------------------------------------------
+		' Fill level with launchpads and gems...
+		' ---------------------------------------------------------------------
+
+		Game.CurrentLevel.Populate ()
+
+		' ---------------------------------------------------------------------
+		' Player setup (position is set up by Level.Populate ()...
+		' ---------------------------------------------------------------------
+
+		Local rocket_pos:Vec3f		= Game.CurrentLevel.RocketStartPosition ()
 
 		Game.Player					= SpawnRocket (rocket_pos)
 		
 			If Not Game.Player Then Abort ("SpawnNextLevel: SpawnRocket failed to spawn rocket!")
-					
+		
+		' ---------------------------------------------------------------------
+		' Camera setup...
+		' ---------------------------------------------------------------------
+
 		Game.MainCamera				= New GameCamera (App.ActiveWindow.Rect, Game.MainCamera, Game.TerrainSize * 4.0)
-		
-		Game.HUD.Destroy ()
 
-			Game.HUD				= New HUDOverlay ' HUD needs to pick up new camera
-
-		Game.SetWindowTitle ()
+		' ---------------------------------------------------------------------
+		' HUD setup...
+		' ---------------------------------------------------------------------
 		
+		Game.HUD					= New HUDOverlay ' HUD needs to pick up new camera
+
+		' ---------------------------------------------------------------------
+		' Get ready...
+		' ---------------------------------------------------------------------
+
 		GameState.SetCurrentState (States.PlayStarting)
 
 	End

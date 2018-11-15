@@ -234,6 +234,8 @@ Class PortalCollider Extends Behaviour
 	
 			Local body:RigidBody			= Entity.AddComponent <RigidBody> ()
 	
+				Game.PhysStack.Add (body)
+	
 				body.Mass					= 0.0
 			
 				body.CollisionMask			= COLL_PORTAL

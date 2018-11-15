@@ -23,6 +23,7 @@ Class ExplosionParticle Extends Behaviour
 				ParticleSprite			= New Sprite ()
 				ParticleSprite.Color	= Color.White
 				ParticleSprite.Visible	= False
+				ParticleSprite.Name		= "ExplosionParticle sprite"
 
 			Endif
 			
@@ -32,6 +33,7 @@ Class ExplosionParticle Extends Behaviour
 				sprite.Scale				= New Vec3f (size, size, size)
 				sprite.Alpha				= 1.0 ' TMP
 				sprite.Visible				= True
+				sprite.Name					= "ExplosionParticle sprite [copy]"
 				
 				Select Int (Rnd (5))
 					Case 0
@@ -69,6 +71,8 @@ Class ExplosionParticle Extends Behaviour
 			Local collider:BoxCollider	= Entity.AddComponent <BoxCollider> () ' Unexpected: Collider needs to be added BEFORE applying impulse!
 
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
+
+				Game.PhysStack.Add (body)
 
 				body.Mass				= 0.01
 				body.Restitution		= 0.5
