@@ -51,7 +51,7 @@ Class PhysicsTri Extends Behaviour
 			
 			Local body:RigidBody		= model.AddComponent <RigidBody> ()
 
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 				body.Mass				= 1.0
 				body.Restitution		= 0.25

@@ -19,7 +19,7 @@ Class GameWindow Extends Window
 
 	Public
 		
-		Global PhysStack:Stack <RigidBody>
+		'Global PhysStack:Stack <RigidBody>
 		
 		Property TerrainSeed:ULong ()
 			Return terrain_seed
@@ -135,7 +135,7 @@ Class GameWindow Extends Window
 			
 			' TMP
 			
-			PhysStack = New Stack <RigidBody>
+'			PhysStack = New Stack <RigidBody>
 			
 			
 		End

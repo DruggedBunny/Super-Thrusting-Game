@@ -106,7 +106,7 @@ Class Wall Extends Behaviour
 				
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 				body.Mass				= 0.0
 				body.Restitution		= 1.0 ' Bouncy!

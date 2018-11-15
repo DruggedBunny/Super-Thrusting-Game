@@ -72,7 +72,7 @@ Class ExplosionParticle Extends Behaviour
 
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 				body.Mass				= 0.01
 				body.Restitution		= 0.5

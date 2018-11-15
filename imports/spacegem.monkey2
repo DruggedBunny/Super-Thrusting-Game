@@ -57,7 +57,7 @@ Class SpaceGem Extends Behaviour
 	
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 				body.Mass				= 1.0
 				body.AngularDamping		= 0.0

@@ -139,7 +139,7 @@ Class HUDOverlay
 '					Next
 '				Endif
 '				
-				ShadowText (canvas, "TEMP: RigidBody count: " + Game.PhysStack.Length, 20.0, 180.0)
+				'ShadowText (canvas, "TEMP: RigidBody count: " + Game.PhysStack.Length, 20.0, 180.0)
 
 				' Horrible, horrible logic!!
 				

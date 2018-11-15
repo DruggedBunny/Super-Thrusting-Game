@@ -65,7 +65,7 @@ Class RocketParticle Extends Behaviour
 
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 ' No Boxf!
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 				body.Mass				= 0.01
 				body.Restitution		= 0.5

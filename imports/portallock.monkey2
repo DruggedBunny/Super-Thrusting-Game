@@ -61,7 +61,7 @@ Class PortalLock Extends Behaviour
 				
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 				body.Mass				= 0.0
 				body.CollisionMask		= COLL_PORTAL_LOCK

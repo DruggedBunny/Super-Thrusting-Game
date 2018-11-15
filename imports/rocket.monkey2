@@ -98,7 +98,7 @@ Class Rocket
 	
 			body				= model.AddComponent <RigidBody> ()
 
-				Game.PhysStack.Add (body)
+'				Game.PhysStack.Add (body)
 
 		 		body.Mass			= collision_mass
 				body.Restitution	= 0.1
