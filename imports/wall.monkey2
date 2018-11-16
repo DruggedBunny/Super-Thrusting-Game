@@ -110,6 +110,7 @@ Class Wall Extends Behaviour
 
 				body.Mass				= 0.0
 				body.Restitution		= 1.0 ' Bouncy!
+				body.Friction			= 0.0
 				
 				body.CollisionMask		= COLL_WALL
 				body.CollisionGroup		= WALL_COLLIDES_WITH

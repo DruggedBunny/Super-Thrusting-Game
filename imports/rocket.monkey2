@@ -361,11 +361,23 @@ Class Rocket
 						
 						Local tpitch:Float		= Abs (jpitch)
 						
+						Local tvel:Vec3f = RocketBody.LinearVelocity
+
+'						Local tvelmulti:Float = 1.0
+						
+'						If tvel.Length > 0.0 And tvel.Length < 10.0
+'							tvelmulti = TransformRange (1.0, 0.0, tvel.Length, 1.333, 1.0)
+'						Endif
+						
+'						jpitch = jpitch * tvelmulti
+						
 						If jpitch > 0.05 Then PitchBack (Game.MainCamera, jpitch * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						If jpitch < -0.05 Then PitchForward (Game.MainCamera, Abs (jpitch) * TransformRange (tpitch, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						
 						Local jlr:Float			= joy.GetAxis (0)
 						Local tlr:Float			= Abs (jpitch)
+						
+'						jlr = jlr * tvelmulti
 						
 						If jlr > 0.05 Then PitchRight (Game.MainCamera, jlr * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))
 						If jlr < -0.05 Then PitchLeft (Game.MainCamera, Abs (jlr) * TransformRange (tlr, 0.0, 1.0, TEMP_lower, TEMP_upper))

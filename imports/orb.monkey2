@@ -63,7 +63,7 @@ Class Orb Extends Behaviour
 		
 		Method Destroy:Void (play_boom:Bool = True)
 
-			Entity.Destroy ()
+			Entity?.Destroy ()
 			
 			If play_boom
 				boom_fader.Channel.Paused = False

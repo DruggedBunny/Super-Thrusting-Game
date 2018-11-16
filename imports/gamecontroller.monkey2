@@ -77,9 +77,15 @@ Class GameController
 
 				' Change to Playing state after HUD has faded-in...
 				
-				Local TMP_FADE:Float = 0.05
+				Local rate:Float
 				
-				If Game.HUD.FadeIn (TMP_FADE) = 0.0
+				If TMP_QUICK_LEVEL_TWEEN
+					rate = 0.1
+				Else
+					rate = 0.05
+				Endif
+				
+				If Game.HUD.FadeIn (rate) = 0.0
 					' Just to make sure...
 					Game.MainMixer.Level = 1.0
 					GameState.SetCurrentState (States.Playing)
@@ -113,7 +119,13 @@ Class GameController
 				
 				' Reset after HUD has faded out...
 				
-				Local rate:Float = 0.01
+				Local rate:Float
+				
+				If TMP_QUICK_LEVEL_TWEEN
+					rate = 0.1
+				Else
+					rate = 0.01
+				Endif
 				
 				If Game.MainMixer.Level > 0.0
 					Game.MainMixer.Level = Blend (Game.MainMixer.Level, 0.0, 0.02)
@@ -135,9 +147,17 @@ Class GameController
 				Game.Player.Control		()					' Rocket controls
 				Game.MainCamera.Update	(Game.Player)		' Update camera, follow player
 				
+				Local rate:Float
+				
+				If TMP_QUICK_LEVEL_TWEEN
+					rate = 0.1
+				Else
+					rate = 0.025
+				Endif
+				
 				' Exit after HUD has faded out...
 				
-				If Game.HUD.FadeOut (0.025) >= 1.0
+				If Game.HUD.FadeOut (rate) >= 1.0
 					App.Terminate ()
 				Endif
 			
@@ -193,7 +213,7 @@ Class GameController
 
 		Game.CurrentLevel			= New Level (Game.TerrainSeed, Game.TerrainSize)
 
-			If Not Game.CurrentLevel Then Abort ("SpawnNextLevel: Failed to create level!")
+			If Not Game.CurrentLevel Then Abort ("SpawnLevel: Failed to create level!")
 		
 		Game.SetWindowTitle ()
 		

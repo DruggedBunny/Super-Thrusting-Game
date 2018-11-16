@@ -92,6 +92,7 @@ Class GameCamera
 				Endif
 				
 				chase_target.Position = (player.RocketModel.Position + up) - lastvel * CameraDistance
+
 				camera_pivot.Move ((chase_target.Position - camera_pivot.Position) * (0.1 * Game.Delta), True)
 				camera_pivot.PointAt (player.RocketModel)
 

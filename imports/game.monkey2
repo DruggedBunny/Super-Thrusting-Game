@@ -178,7 +178,7 @@ Class GameWindow Extends Window
 			Controller.InitScene ()
 
 			TerrainSeed				= 0		' Random terrain: Int (RndULong ())
-			TerrainSize				= 512.0	' Size of terrain cube sides
+			TerrainSize				= TERRAIN_SIZE '512.0	' Size of terrain cube sides
 			
 			Controller.SpawnLevel ()
 			

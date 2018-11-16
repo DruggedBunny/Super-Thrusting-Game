@@ -106,12 +106,12 @@ Class Level
 								New Color (0.75, 0.2, 0.2),
 								((Color.Sky * 0.75) + (Color.Orange * 0.5) + (Color.Red * 0.75)) * 0.333)
 
-				levels[3]	=	New LevelData ("Winterlong",
-								New Color (0.95, 0.95, 1.0),
-								New Color (0.75, 0.75, 0.95),
-								Color.Sky * 0.25)
+				levels[3]	=	New LevelData ("Mooner",
+								New Color (0.25, 0.25, 0.25),
+								New Color (0.333, 0.333, 0.333),
+								New Color (0.05, 0.05, 0.05))
 
-				levels[4]	=	New LevelData ("I'll Be Blue",
+				levels[4]	=	New LevelData ("Have Blue",
 								New Color (0.25, 0.5, 1.0),
 								New Color (0.5, 0.8, 1.0))
 

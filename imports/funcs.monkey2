@@ -439,7 +439,7 @@ End
 
 Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500)
 
-	QuickTimer.Start ()
+'	QuickTimer.Start ()
 
 	Local particle_vel:Float = 0.75
 
@@ -492,7 +492,7 @@ Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, exp
 	
 	Next
 
-	QuickTimer.Stop ()
+'	QuickTimer.Stop ()
 
 End
 		

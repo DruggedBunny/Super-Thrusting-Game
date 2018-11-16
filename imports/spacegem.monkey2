@@ -53,7 +53,8 @@ Class SpaceGem Extends Behaviour
 		Method AddRigidBody (box:Boxf)
 	
 			Local collider:BoxCollider	= Entity.AddComponent <BoxCollider> ()
-			collider.Box				= box
+			
+				collider.Box			= box
 	
 			Local body:RigidBody		= Entity.AddComponent <RigidBody> ()
 

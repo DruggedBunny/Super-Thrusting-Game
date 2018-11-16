@@ -22,7 +22,7 @@ Class Temp
 		If Keyboard.KeyHit (Key.F4)
 			Game.MonoShader.Toggle ()
 		Endif
-		
+	
 		If Keyboard.KeyHit (Key.M)
 			Game.HUD.GemMapVisible = Not Game.HUD.GemMapVisible
 		Endif

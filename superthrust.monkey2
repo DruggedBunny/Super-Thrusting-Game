@@ -26,20 +26,20 @@ Const AppName:String = "Super Thrusting Game!"
 
 Global Game:GameWindow
 
+Const TERRAIN_SIZE:Int = 256
+
 ' Hacks...
 
-Const VR_MODE:Int = False
-Const TMP_LEVEL_COMPLETE:Bool = False
+Const FULL_SCREEN:Bool				= False
+Const VR_MODE:Int					= False
+Const TMP_LEVEL_COMPLETE:Bool		= False
+Const TMP_QUICK_LEVEL_TWEEN:Bool	= True
 
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
 Function InitTODOs ()
 
 	' *** WASM CRASH: "C:\Users\James\Desktop\wasm integer overflow.txt"
-
-	TODO ("Rework SpaceGem physics setup")
-	
-	TODO ("Check if pads, etc, are actually being destroyed! RigidBodies in particular... mark positions and revisit between levels.")
 	
 	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
 	
@@ -82,7 +82,10 @@ Function Main ()
 	Local height:Int	= 768
 #Endif
 
-	Run3D (AppName, width, height, WindowFlags.Center | WindowFlags.Resizable)
-	'Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
+	If FULL_SCREEN
+		Run3D (AppName, 0, 0, WindowFlags.Fullscreen)		' 0, 0 means desktop resolution
+	Else
+		Run3D (AppName, width, height, WindowFlags.Center | WindowFlags.Resizable)
+	Endif
 	
 End
