@@ -31,7 +31,7 @@ Class DummyOrb
 	
 			Local radius:Float = 2.0
 			
-			Local mat:PbrMaterial		= New PbrMaterial (Color.HotPink)
+			Local mat:PbrMaterial		= New PbrMaterial (Color.HotPink, 0.05, 0.0)
 				
 			model						= Model.CreateSphere (radius, 8, 8, mat)
 	

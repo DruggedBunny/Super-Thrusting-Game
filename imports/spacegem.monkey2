@@ -17,10 +17,10 @@ Class SpaceGem Extends Behaviour
 			
 			Local box:Boxf		= New Boxf (-size * 0.5, -size * 0.5, -size * 0.5, size * 0.5, size * 0.5, size * 0.5)
 			
-			Local model:Model	= Model.CreateBox (box, 1, 1, 1, New PbrMaterial (color))
+			Local model:Model	= Model.CreateBox (box, 1, 1, 1, New PbrMaterial (color, 0.05, 0.0))
 			
 				model.Name		= "SpaceGem [spawned at " + Time.Now () + "]"
-				model.Alpha		= 0.5
+				model.Alpha		= 0.333
 			
 				' Place at pad position plus 3 x gem height...
 				

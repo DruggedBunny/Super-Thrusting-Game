@@ -96,24 +96,24 @@ Class Level
 								New Color (0.0, 0.498, 0.0),		' Terrain color 0
 								New Color (0.0275, 0.357, 0.176))	' Terrain color 1
 
-				levels[1]	=	New LevelData ("Desert",
-								((Color.Yellow * 0.5) + (Color.Brown * 0.5) + Color.Orange) * 0.333,
-								((Color.Yellow * 0.8) + Color.Orange * 0.75) * 0.5,
-								(Color.Sky + (Color.Yellow * 0.5)) * 0.5)
+				levels[1]	=	New LevelData ("Have Blue",
+								New Color (0.25, 0.5, 1.0),
+								New Color (0.5, 0.8, 1.0))
 
-				levels[2]	=	New LevelData ("Martian Hell",
-								New Color (1.0, 0.2, 0.2),
-								New Color (0.75, 0.2, 0.2),
-								((Color.Sky * 0.75) + (Color.Orange * 0.5) + (Color.Red * 0.75)) * 0.333)
-
-				levels[3]	=	New LevelData ("Mooner",
+				levels[2]	=	New LevelData ("Mooner",
 								New Color (0.25, 0.25, 0.25),
 								New Color (0.333, 0.333, 0.333),
 								New Color (0.05, 0.05, 0.05))
 
-				levels[4]	=	New LevelData ("Have Blue",
-								New Color (0.25, 0.5, 1.0),
-								New Color (0.5, 0.8, 1.0))
+				levels[3]	=	New LevelData ("Desert",
+								((Color.Yellow * 0.5) + (Color.Brown * 0.5) + Color.Orange) * 0.333,
+								((Color.Yellow * 0.8) + Color.Orange * 0.75) * 0.5,
+								(Color.Sky + (Color.Yellow * 0.5)) * 0.5)
+
+				levels[4]	=	New LevelData ("Martian Hell",
+								New Color (1.0, 0.2, 0.2),
+								New Color (0.75, 0.2, 0.2),
+								((Color.Sky * 0.75) + (Color.Orange * 0.5) + (Color.Red * 0.75)) * 0.333)
 
 				levels[5]	=	New LevelData ("Checkmate!",
 								New Color (0.2, 0.2, 0.2 ),
@@ -348,7 +348,7 @@ Class Level
 
 			Until valid_position
 
-			'Lock = PortalLock.Create (pad_x, pad_y, pad_z)
+			Lock = PortalLock.Create (pad_x, pad_y, pad_z)
 			
 		End
 

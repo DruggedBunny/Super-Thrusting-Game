@@ -5,10 +5,6 @@
 
 Class GameMenu
 
-	Private
-
-		Global LastTimeScale:Float
-	
 	Public
 
 		Function Control ()

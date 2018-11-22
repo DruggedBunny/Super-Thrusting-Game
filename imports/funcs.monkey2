@@ -437,6 +437,8 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
  
 End
 
+' TODO: Make tris_per_chunk variation start from 1...
+
 Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500)
 
 '	QuickTimer.Start ()
@@ -455,7 +457,7 @@ Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, exp
 
 		' Create particle...
 		
-		ExplosionParticle.Create	(	model,		' Rocket
+		ExplosionParticle.Create	(	model,				' Rocket
 										angle,				' 3D angle
 										Rnd (0.1, 1.0),		' Size
 										0.99)				' Fadeout-multiplier
@@ -484,9 +486,9 @@ Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, exp
 
 				ptri.SrcBody			= body
 				
-				If model = Game.Player.RocketModel
-					ptri.FromRocket		= True
-				Endif
+'				If Game.Player.RocketModel And model = Game.Player.RocketModel
+'					ptri.FromRocket		= True
+'				Endif
 				
 		Next
 	

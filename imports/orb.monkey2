@@ -9,7 +9,7 @@ Class Orb Extends Behaviour
 	
 		Function Create:Orb (rocket:Rocket, distance:Float, in_mass:Float = 1.0)
 
-			Local mat:PbrMaterial		= New PbrMaterial (Color.HotPink)
+			Local mat:PbrMaterial		= New PbrMaterial (Color.HotPink, 0.05, 0.0)
 			
 			Local model:Model			= Model.CreateSphere (0.75, 8, 8, mat, rocket.RocketModel)
 			
@@ -17,7 +17,7 @@ Class Orb Extends Behaviour
 
 				model.Parent			= Null
 				model.Name				= "Orb [spawned at " + Time.Now () + "]"
-				model.Alpha				= 1.0
+				model.Alpha				= 0.75
 				model.CastsShadow		= True
 			
 			Local orb:Orb				= New Orb (model)

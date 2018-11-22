@@ -115,21 +115,30 @@ Class Rocket
 				
 					Case COLL_PAD
 					
+						' Reject if below pad (centre of rocket vs centre of pad)...
+						
+						If RocketModel.Y < other_body.Entity.Y Then Return
+						
+						Local half_pad_size:Float = Cast <Model> (other_body.Entity).Mesh.Bounds.Width * 0.5
+						
+						' Reject if outside horizontal pad area...
+						
+						If RocketModel.X < other_body.Entity.X - half_pad_size Or RocketModel.X > other_body.Entity.X + half_pad_size Or
+							RocketModel.Z < other_body.Entity.Z - half_pad_size Or RocketModel.Z > other_body.Entity.Z + half_pad_size
+								Return
+						Endif
+						
 						landed = True
 				
-						' Add landing speed check?
-						
 						' TODO: Angle!
 						
-'						If Not landed
-'							landed = True ' Can't detect when no longer colliding!
-							' Want to play landing 'thump' once
-'						Endif
-					
 						If fuel < 100.0
 						
 							fuel = fuel + (0.25 * Game.Delta)
 
+							' Set refueling flag only within 5 - 95 fuel level -- avoids flickering
+							' "refueling" text/audio...
+							
 							If fuel > 5.0 And fuel < 95.0
 								refueling = True
 								If fuel_fader.Level < (FUEL_VOLUME)
@@ -138,14 +147,20 @@ Class Rocket
 								Endif
 							Endif
 
+							' Turn off fuel alert if > 25%...
+							
 							If alert_fader.Level
 								If fuel > 25.0 Then alert_fader.Level = 0.0
 							Endif
 							
-							If fuel > 100.0 Then fuel = 100.0 '; refuel_channel.Level = 0.0
+							' Limit to 100...
+							
+							If fuel > 100.0 Then fuel = 100.0
 						
 						Else
 
+							' Full refuelled, so fade out fuel alert audio...
+							
 							If fuel_fader.Level > 0.0
 
 								fuel_fader.Level = fuel_fader.Level - (0.05 * Game.Delta)

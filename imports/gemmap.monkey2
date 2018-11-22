@@ -53,6 +53,27 @@ Class GemMap
 				
 			Next
 			
+			If Game.CurrentLevel.Lock
+			
+				Local lock_model:Model = Game.CurrentLevel.Lock.PortalLockModel
+				
+				Local ix:Float			= TransformRange (lock_model.X, -half_terrain_size, half_terrain_size, 0.0, gem_map_image.Width)
+				Local iy:Float			= TransformRange (lock_model.Z, -half_terrain_size, half_terrain_size, gem_map_image.Height, 0.0)
+
+				' WIP portal lock representation!
+				
+				gem_map_canvas.Color	= Color.Lime'lock_model.Color
+
+				gem_map_canvas.DrawRect (ix - offset, iy - offset, dot_size * 2.0, dot_size * 2.0)
+
+				gem_map_canvas.Color	= Color.White
+				gem_map_canvas.DrawCircle (ix + 2.0, iy + 2.0, 4.0)
+				
+				gem_map_canvas.Color	= Color.Lime'lock_model.Color
+				gem_map_canvas.DrawCircle (ix + 1.0, iy + 1.0, 2.0)
+				
+			Endif
+			
 			' Draw portal...
 			
 			If Game.CurrentLevel.ExitPortal.PortalState <> Portal.PORTAL_STATE_CLOSED

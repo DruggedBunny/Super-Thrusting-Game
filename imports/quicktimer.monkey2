@@ -11,7 +11,8 @@ Class QuickTimer
 	Const MILLIS:Double	= 2
 	Const SECS:Double	= 3
 	
-	Function Start ()
+	Function Start (message:String = "")
+		If message Then Print message
 		Ticks = Microsecs ()
 	End
 	
