@@ -18,8 +18,8 @@ See TODOs in main superthrust.monkey2 file!
 
 Screenshots:
 
-![Super Thrusting Game: Flying over terrain](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss1.png)
+![Super Thrusting Game: Flying over terrain](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss1.jpg)
 
-![Super Thrusting Game: Heading for portal lock, carrying orb](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss2.png)
+![Super Thrusting Game: Heading for portal lock, carrying orb](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss2.jpg)
 
-![Super Thrusting Game: Heading for portal, after unlocking](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss3.png)
+![Super Thrusting Game: Heading for portal, after unlocking](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss3.jpg)

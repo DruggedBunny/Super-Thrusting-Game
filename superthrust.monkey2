@@ -30,10 +30,10 @@ Const TERRAIN_SIZE:Int = 256
 
 ' Hacks...
 
-Const FULL_SCREEN:Bool				= False
+Const FULL_SCREEN:Bool				= True
 Const VR_MODE:Int					= False
 Const TMP_LEVEL_COMPLETE:Bool		= False
-Const TMP_QUICK_LEVEL_TWEEN:Bool	= True
+Const TMP_QUICK_LEVEL_TWEEN:Bool	= False
 
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
