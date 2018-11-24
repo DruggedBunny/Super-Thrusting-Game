@@ -348,7 +348,7 @@ Class Level
 
 			Until valid_position
 
-			Lock = PortalLock.Create (pad_x, pad_y, pad_z)
+			Lock = New PortalLock (pad_x, pad_y, pad_z)
 			
 		End
 

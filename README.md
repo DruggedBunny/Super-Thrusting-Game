@@ -10,7 +10,7 @@ http://www.playfuljs.com/realistic-terrain-in-130-lines/
 
 Uses keyboard and, optionally, first Xbox controller detected.
 
-Collect all Space Gems [tm\*] to spawn the Atomic Orb [tm\*], which appears at your start point, before heading for the Space Portal [tm\*]. Refuel by landing on pads.
+Collect all Space Gems [tm\*] to spawn the Atomic Orb [tm\*], which appears at your start point. Drop the orb in the portal unlocker (glass sphere) before heading for the Space Portal [tm\*]. Refuel by landing on pads.
 
 \* Not really.
 
@@ -18,5 +18,8 @@ See TODOs in main superthrust.monkey2 file!
 
 Screenshots:
 
-![Super Thrusting Game: Flying over terrain](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/superthrust1.png)
-![Super Thrusting Game: Heading for portal, carrying orb](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/superthrust2.png)
+![Super Thrusting Game: Flying over terrain](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss1.png)
+
+![Super Thrusting Game: Heading for portal lock, carrying orb](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss2.png)
+
+![Super Thrusting Game: Heading for portal, after unlocking](https://raw.githubusercontent.com/DruggedBunny/Super-Thrusting-Game/master/screenshots/ss3.png)

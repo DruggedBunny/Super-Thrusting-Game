@@ -181,15 +181,7 @@ Class GameWindow Extends Window
 			TerrainSize				= TERRAIN_SIZE '512.0	' Size of terrain cube sides
 			
 			Controller.SpawnLevel ()
-			
-'			' ----------------------------------------------------------------
-'			' TMP: Clouds. TODO: Move into Cloud class!
-'			' ----------------------------------------------------------------
-'
-			For Local loop:Int = 1 To 25
-				Local c:Cloud = New Cloud (Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (TerrainSize, TerrainSize * 4.0), Rnd (-TerrainSize * 4.0, TerrainSize * 4.0), Rnd (TerrainSize * 0.5, TerrainSize))
-			Next
-			
+
 			' ----------------------------------------------------------------
 			' Hide mouse pointer...
 			' ----------------------------------------------------------------

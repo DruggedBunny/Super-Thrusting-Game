@@ -156,6 +156,10 @@ Class Orb Extends Behaviour
 				
 			body.Collided += Lambda (other_body:RigidBody) ' Other colliding body
 				
+				If other_body.CollisionMask = COLL_PORTAL_LOCK_SPHERE_COLLIDER
+					Return
+				Endif
+'				
 				If constraint And Abs (body.LinearVelocity.Length - last_vel.Length) < 9.0 ' Resilient little bugger
 					Return
 				Endif
@@ -168,7 +172,7 @@ Class Orb Extends Behaviour
 			
 			start_vel						= Null
 
-			Game.CurrentLevel.ExitPortal.Open ()
+'			Game.CurrentLevel.ExitPortal.Open ()
 
 			ResetBoomAudio ()
 
@@ -188,7 +192,7 @@ Class Orb Extends Behaviour
 			
 			exploded = True
 			
-			Game.CurrentLevel.ExitPortal.Close ()
+'			Game.CurrentLevel.ExitPortal.Close ()
 			
 		End
 		

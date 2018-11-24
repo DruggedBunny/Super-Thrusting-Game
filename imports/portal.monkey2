@@ -245,7 +245,8 @@ Class PortalCollider Extends Behaviour
 	
 				body.Collided += Lambda (other_body:RigidBody)
 					
-					If Game.Player.CurrentOrb
+'					If Game.Player.CurrentOrb And 
+					If Game.CurrentLevel.Lock.Unlocked
 						Triggered = True
 					Endif
 				

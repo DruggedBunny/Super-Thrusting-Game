@@ -91,12 +91,12 @@ Class Rocket
 	
 			' Add collider shape and rigid body...
 			
-			collider			= model.AddComponent <ConeCollider> ()
+			collider				= model.AddComponent <ConeCollider> ()
 		
 				collider.Radius		= collision_radius
 				collider.Length		= collision_length
 	
-			body				= model.AddComponent <RigidBody> ()
+			body					= model.AddComponent <RigidBody> ()
 
 '				Game.PhysStack.Add (body)
 

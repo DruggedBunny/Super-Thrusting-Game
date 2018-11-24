@@ -54,10 +54,27 @@ Class GameController
 					Game.GameScene.UpdateRate = last_timescale
 				Endif
 
+				If Game.CurrentLevel.Lock.Unlocked
+					If Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED Or
+						Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSING
+							Game.CurrentLevel.ExitPortal.Open ()
+					Endif
+				Endif
+	
+				If Not Game.Player.CurrentOrb
+					If Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_OPEN Or
+						Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_OPENING
+							Game.CurrentLevel.ExitPortal.Close ()
+					Endif
+					If Game.CurrentLevel.Lock.Unlocked
+						Game.CurrentLevel.Lock.Unlocked = False
+					Endif
+				Endif
+				
 				If Game.Player.Alive
-					Game.Player.Control		()				' Rocket controls
+					Game.Player.Control ()				' Rocket controls
 					Cloud.Update ()
-					Game.MainCamera.Update	(Game.Player)	' Update camera, follow player
+					Game.MainCamera.Update (Game.Player)	' Update camera, follow player
 				Else
 					GameState.SetCurrentState (States.PlayEnding)
 				Endif
@@ -241,6 +258,17 @@ Class GameController
 
 		Game.MainCamera				= New GameCamera (App.ActiveWindow.Rect, Game.MainCamera, Game.TerrainSize * 4.0)
 
+			
+'			' ----------------------------------------------------------------
+'			' TMP: Clouds. TODO: Move into Cloud class!
+'			' ----------------------------------------------------------------
+'
+			Cloud.Destroy () ' Yuk!
+			
+			For Local loop:Int = 1 To 25
+				Local c:Cloud = New Cloud (Rnd (-Game.TerrainSize * 4.0, Game.TerrainSize * 4.0), Rnd (Game.TerrainSize, Game.TerrainSize * 4.0), Rnd (-Game.TerrainSize * 4.0, Game.TerrainSize * 4.0), Rnd (Game.TerrainSize * 0.5, Game.TerrainSize))
+			Next
+			
 		' ---------------------------------------------------------------------
 		' HUD setup...
 		' ---------------------------------------------------------------------

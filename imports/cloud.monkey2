@@ -16,7 +16,7 @@ Class Cloud
 			Endif
 			
 			If Not CloudPivot
-				
+			
 				CloudPivot		= New Pivot ()
 				CloudPivot.Name	= "Cloud sprites pivot"
 				
@@ -47,6 +47,10 @@ Class Cloud
 			
 			CloudList.Add (Self)
 			
+		End
+		
+		Function Destroy ()
+			CloudPivot = Null ' Yuk!
 		End
 		
 		Function Update ()

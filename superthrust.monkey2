@@ -38,23 +38,24 @@ Const TMP_QUICK_LEVEL_TWEEN:Bool	= True
 ' Yes, this is stupid! But it highlights better than comments AND prompts me to reduce clutter in Output window!
 
 Function InitTODOs ()
-
+	
+	TODO ("MAIN ITEM: Portal open/close logic needs revising now that orb gets dropped into portal lock")
+	
+	TODO ("Some pads cause damage and others don't... WTF?!")
+	
+	TODO ("Revise DummyOrb spawning logic to match other Behaviours")
+	
 	' *** WASM CRASH: "C:\Users\James\Desktop\wasm integer overflow.txt"
 	
 	' Done: WIP portal lock -- player will carry orb into sphere to trigger portal, then fly away without orb. Looks pretty cool!
 	
-	TODO ("See PortalLock...")
-
-	TODO ("RGGGHHH! There's a particle system! D:/DevTools/Monkey2/monkey2/modules/mojo3d/tests/particles.monkey2")
+	TODO ("Clouds don't spawn on Moon, which is good... but I haven't told it not to?! Currently in GameController.SpawnLevel...")
 	
 	TODO ("*** REVISIT DELTA TIMING -- BROKEN! Also, sprites in VR broken (along with delta), may be related")
 	
 	TODO ("GameState -> Proper object!")
 	
-	TODO ("PortalLock: REMOVED FOR NOW -> Level.Populate [...] just started. (Pink pads.) Need to remove at end of level! Player will drop orb here to unlock. Mini-portal hovering above?")
 	TODO ("Might add emergency air-jump to fix lying on side on ground... though finally detecting tilt angle and blowing up probably better...")
-	TODO ("New refueling sound. Maybe add landing timer to delay before triggering -- slightly tricky due to need to reset Rocket.landed per-frame!")
-	TODO ("Can end up carrying two orbs if collecting new one prior to old one being destroyed (where rocket dies first)")
 	TODO ("Damage visibility/explosions")
 	TODO ("Add Options class for performance tweaks, etc")
 	TODO ("Can get stuck between levels if alt-tabbing away/back!")
