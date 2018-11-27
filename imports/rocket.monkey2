@@ -272,7 +272,8 @@ Class Rocket
 			alert_fader.Channel.Paused	= True
 			fuel_fader.Channel.Paused	= True
 			
-			ExplodeModel (model, body)
+			' ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500, shadows:Bool = True, charring:Bool = False)
+			ExplodeModel (model, body, 0, 500, True, True)
 			
 			model.Visible			= False
 			

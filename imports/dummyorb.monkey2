@@ -59,6 +59,10 @@ Class DummyOrb
 		
 					ResetCollectedAudio ()
 					
+					' Start portal lock ring spinning! No damping on this body, so just keeps going...
+										
+					Game.CurrentLevel.Lock.Ring.StartRotation ()
+					
 					Destroy ()
 	
 				End

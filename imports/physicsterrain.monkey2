@@ -7,6 +7,10 @@ Class PhysicsTerrain ' WIP
 
 	Public
 		
+		Property WallHeight:Float ()
+			Return trump_wall.Height
+		End
+
 		Property TerrainData:PlayfulJSTerrainMap ()
 			Return terrain_data
 		End

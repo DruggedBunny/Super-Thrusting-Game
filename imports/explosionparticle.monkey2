@@ -16,7 +16,7 @@ Class ExplosionParticle Extends Behaviour
 
 	Public
 	
-		Function Create:ExplosionParticle (model:Model, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.95)
+		Function Create:ExplosionParticle (model:Model, thrust:Vec3f, size:Float = 0.5, fadeout:Float = 0.975)
 
 			If Not ParticleSprite
 
@@ -90,6 +90,8 @@ Class ExplosionParticle Extends Behaviour
 			
 			If Game.GameState.GetCurrentState () <> States.Paused
 			
+				' NB. update_fader may be passed in via fadeout param from ExplodeModel!
+				
 				Entity.Alpha = Entity.Alpha * FrameStretch (update_fader, elapsed)
 				
 				' Slow particle down (like air resistance)... very dependent on start speed and alpha fade amount...

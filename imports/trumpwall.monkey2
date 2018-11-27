@@ -29,6 +29,10 @@ Class TrumpWall
 			
 		End
 		
+		Property Height:Float ()
+			Return height
+		End
+		
 		Method New (height_box:Boxf)
 
 			' Invisible walls around terrain...
@@ -70,7 +74,8 @@ Class TrumpWall
 	
 			Local ceiling_box:Boxf = New Boxf (-height_box.Width * 0.5, -2.0, -height_box.Depth * 0.5, height_box.Width * 0.5, 2.0, height_box.Depth * 0.5)
 			
-				pos			= New Vec3f (0, height_box.Height * 3.0 + ceiling_box.Height * 0.5, 0.0)
+				height		= height_box.Height * 5.0
+				pos			= New Vec3f (0, height + ceiling_box.Height * 0.5, 0.0)
 				yrot		= 0.0
 				
 				ceiling		= Wall.Create (ceiling_box, pos, yrot, New PbrMaterial (Color.White), "Ceiling")
@@ -81,5 +86,6 @@ Class TrumpWall
 	
 		Field walls:Wall []
 		Field ceiling:Wall
+		Field height:Float
 		
 End

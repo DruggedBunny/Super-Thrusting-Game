@@ -186,7 +186,7 @@ Class Level
 			' Create exit portal...
 			' -----------------------------------------------------------------
 
-			ExitPortal = New Portal (0.0, terrain.Height + 100.0, terrain.Depth * 0.25)
+			ExitPortal = New Portal (0.0, terrain.WallHeight * 0.65, terrain.Depth * 0.25)
 
 			gem_map = New GemMap (256.0)
 			
@@ -378,6 +378,8 @@ Class Level
 		
 		Method Reset:Vec3f ()
 	
+			Lock.Reset ()
+			
 			Game.MainCamera.Reset ()
 			
 			GameState.SetCurrentState (States.PlayStarting)

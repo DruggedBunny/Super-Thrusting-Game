@@ -30,7 +30,7 @@ Const TERRAIN_SIZE:Int = 256
 
 ' Hacks...
 
-Const FULL_SCREEN:Bool				= True
+Const FULL_SCREEN:Bool				= False
 Const VR_MODE:Int					= False
 Const TMP_LEVEL_COMPLETE:Bool		= False
 Const TMP_QUICK_LEVEL_TWEEN:Bool	= False
@@ -39,15 +39,14 @@ Const TMP_QUICK_LEVEL_TWEEN:Bool	= False
 
 Function InitTODOs ()
 	
-	TODO ("MAIN ITEM: Portal open/close logic needs revising now that orb gets dropped into portal lock")
+	TODO ("PortalLock: Delete/re-create ring when resetting (make flat when not moving)...")
+	TODO ("PortalLock: Add dummy orb when unlocked!")
 	
 	TODO ("Some pads cause damage and others don't... WTF?!")
 	
 	TODO ("Revise DummyOrb spawning logic to match other Behaviours")
 	
 	' *** WASM CRASH: "C:\Users\James\Desktop\wasm integer overflow.txt"
-	
-	' Done: WIP portal lock -- player will carry orb into sphere to trigger portal, then fly away without orb. Looks pretty cool!
 	
 	TODO ("Clouds don't spawn on Moon, which is good... but I haven't told it not to?! Currently in GameController.SpawnLevel...")
 	

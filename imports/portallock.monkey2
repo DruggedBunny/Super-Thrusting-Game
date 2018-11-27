@@ -10,8 +10,8 @@ Class PortalLock
 			' Basic sphere model, later used for visible glass sphere (collides with rocket) and
 			' invisible sphere, used for orb collision detection without physics response...
 			
-			ProtoSphere			= Model.CreateSphere (12.0, 32, 32, New PbrMaterial (Color.Silver, 0.15, 0.0))
-			ProtoSphere.Visible = False
+			ProtoSphere				= Model.CreateSphere (12.0, 32, 32, New PbrMaterial (Color.Silver, 0.15, 0.0))
+			ProtoSphere.Visible 	= False
 
 			' Parts of PortalLock...
 			
@@ -20,10 +20,23 @@ Class PortalLock
 			' Sphere:			the visible 'glass' sphere
 			' SphereContact:	the invisible sphere used to detect orb contact
 			
-			Pad					= PortalLockPad.Create (Self, x, y, z)
-			Ring				= PortalLockRing.Create (Self)
-			Sphere				= PortalLockSphere.Create (Self)
-			SphereContact		= PortalLockSphereContact.Create (Self)
+			Pad						= PortalLockPad.Create (Self, x, y, z)
+			Ring					= PortalLockRing.Create (Self)
+			Sphere					= PortalLockSphere.Create (Self)
+			SphereContact			= PortalLockSphereContact.Create (Self)
+			
+			Ring.SetState (0)
+			
+			Beacon					= New Light (PadModel)
+			
+				Beacon.Color		= Color.Lime * 4.0
+				Beacon.Type			= LightType.Point
+				Beacon.CastsShadow	= False
+				Beacon.Range		= SphereModel.Mesh.Bounds.Width * 0.5
+				
+				Beacon.Visible		= False
+				
+				Beacon.Move (0.0, SphereModel.Mesh.Bounds.Height * 0.5, 0.0)
 			
 			' Don't need this any more...
 			
@@ -103,6 +116,12 @@ Class PortalLock
 			Return lock_sphere_contact.Entity.GetComponent <RigidBody> ()
 		End
 	
+		Property Beacon:Light ()
+			Return beacon
+			Setter (light:Light)
+				beacon = light
+		End
+		
 		' ---------------------------------------------------------------------
 		' Prototype sphere model...
 		' ---------------------------------------------------------------------
@@ -136,7 +155,15 @@ Class PortalLock
 		End
 
 		Method Reset ()
-			Unlocked = True
+			Ring.SetState (0)
+			RingBody.AngularVelocity = New Vec3f (0.0, 0.0, 0.0)
+			Beacon.Visible = False
+		End
+		
+		Property RingState:Int ()
+			Return Ring.GetState ()
+			Setter (new_state:Int)
+				Ring.SetState (new_state)
 		End
 		
 	Private
@@ -148,6 +175,8 @@ Class PortalLock
 		Field lock_sphere:PortalLockSphere
 		Field lock_sphere_contact:PortalLockSphereContact
 		
+		Field beacon:Light
+
 		Field unlocked:Bool
 		Field lock_status_changed:Bool
 		
@@ -216,7 +245,10 @@ Class PortalLockSphereContact Extends Behaviour
 				
 					Game.Player.CurrentOrb.Destroy (False)
 					
-					Parent.Unlocked = True
+					If Parent.Unlocked Then Return
+					
+					Parent.Unlocked			= True
+					Parent.Beacon.Visible	= True
 					
 '					Game.CurrentLevel.ExitPortal.Open ()
 					
@@ -331,7 +363,7 @@ Class PortalLockRing Extends Behaviour
 
 		Function Create:PortalLockRing (belongs_to:PortalLock, radius:Float = 8.0)
 
-			Local ring_model:Model		= Model.CreateTorus (radius, 0.5, 16, 16, New PbrMaterial (Color.DarkGrey, 0.0, 1.0), belongs_to.PadModel)
+			Local ring_model:Model		= Model.CreateTorus (radius, 0.5, 16, 16, New PbrMaterial (Color.Red * 0.5, 0.0, 1.0), belongs_to.PadModel)
 				
 				ring_model.Name			= "PortalLockRing [spawned at " + Time.Now () + "]"
 				ring_model.CastsShadow	= False
@@ -358,12 +390,62 @@ Class PortalLockRing Extends Behaviour
 				parent = p
 		End
 		
+		Method StartRotation ()
+			body.ApplyTorqueImpulse (New Vec3f (0.0, 1.0, 0.0))
+			SetState (1)
+		End
+		
+		Method GetState:Int ()
+			Return state
+		End
+		
+		Method SetState (new_state:Int)
+		
+			Local pbrm:PbrMaterial = Cast <PbrMaterial> (model.Material)
+
+			state = new_state
+			
+			Select state
+			
+				Case 0
+				
+					pbrm.ColorFactor		= Color.Red * 0.5
+					pbrm.EmissiveFactor		= Color.Red * 0.5
+					pbrm.MetalnessFactor	= 0.0
+					pbrm.RoughnessFactor	= 1.0
+
+				Case 1
+				
+					pbrm.ColorFactor		= Color.Orange * 0.5
+					pbrm.EmissiveFactor		= Color.Orange * 0.75
+					pbrm.MetalnessFactor	= 0.1
+					pbrm.RoughnessFactor	= 0.5
+
+				Case 2
+				
+					pbrm.ColorFactor		= Color.Lime
+					pbrm.EmissiveFactor		= Color.Lime * 0.5
+					pbrm.MetalnessFactor	= 0.1
+					pbrm.RoughnessFactor	= 0.0
+
+			End
+			
+		End
+		
+		Property State:Int ()
+			Return state
+			Setter (new_state:Int)
+				new_state = state
+		End
+		
 	Private
 	
 		Field parent:PortalLock
 		Field body:RigidBody
 		Field model:Model
 		
+		Field state:Int
+				
 		Method New (entity:Entity)
 			
 			Super.New (entity)
@@ -384,8 +466,10 @@ Class PortalLockRing Extends Behaviour
 				
 				' Start spinning! No damping, so just keeps going...
 				
-				body.ApplyTorqueImpulse (New Vec3f (0.0, 1.0, 0.0))
+'				body.ApplyTorqueImpulse (New Vec3f (0.0, 1.0, 0.0))
 
+			SetState (0)
+			
 		End
 
 		Method OnUpdate (elapsed:Float) Override
@@ -399,15 +483,9 @@ Class PortalLockRing Extends Behaviour
 			If Parent.LockStatusChanged
 
 				If Parent.Unlocked
-					pbrm.ColorFactor		= Color.White
-					pbrm.EmissiveFactor		= Color.Lime
-					pbrm.MetalnessFactor	= 0.1
-					pbrm.RoughnessFactor	= 0.0
+					SetState (2)			' Lime
 				Else
-					pbrm.ColorFactor		= Color.DarkGrey
-					pbrm.EmissiveFactor		= Color.Black
-					pbrm.MetalnessFactor	= 0.0
-					pbrm.RoughnessFactor	= 1.0
+					SetState (0)			' Red
 				Endif
 			
 				Parent.LockStatusChanged	= False
@@ -427,7 +505,7 @@ Class PortalLockPad Extends Behaviour
 			Local thickness:Float				= 1.0
 			Local box:Boxf						= New Boxf (-size * 0.5, -thickness * 0.5, -size * 0.5, size * 0.5, thickness * 0.5, size * 0.5)
 			
-			Local pad:Model						= Model.CreateBox (box, 2, 2, 2, New PbrMaterial (Color.Lime, 0.5, 0.0))
+			Local pad:Model						= Model.CreateBox (box, 2, 2, 2, New PbrMaterial (Color.Green, 0.5, 0.0))
 				
 				pad.Name						= "PortalLockPad [spawned at " + Time.Now () + "]"
 				pad.Move (x, y, z)

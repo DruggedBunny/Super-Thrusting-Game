@@ -363,7 +363,7 @@ End
 ' ModelFromTriangles: Generates a separate model from a range of existing model triangles.
 ' Used for chunky explosions via PhysicsTri class!
 
-Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:UInt, mat_index:Int)
+Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:UInt, mat_index:Int, charring:Bool = False)
 
 ' TODO: index_start = tri number??
 
@@ -376,20 +376,15 @@ Function ModelFromTriangles:Model (in_model:Model, index_start:UInt, tri_count:U
 		Assert (mat_index < in_model.Mesh.NumMaterials, "Material index too high")
 		Assert (index_start + 2 < in_model.Mesh.NumIndices, "Index too high")			' Think that's right...
 		
-'		Local black_mat:PbrMaterial		= New PbrMaterial (Color.Black)
-		
-'		Select Int (Rnd (5)) ' 0 - 4
-'			Case 0, 1, 2, 3
-'				tri_model.Material		= black_mat
-'			Default
-'				tri_model.Material		= in_model.Materials [mat_index]
-'		End
-
 		tri_model.Material				= in_model.Materials [mat_index]
+
+		If charring
+			Cast <PbrMaterial> (tri_model.Material).ColorFactor = Cast <PbrMaterial> (tri_model.Material).ColorFactor * (Rnd (0.1, 0.95))
+		Endif
 		
-			If tri_count = 1
-				tri_model.Material.CullMode	= CullMode.None
-			Endif
+		If tri_count = 1
+			tri_model.Material.CullMode	= CullMode.None
+		Endif
 
 		'tri_model.Name = "Triangle created at " + Millisecs ()
 	
@@ -439,7 +434,7 @@ End
 
 ' TODO: Make tris_per_chunk variation start from 1...
 
-Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500)
+Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, explosion_particles:Int = 500, shadows:Bool = True, charring:Bool = False)
 
 '	QuickTimer.Start ()
 
@@ -460,7 +455,7 @@ Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, exp
 		ExplosionParticle.Create	(	model,				' Rocket
 										angle,				' 3D angle
 										Rnd (0.1, 1.0),		' Size
-										0.99)				' Fadeout-multiplier
+										0.98)				' Fadeout-multiplier
 	Next
 	
 	For Local mat:Int = 0 Until model.Mesh.NumMaterials
@@ -477,18 +472,18 @@ Function ExplodeModel (model:Model, body:RigidBody, tris_per_chunk:UInt = 0, exp
 		
 		For Local tri:UInt = 0 Until model.Mesh.GetIndices (mat).Length Step steps
 		
-			Local tri_model:Model		= ModelFromTriangles (model, tri, tris_per_chunk, mat)
+			Local tri_model:Model		= ModelFromTriangles (model, tri, tris_per_chunk, mat, charring)
 			
 				tri_model.Parent		= Null
-				tri_model.CastsShadow	= False
+				tri_model.CastsShadow	= shadows
 
 			Local ptri:PhysicsTri		= New PhysicsTri (tri_model) ' Note to self: Not a 'tri' here, but a chunk!
 
 				ptri.SrcBody			= body
 				
-'				If Game.Player.RocketModel And model = Game.Player.RocketModel
-'					ptri.FromRocket		= True
-'				Endif
+				If Game.Player.RocketModel And model = Game.Player.RocketModel
+					ptri.FromRocket		= True
+				Endif
 				
 		Next
 	

@@ -85,10 +85,12 @@ Class GameWindow Extends Window
 		
 		Method TMP_ResetLevel ()
 			
-			HUD = New HUDOverlay
-				
+			GameState.SetCurrentState (States.PlayEnding)
+			
 			Controller.ResetLevel ()
 			
+			HUD = New HUDOverlay
+				
 		End
 
 #If __TARGET__ <> "emscripten"

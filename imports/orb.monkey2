@@ -113,6 +113,8 @@ Class Orb Extends Behaviour
 				glow.Color					= Color.HotPink * 8.0
 				glow.Range					= 10.0
 			
+				glow.Move (0.0, -0.8, 0.0)
+				
 			Local collider:SphereCollider	= Entity.AddComponent <SphereCollider> ()
 
 			Local body:RigidBody			= Entity.AddComponent <RigidBody> ()

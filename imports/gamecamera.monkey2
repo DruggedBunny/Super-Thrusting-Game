@@ -98,8 +98,18 @@ Class GameCamera
 
 				Local cam_dist:Float = Game.Player.RocketModel.Position.Distance (Game.MainCamera.Camera3D.Position)
 				
-				If cam_dist < 10.0
-					Camera3D.FOV = Blend (Camera3D.FOV, TransformRange (cam_dist, 1.0, 10.0, 130.0, 90.0), 0.1 * Game.Delta)
+				Local closeup:Float = 10.5
+				Local closer:Float = 0.1
+				
+				' Mess!
+				
+				If Game.Player.CurrentOrb
+					closeup = 18.5
+					closer = 0.025
+				Endif
+				
+				If cam_dist < closeup
+					Camera3D.FOV = Blend (Camera3D.FOV, TransformRange (cam_dist, 1.0, closeup, 130.0, 90.0), closer * Game.Delta)
 					up.Y = Blend (up.Y, 3.0, 0.01 * Game.Delta)
 				Else
 					Camera3D.FOV = Blend (Camera3D.FOV, 90.0, 0.075 * Game.Delta)

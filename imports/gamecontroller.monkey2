@@ -54,6 +54,8 @@ Class GameController
 					Game.GameScene.UpdateRate = last_timescale
 				Endif
 
+				' Don't like this stuff! Red-do...
+				
 				If Game.CurrentLevel.Lock.Unlocked
 					If Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSED Or
 						Game.CurrentLevel.ExitPortal.PortalState = Portal.PORTAL_STATE_CLOSING
@@ -68,6 +70,9 @@ Class GameController
 					Endif
 					If Game.CurrentLevel.Lock.Unlocked
 						Game.CurrentLevel.Lock.Unlocked = False
+					Endif
+					If Game.CurrentLevel.Lock.RingState > 0
+						Game.CurrentLevel.Lock.Reset ()
 					Endif
 				Endif
 				
